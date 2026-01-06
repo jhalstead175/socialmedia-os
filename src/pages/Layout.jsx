@@ -18,12 +18,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-import { PromoURL } from "./components/marketing/PromoURL";
-import { BillingURL } from "./components/subscription/BillingURL";
+import { PromoURL } from "@/components/marketing/PromoURL";
+import { BillingURL } from "@/components/subscription/BillingURL";
 import { toast } from "sonner";
-import RezemaiLogo from "./components/Logo";
-import Meta from "./components/shared/Meta";
-import { PaywallProvider } from "./components/subscription/PaywallProvider";
+import RezemaiLogo from "@/components/Logo";
+import Meta from "@/components/shared/Meta";
+import { PaywallProvider } from "@/components/subscription/PaywallProvider";
 
 const globalStyles = `
   :root {
@@ -127,7 +127,9 @@ const globalStyles = `
   @keyframes pop { from { opacity:.6; transform: scale(.98);} to { opacity:1; transform: scale(1);} }
 `;
 
-// New StatusBadge component
+// DISABLED FOR PRODUCTION: Health endpoint doesn't exist yet
+// StatusBadge component - Re-enable when /health endpoint is created
+/*
 const StatusBadge = () => {
   const [status, setStatus] = useState('operational');
 
@@ -169,6 +171,7 @@ const StatusBadge = () => {
     </Tooltip>
   );
 };
+*/
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
@@ -370,9 +373,10 @@ export default function Layout({ children, currentPageName }) {
               </Button>
             </div>
 
-            <div className="mt-4 pt-4 border-t">
+            {/* DISABLED: StatusBadge - Health endpoint doesn't exist yet */}
+            {/* <div className="mt-4 pt-4 border-t">
               <StatusBadge />
-            </div>
+            </div> */}
           </div>
         </div>
       </SheetContent>
@@ -481,9 +485,10 @@ export default function Layout({ children, currentPageName }) {
                   </Button>
                 </div>
 
-                <div className="mt-4 pt-4 border-t border-gray-200">
+                {/* DISABLED: StatusBadge - Health endpoint doesn't exist yet */}
+                {/* <div className="mt-4 pt-4 border-t border-gray-200">
                   <StatusBadge />
-                </div>
+                </div> */}
               </div>
             </aside>
 

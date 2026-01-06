@@ -1,5 +1,6 @@
 import React from 'react';
-import ReactMarkdown from 'react-markdown';
+// PRODUCTION FIX: Removed react-markdown dependency
+// Using simple pre-formatted text instead
 import { Card, CardContent } from "@/components/ui/card";
 import { Scale } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -40,23 +41,10 @@ export default function LegalTermsPage() {
         </div>
         <Card className="border-0 shadow-lg">
           <CardContent className="p-6 sm:p-8">
-            <ReactMarkdown 
-              className="prose prose-slate max-w-none"
-              components={{
-                a: ({children, ...props}) => {
-                  const statusPageKeywords = ['status', 'incidents', 'maintenance'];
-                  if (statusPageKeywords.some(keyword => String(children).toLowerCase().includes(keyword))) {
-                    return <Link to={createPageUrl('Status')} {...props}>{children}</Link>;
-                  }
-                  if (String(children).toLowerCase().includes('account')) {
-                    return <Link to={createPageUrl('Account')} {...props}>{children}</Link>;
-                  }
-                  return <a {...props}>{children}</a>
-                }
-              }}
-            >
+            {/* PRODUCTION FIX: Simple pre-formatted text instead of ReactMarkdown */}
+            <div className="prose prose-slate max-w-none whitespace-pre-wrap font-sans">
               {termsContent}
-            </ReactMarkdown>
+            </div>
           </CardContent>
         </Card>
       </div>

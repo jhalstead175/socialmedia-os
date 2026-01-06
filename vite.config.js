@@ -6,7 +6,8 @@ import path from 'path'
 export default defineConfig({
   plugins: [react()],
   server: {
-    allowedHosts: true
+    // PRODUCTION FIX: Removed allowedHosts: true (security risk)
+    // For local dev, Vite defaults are secure. For production, use proper reverse proxy.
   },
   resolve: {
     alias: {

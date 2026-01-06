@@ -1,5 +1,6 @@
 import React from 'react';
-import ReactMarkdown from 'react-markdown';
+// PRODUCTION FIX: Removed react-markdown dependency
+// Using simple pre-formatted text instead
 import { Card, CardContent } from "@/components/ui/card";
 import { Shield } from 'lucide-react';
 
@@ -36,9 +37,10 @@ export default function LegalPrivacyPage() {
         </div>
         <Card className="border-0 shadow-lg">
           <CardContent className="p-6 sm:p-8">
-            <ReactMarkdown className="prose prose-slate max-w-none">
+            {/* PRODUCTION FIX: Simple pre-formatted text instead of ReactMarkdown */}
+            <div className="prose prose-slate max-w-none whitespace-pre-wrap font-sans">
               {privacyContent}
-            </ReactMarkdown>
+            </div>
           </CardContent>
         </Card>
       </div>
