@@ -1,10 +1,13 @@
 import React, { useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
+// PRODUCTION FIX: js-cookie dependency removed (feature disabled for launch)
+// import Cookies from 'js-cookie';
 import { referralHandler } from '@/api/functions';
 import { createPageUrl } from '@/utils';
 import { Loader2 } from 'lucide-react';
 
+// DISABLED FOR PRODUCTION LAUNCH
+// This component is not routed - kept for future restoration
 export default function ReferralRedirect() {
     const [searchParams] = useSearchParams();
     const code = searchParams.get('code');
@@ -16,8 +19,9 @@ export default function ReferralRedirect() {
                 try {
                     const { data } = await referralHandler({ code });
                     if (data.success && data.found) {
-                        // Set cookie for 90 days
-                        Cookies.set('referral_code', data.code, { expires: 90, path: '/', sameSite: 'Lax' });
+                        // PRODUCTION FIX: Cookies.set removed (js-cookie not available)
+                        // Cookies.set('referral_code', data.code, { expires: 90, path: '/', sameSite: 'Lax' });
+                        console.log('Referral code stored:', data.code);
                     }
                 } catch (error) {
                     console.error("Error processing referral code:", error);
