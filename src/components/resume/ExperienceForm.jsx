@@ -6,8 +6,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
-import { Plus, Trash2, Briefcase, GripVertical } from "lucide-react";
-import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { Plus, Trash2, Briefcase } from "lucide-react";
+// PRODUCTION FIX: Removed @hello-pangea/dnd dependency
+// Drag-and-drop reordering disabled for launch (users can still add/edit/delete)
 
 export default function ExperienceForm({ experiences, onChange }) {
   const addExperience = () => {
@@ -71,15 +72,14 @@ export default function ExperienceForm({ experiences, onChange }) {
     onChange(updated);
   };
 
-  const handleOnDragEnd = (result) => {
-    if (!result.destination) return;
-
-    const items = Array.from(experiences);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    onChange(items);
-  };
+  // PRODUCTION FIX: Drag-and-drop disabled
+  // const handleOnDragEnd = (result) => {
+  //   if (!result.destination) return;
+  //   const items = Array.from(experiences);
+  //   const [reorderedItem] = items.splice(result.source.index, 1);
+  //   items.splice(result.destination.index, 0, reorderedItem);
+  //   onChange(items);
+  // };
 
   return (
     <div className="space-y-6">
@@ -105,30 +105,19 @@ export default function ExperienceForm({ experiences, onChange }) {
           </CardContent>
         </Card>
       ) : (
-        <DragDropContext onDragEnd={handleOnDragEnd}>
-          <Droppable droppableId="experiences">
-            {(provided) => (
-              <div 
-                className="space-y-6"
-                {...provided.droppableProps} 
-                ref={provided.innerRef}
-              >
-                {experiences.map((exp, index) => (
-                  <Draggable key={exp.id || index} draggableId={String(exp.id || index)} index={index}>
-                    {(provided) => (
-                      <Card 
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        className="border-slate-200"
-                      >
-                        <CardContent className="p-6">
-                          <div className="flex justify-between items-start mb-4">
-                            <div className="flex items-center gap-2">
-                               <div {...provided.dragHandleProps} className="text-slate-400 hover:text-slate-600 cursor-grab -ml-1">
-                                <GripVertical className="w-5 h-5" />
-                               </div>
-                               <h4 className="font-semibold text-slate-900">Position {index + 1}</h4>
-                            </div>
+        // PRODUCTION FIX: Removed drag-and-drop wrapper components
+        <div className="space-y-6">
+          {experiences.map((exp, index) => (
+            <Card
+              key={exp.id || index}
+              className="border-slate-200"
+            >
+              <CardContent className="p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex items-center gap-2">
+                    {/* PRODUCTION FIX: Drag handle removed */}
+                    <h4 className="font-semibold text-slate-900">Position {index + 1}</h4>
+                  </div>
                             <Button
                               variant="ghost"
                               size="icon"
@@ -241,16 +230,10 @@ export default function ExperienceForm({ experiences, onChange }) {
                               </Button>
                             </div>
                           </div>
-                        </CardContent>
-                      </Card>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       )}
     </div>
   );

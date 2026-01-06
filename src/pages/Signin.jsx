@@ -51,8 +51,8 @@ export default function Signin() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <RezemaiLogo className="mx-auto mb-4" />
-          <h1 className="text-2xl font-semibold text-white mb-2">Welcome to REZEMAI</h1>
-          <p className="text-white/70">Sign in to continue your career journey</p>
+          <h1 className="text-2xl font-semibold text-white mb-2">Welcome to Rezemai</h1>
+          <p className="text-white/70">Build resumes and practice interviews</p>
         </div>
 
         <Card className="border-white/10 bg-white/5 backdrop-blur-sm">

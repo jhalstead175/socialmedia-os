@@ -4,8 +4,8 @@ import React, { useEffect } from 'react';
 // They should be replaced with actual files at the specified paths.
 
 export default function Meta() {
-  const title = "Rezemai — AI Resume & Interview Coach";
-  const description = "Tailor resumes to any JD, export ATS-clean PDFs, and practice interviews with live feedback. Start free.";
+  const title = "Rezemai — Resume Builder & Interview Coach";
+  const description = "Build tailored resumes for any job description, export ATS-ready PDFs, and practice interviews with real-time feedback. Start free.";
   const imageUrl = `${window.location.origin}/og/rezemai-og.png`;
 
   useEffect(() => {

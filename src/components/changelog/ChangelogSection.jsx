@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { ChangelogEntry } from "@/api/entities";
 import { format, parseISO } from 'date-fns';
-import ReactMarkdown from 'react-markdown';
+// PRODUCTION FIX: Removed react-markdown dependency
+// Using simple pre-formatted text instead
 import {
   PlusCircle,
   ArrowUpCircle,
@@ -106,8 +107,9 @@ export default function ChangelogSection() {
                     </div>
                     <div className="md:col-span-3">
                       <h3 className="font-semibold text-navy text-lg mb-2">{entry.title}</h3>
-                      <div className="prose prose-sm max-w-none text-slate-600">
-                        <ReactMarkdown>{entry.body}</ReactMarkdown>
+                      <div className="prose prose-sm max-w-none text-slate-600 whitespace-pre-wrap">
+                        {/* PRODUCTION FIX: Simple pre-formatted text instead of ReactMarkdown */}
+                        {entry.body}
                       </div>
                     </div>
                   </div>

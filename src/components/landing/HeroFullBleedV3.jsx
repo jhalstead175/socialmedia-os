@@ -4,7 +4,7 @@ import { InterviewCoachWidget } from './InterviewCoachWidget';
 export function HeroFullBleedV3({
   heroImageUrl = "https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   title = "Your Resume Has 7 Seconds to Impress. Let's Make it Count.",
-  subtitle = "REZEMAI | Helps you craft expert-level resumes with AI precision and clarity to land your dream job.",
+  subtitle = "Build expert-level resumes tailored to any job description. Get interview-ready with practice sessions and real-time feedback.",
   showAva = false,
   avatarUrl = "/img/ava-bridge.png",
   onPrimary = () => {},
@@ -19,6 +19,13 @@ export function HeroFullBleedV3({
 
       <div className="relative mx-auto max-w-7xl px-6 md:px-8 pt-24 pb-16">
         <div className="max-w-2xl">
+          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-xs font-medium text-indigo-200 mb-4">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+            </span>
+            Early Access — Join professionals already using Rezemai
+          </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-zinc-100">{title}</h1>
           <p className="mt-4 text-zinc-300 text-base md:text-lg">{subtitle}</p>
           <div className="mt-7 flex flex-wrap items-center gap-3">

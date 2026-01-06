@@ -44,7 +44,8 @@ import AdminGrowth from "./AdminGrowth";
 
 import AdminPromos from "./AdminPromos";
 
-import ReferralRedirect from "./ReferralRedirect";
+// DISABLED FOR PRODUCTION: Missing js-cookie dependency
+// import ReferralRedirect from "./ReferralRedirect";
 
 import Referrals from "./Referrals";
 
@@ -105,9 +106,10 @@ const PAGES = {
     AdminGrowth: AdminGrowth,
     
     AdminPromos: AdminPromos,
-    
-    ReferralRedirect: ReferralRedirect,
-    
+
+    // DISABLED FOR PRODUCTION: Missing js-cookie dependency
+    // ReferralRedirect: ReferralRedirect,
+
     Referrals: Referrals,
     
     CampaignRedirect: CampaignRedirect,
@@ -190,9 +192,10 @@ function PagesContent() {
                 <Route path="/AdminGrowth" element={<AdminGrowth />} />
                 
                 <Route path="/AdminPromos" element={<AdminPromos />} />
-                
-                <Route path="/ReferralRedirect" element={<ReferralRedirect />} />
-                
+
+                {/* DISABLED FOR PRODUCTION: Missing js-cookie dependency */}
+                {/* <Route path="/ReferralRedirect" element={<ReferralRedirect />} /> */}
+
                 <Route path="/Referrals" element={<Referrals />} />
                 
                 <Route path="/CampaignRedirect" element={<CampaignRedirect />} />
