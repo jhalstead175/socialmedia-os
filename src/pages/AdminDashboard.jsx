@@ -1,16 +1,62 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Shield, Users, LifeBuoy, BarChart3, Mail, LineChart, Ticket } from 'lucide-react';
+import { Shield, Users, LifeBuoy, BarChart3, Mail, LineChart, Ticket, AlertCircle } from 'lucide-react';
+import { User } from '@/api/entities';
+import { createPageUrl } from '@/utils';
 import UserManagement from '../components/admin/UserManagement';
 import SupportTicketViewer from '../components/admin/SupportTicketViewer';
 import AnalyticsViewer from '../components/admin/AnalyticsViewer';
 import PerformanceMonitorViewer from '../components/admin/PerformanceMonitorViewer';
 import EmailCampaignManager from '../components/admin/EmailCampaignManager';
-import AdminPromos from './AdminPromos'; // Added AdminPromos import
+import AdminPromos from './AdminPromos';
 
 export default function AdminDashboard() {
+  const navigate = useNavigate();
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
+
+  useEffect(() => {
+    const checkAdminAccess = async () => {
+      try {
+        const currentUser = await User.me();
+        // SECURITY: Client-side guard (server-side enforcement in Base44 SDK)
+        if (currentUser?.role === 'admin') {
+          setIsAuthorized(true);
+        } else {
+          // Non-admin user - redirect to dashboard
+          navigate(createPageUrl('Dashboard'), { replace: true });
+        }
+      } catch (error) {
+        // Not authenticated - redirect to landing
+        navigate(createPageUrl('Landing'), { replace: true });
+      }
+      setIsChecking(false);
+    };
+    checkAdminAccess();
+  }, [navigate]);
+
+  // Show loading state while checking authorization
+  if (isChecking) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <Card className="w-96">
+          <CardContent className="p-6 text-center">
+            <Shield className="w-12 h-12 text-slate-400 mx-auto mb-3 animate-pulse" />
+            <p className="text-slate-600">Verifying access...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Only render admin dashboard if authorized
+  if (!isAuthorized) {
+    return null; // Will redirect, but show nothing during transition
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 p-4 sm:p-6">
       <div className="max-w-7xl mx-auto">
