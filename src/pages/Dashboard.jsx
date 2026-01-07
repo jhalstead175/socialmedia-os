@@ -97,18 +97,28 @@ export default function Dashboard() {
     setError(null);
     try {
       const [userData, resumeData, sessionData, subscriptions, usageData] = await Promise.all([
-        User.me(),
-        Resume.list('-updated_date', 10),
-        InterviewSession.list('-created_date', 10),
-        Subscription.list('-created_date', 1), // Get latest subscription
-        Usage.list('', 500) // Get usage data
+        User.me().catch(() => null), // Handle auth not configured
+        Resume.list('-updated_date', 10).catch(() => []),
+        InterviewSession.list('-created_date', 10).catch(() => []),
+        Subscription.list('-created_date', 1).catch(() => []), // Get latest subscription
+        Usage.list('', 500).catch(() => []) // Get usage data
       ]);
+
+      // If no user (auth not configured), show error
+      if (!userData) {
+        setError({
+          title: 'Authentication Not Configured',
+          message: 'Please set up Clerk authentication to access the dashboard. Contact your administrator.',
+        });
+        setIsLoading(false);
+        return;
+      }
 
       setUser(userData);
       setResumes(resumeData);
       setInterviewSessions(sessionData);
       setSubscription(subscriptions[0]);
-      
+
       const currentUsage = {
         resumes: resumeData.length,
         sessions: sessionData.length,
