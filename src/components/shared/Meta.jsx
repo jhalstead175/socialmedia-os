@@ -6,7 +6,7 @@ import React, { useEffect } from 'react';
 export default function Meta() {
   const title = "Rezemai — Resume Builder & Interview Coach";
   const description = "Build tailored resumes for any job description, export ATS-ready PDFs, and practice interviews with real-time feedback. Start free.";
-  const imageUrl = `${window.location.origin}/og/rezemai-og.png`;
+  const imageUrl = `${window.location.origin}/og-rezemai.png`;
 
   useEffect(() => {
     document.title = title;

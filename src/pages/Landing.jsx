@@ -11,10 +11,11 @@ import { BrandHeaderV2 } from "../components/landing/BrandHeader";
 import { HeroFullBleedV3 } from "../components/landing/HeroFullBleedV3";
 import { TrustBadgesRow } from "../components/landing/TrustBadgesRow";
 import TemplatesGallery from "../components/landing/TemplatesGallery";
-import { PricingPlansV2 } from "../components/landing/PricingPlansV2";
+import { PricingSection } from "../components/pricing/PricingSection";
 import PromoBanner from '../components/marketing/PromoBanner';
 import WhatsNew from '../components/marketing/WhatsNew';
 import { FooterSitemapV2 } from "../components/landing/FooterSitemap";
+import SEO from "../components/shared/SEO";
 
 export default function Landing() {
   const [annual, setAnnual] = useState(true);
@@ -65,6 +66,12 @@ export default function Landing() {
 
   return (
     <main className="min-h-screen bg-[#0B0D15] text-zinc-100 flex flex-col">
+      <SEO
+        title="Rezemai — AI Resume Builder & Interview Coach"
+        description="Build ATS-optimized resumes tailored to any job description. Practice interviews with AI coaching and real-time feedback. Free to start."
+        keywords="resume builder, ATS resume, interview coach, job application, AI resume optimization, career tools, professional resume, interview practice"
+        canonical={window.location.origin}
+      />
       <PromoBanner surface="Landing" />
       
       {/* Header */}
@@ -111,14 +118,10 @@ export default function Landing() {
       </section>
 
       <WhatsNew />
-      
+
       {/* Pricing plans */}
-      <section id="pricing" className="py-16 bg-zinc-900">
-        <PricingPlansV2 
-          cycle={annual ? 'annual' : 'monthly'}
-          onSelect={handleCheckout}
-          onCycleChange={handleBillingToggle}
-        />
+      <section id="pricing">
+        <PricingSection />
       </section>
 
       {/* Footer */}

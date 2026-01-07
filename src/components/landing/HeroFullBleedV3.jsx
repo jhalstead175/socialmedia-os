@@ -1,48 +1,120 @@
 import React from 'react';
-import { InterviewCoachWidget } from './InterviewCoachWidget';
+import { useNavigate } from 'react-router-dom';
+import { useRoleCopy } from '@/hooks/useRoleCopy';
+import { useClerkAuth } from '@/api/clerkClient';
+import { theme } from '@/styles/rezemai.tokens';
+import { createPageUrl } from '@/utils';
 
 export function HeroFullBleedV3({
   heroImageUrl = "https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  title = "Your Resume Has 7 Seconds to Impress. Let's Make it Count.",
-  subtitle = "Build expert-level resumes tailored to any job description. Get interview-ready with practice sessions and real-time feedback.",
-  showAva = false,
-  avatarUrl = "/img/ava-bridge.png",
-  onPrimary = () => {},
-  onSecondary = () => {},
+  onSecondary,
 }) {
+  const { copy } = useRoleCopy();
+  const { isAuthenticated } = useClerkAuth();
+  const navigate = useNavigate();
+
+  const handlePrimaryCTA = () => {
+    if (isAuthenticated) {
+      navigate(createPageUrl('Dashboard'));
+    } else {
+      navigate(createPageUrl('Signin'));
+    }
+  };
+
+  const handleSecondaryCTA = () => {
+    if (onSecondary) {
+      onSecondary();
+    } else {
+      document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section className="relative isolate min-h-[68vh] overflow-hidden">
       {/* Full-bleed image */}
-      <img src={heroImageUrl} alt="Interview panel" className="absolute inset-0 h-full w-full object-cover" />
-      {/* Dark gradient for legibility */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#0B0D15] via-[#0B0D15]/80 to-transparent" />
+      <img src={heroImageUrl} alt="Professional workspace" className="absolute inset-0 h-full w-full object-cover" />
 
-      <div className="relative mx-auto max-w-7xl px-6 md:px-8 pt-24 pb-16">
+      {/* Dark gradient for legibility */}
+      <div
+        className="absolute inset-0 bg-gradient-to-r from-current via-current/80 to-transparent"
+        style={{ color: theme.colors.bg }}
+      />
+
+      <div className={`relative ${theme.spacing.container} pt-24 pb-16`}>
         <div className="max-w-2xl">
-          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-xs font-medium text-indigo-200 mb-4">
+          {/* Early Access Badge */}
+          <div
+            className={`inline-flex items-center gap-2 ${theme.radius.button} border px-3 py-1 text-xs font-medium mb-4`}
+            style={{
+              borderColor: `${theme.colors.accent}30`,
+              backgroundColor: `${theme.colors.accent}10`,
+              color: theme.colors.accent
+            }}
+          >
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+              <span
+                className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
+                style={{ backgroundColor: theme.colors.accent }}
+              />
+              <span
+                className="relative inline-flex rounded-full h-2 w-2"
+                style={{ backgroundColor: theme.colors.accent }}
+              />
             </span>
             Early Access — Join professionals already using Rezemai
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-zinc-100">{title}</h1>
-          <p className="mt-4 text-zinc-300 text-base md:text-lg">{subtitle}</p>
-          <div className="mt-7 flex flex-wrap items-center gap-3">
-            <button onClick={onPrimary} className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-5 py-3 text-sm md:text-base font-semibold text-white shadow hover:bg-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400">
-              Get Started Free
-            </button>
-            <button onClick={onSecondary} className="inline-flex items-center justify-center rounded-xl border border-white/20 bg-white/5 px-5 py-3 text-sm md:text-base font-semibold text-white/90 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400">
-              See Features
-            </button>
-          </div>
-        </div>
 
-        {showAva && (
-          <div className="mt-8 max-w-xl">
-            <InterviewCoachWidget avatarUrl={avatarUrl} />
+          {/* Dynamic Headline */}
+          <h1
+            className={`text-3xl sm:text-4xl md:text-5xl ${theme.typography.headings}`}
+            style={{ color: theme.colors.textPrimary }}
+          >
+            {copy.headline}
+          </h1>
+
+          {/* Dynamic Subtitle */}
+          <p
+            className={`mt-4 text-base md:text-lg ${theme.typography.body}`}
+            style={{ color: theme.colors.textSecondary }}
+          >
+            {copy.sub}
+          </p>
+
+          {/* CTA Buttons */}
+          <div className="mt-7 flex flex-wrap items-center gap-3">
+            <button
+              onClick={handlePrimaryCTA}
+              className={`inline-flex items-center justify-center ${theme.radius.button} px-5 py-3 text-sm md:text-base font-semibold shadow hover:opacity-90 focus:outline-none focus-visible:ring-2 transition-opacity`}
+              style={{
+                backgroundColor: theme.colors.accent,
+                color: theme.colors.bg,
+                boxShadow: theme.shadow.soft
+              }}
+            >
+              {isAuthenticated ? 'Go to Dashboard' : copy.primaryCTA}
+            </button>
+
+            <button
+              onClick={handleSecondaryCTA}
+              className={`inline-flex items-center justify-center ${theme.radius.button} border px-5 py-3 text-sm md:text-base font-semibold hover:opacity-80 focus:outline-none focus-visible:ring-2 transition-opacity`}
+              style={{
+                borderColor: `${theme.colors.textPrimary}20`,
+                backgroundColor: `${theme.colors.textPrimary}05`,
+                color: theme.colors.textPrimary
+              }}
+            >
+              {copy.secondaryCTA}
+            </button>
           </div>
-        )}
+
+          {/* Micro-copy */}
+          <p
+            className="mt-4 text-xs"
+            style={{ color: theme.colors.textSecondary }}
+          >
+            No templates. No spam. Private by design.
+          </p>
+        </div>
       </div>
     </section>
   );
