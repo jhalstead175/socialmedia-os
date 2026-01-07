@@ -11,7 +11,7 @@ import { BrandHeaderV2 } from "../components/landing/BrandHeader";
 import { HeroFullBleedV3 } from "../components/landing/HeroFullBleedV3";
 import { TrustBadgesRow } from "../components/landing/TrustBadgesRow";
 import TemplatesGallery from "../components/landing/TemplatesGallery";
-import { PricingPlansV2 } from "../components/landing/PricingPlansV2";
+import { PricingSection } from "../components/pricing/PricingSection";
 import PromoBanner from '../components/marketing/PromoBanner';
 import WhatsNew from '../components/marketing/WhatsNew';
 import { FooterSitemapV2 } from "../components/landing/FooterSitemap";
@@ -111,14 +111,10 @@ export default function Landing() {
       </section>
 
       <WhatsNew />
-      
+
       {/* Pricing plans */}
-      <section id="pricing" className="py-16 bg-zinc-900">
-        <PricingPlansV2 
-          cycle={annual ? 'annual' : 'monthly'}
-          onSelect={handleCheckout}
-          onCycleChange={handleBillingToggle}
-        />
+      <section id="pricing">
+        <PricingSection />
       </section>
 
       {/* Footer */}
