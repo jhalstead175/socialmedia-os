@@ -4,10 +4,7 @@ import { User } from '@/api/entities';
 import { createPageUrl } from '@/utils';
 
 /**
- * SECURITY HOOK: Verifies admin role before allowing access
- *
- * Defense in depth: This provides client-side protection.
- * Base44 SDK enforces server-side authorization on all API calls.
+ * 
  *
  * @returns {Object} { isAuthorized: boolean, isChecking: boolean }
  */
