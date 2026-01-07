@@ -36,6 +36,18 @@ const createMockEntity = (name) => ({
   },
 });
 
+// Create mock function
+const createMockFunction = (name) => async (...args) => {
+  console.warn(`${name}() called but Base44 has been removed. Implement new backend.`);
+  throw new Error(`Backend function not available. Base44 has been removed. Cannot call ${name}().`);
+};
+
+// Create mock integration function
+const createMockIntegration = (name) => async (...args) => {
+  console.warn(`${name}() integration called but Base44 has been removed. Implement new backend.`);
+  throw new Error(`Integration not available. Base44 has been removed. Cannot call ${name}().`);
+};
+
 // Mock Base44 client
 export const base44 = {
   entities: {
@@ -66,6 +78,46 @@ export const base44 = {
     FeatureFlag: createMockEntity('FeatureFlag'),
     Team: createMockEntity('Team'),
     TeamMember: createMockEntity('TeamMember'),
+  },
+
+  // Mock functions (cloud functions)
+  functions: {
+    createCheckoutSession: createMockFunction('createCheckoutSession'),
+    createPortalSession: createMockFunction('createPortalSession'),
+    stripeWebhook: createMockFunction('stripeWebhook'),
+    generateResumePdf: createMockFunction('generateResumePdf'),
+    sendCampaignEmail: createMockFunction('sendCampaignEmail'),
+    optimizeResume: createMockFunction('optimizeResume'),
+    sendWelcomeEmail: createMockFunction('sendWelcomeEmail'),
+    createInterviewSession: createMockFunction('createInterviewSession'),
+    evaluateInterviewResponse: createMockFunction('evaluateInterviewResponse'),
+    createSupportTicket: createMockFunction('createSupportTicket'),
+    trackUsage: createMockFunction('trackUsage'),
+    webhookTestTools: createMockFunction('webhookTestTools'),
+    activationOrchestrator: createMockFunction('activationOrchestrator'),
+    emailSender: createMockFunction('emailSender'),
+    createStripePromo: createMockFunction('createStripePromo'),
+    validatePromo: createMockFunction('validatePromo'),
+    referralHandler: createMockFunction('referralHandler'),
+    grantReferralReward: createMockFunction('grantReferralReward'),
+    campaignRedirect: createMockFunction('campaignRedirect'),
+    qaReporter: createMockFunction('qaReporter'),
+    runQATests: createMockFunction('runQATests'),
+    lintATS: createMockFunction('lintATS'),
+    triageTicket: createMockFunction('triageTicket'),
+  },
+
+  // Mock integrations
+  integrations: {
+    Core: {
+      InvokeLLM: createMockIntegration('InvokeLLM'),
+      SendEmail: createMockIntegration('SendEmail'),
+      UploadFile: createMockIntegration('UploadFile'),
+      GenerateImage: createMockIntegration('GenerateImage'),
+      ExtractDataFromUploadedFile: createMockIntegration('ExtractDataFromUploadedFile'),
+      CreateFileSignedUrl: createMockIntegration('CreateFileSignedUrl'),
+      UploadPrivateFile: createMockIntegration('UploadPrivateFile'),
+    }
   },
 
   // Mock auth (Clerk is now handling auth via clerkClient.js)
