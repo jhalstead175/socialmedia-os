@@ -4,7 +4,11 @@ import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
+  root: './',
   plugins: [react()],
+  build: {
+    outDir: 'dist',
+  },
   server: {
     // PRODUCTION FIX: Removed allowedHosts: true (security risk)
     // For local dev, Vite defaults are secure. For production, use proper reverse proxy.
