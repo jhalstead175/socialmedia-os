@@ -274,19 +274,19 @@ export default function Layout({ children, currentPageName }) {
   const MobileNav = () => (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden">
+        <Button variant="ghost" size="icon" className="md:hidden" style={{ color: 'var(--text-100)' }}>
           <Menu className="h-6 w-6" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-80 p-0">
+      <SheetContent side="left" className="w-80 p-0" style={{ background: 'var(--surf-1)', borderLeft: '1px solid var(--bd-weak)' }}>
         <div className="flex h-full flex-col">
-          <div className="border-b p-6">
+          <div className="p-6" style={{ borderBottom: '1px solid var(--bd-weak)' }}>
             <div className="flex items-center gap-3">
               <RezemaiLogo variant="monogram" />
               <div>
-                <div className="font-semibold text-lg">Rezemai</div>
+                <div className="font-semibold text-lg" style={{ color: 'var(--text-100)' }}>Rezemai</div>
                 {user && (
-                  <div className="text-sm text-slate-500">{user.full_name}</div>
+                  <div className="text-sm" style={{ color: 'var(--text-70)' }}>{user.full_name}</div>
                 )}
               </div>
             </div>
@@ -301,11 +301,14 @@ export default function Layout({ children, currentPageName }) {
                   <Link
                     key={link.name}
                     to={link.href}
-                    className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                      isActive
-                        ? 'bg-blue-50 text-blue-700 border-blue-200'
-                        : 'text-slate-700 hover:bg-slate-50'
-                    }`}
+                    className="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors"
+                    style={{
+                      background: isActive ? 'var(--surf-3)' : 'transparent',
+                      color: isActive ? 'var(--text-100)' : 'var(--text-80)',
+                      border: isActive ? '1px solid var(--bd-strong)' : '1px solid transparent'
+                    }}
+                    onMouseEnter={(e) => !isActive && (e.currentTarget.style.background = 'var(--surf-2)')}
+                    onMouseLeave={(e) => !isActive && (e.currentTarget.style.background = 'transparent')}
                   >
                     <Icon className="w-5 h-5" />
                     {link.name}
@@ -315,8 +318,8 @@ export default function Layout({ children, currentPageName }) {
             </div>
 
             {user?.role === 'admin' && (
-              <div className="mt-8 pt-6 border-t">
-                <div className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-3">
+              <div className="mt-8 pt-6" style={{ borderTop: '1px solid var(--bd-weak)' }}>
+                <div className="text-xs font-medium uppercase tracking-wider mb-3" style={{ color: 'var(--text-60)' }}>
                   Admin
                 </div>
                 <div className="space-y-2">
@@ -327,11 +330,14 @@ export default function Layout({ children, currentPageName }) {
                       <Link
                         key={link.name}
                         to={link.href}
-                        className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                          isActive
-                            ? 'bg-blue-50 text-blue-700 border-blue-200'
-                            : 'text-slate-700 hover:bg-slate-50'
-                        }`}
+                        className="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors"
+                        style={{
+                          background: isActive ? 'var(--surf-3)' : 'transparent',
+                          color: isActive ? 'var(--text-100)' : 'var(--text-80)',
+                          border: isActive ? '1px solid var(--bd-strong)' : '1px solid transparent'
+                        }}
+                        onMouseEnter={(e) => !isActive && (e.currentTarget.style.background = 'var(--surf-2)')}
+                        onMouseLeave={(e) => !isActive && (e.currentTarget.style.background = 'transparent')}
                       >
                         <Icon className="w-5 h-5" />
                         {link.name}
@@ -343,7 +349,7 @@ export default function Layout({ children, currentPageName }) {
             )}
           </nav>
 
-          <div className="border-t p-6">
+          <div className="p-6" style={{ borderTop: '1px solid var(--bd-weak)' }}>
             <div className="space-y-2">
               {footerLinks.map((link) => {
                 const Icon = link.icon;
@@ -352,25 +358,30 @@ export default function Layout({ children, currentPageName }) {
                   <Link
                     key={link.name}
                     to={link.href}
-                    className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                      isActive
-                        ? 'bg-blue-50 text-blue-700 border-blue-200'
-                        : 'text-slate-700 hover:bg-slate-50'
-                    }`}
+                    className="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors"
+                    style={{
+                      background: isActive ? 'var(--surf-3)' : 'transparent',
+                      color: isActive ? 'var(--text-100)' : 'var(--text-80)',
+                      border: isActive ? '1px solid var(--bd-strong)' : '1px solid transparent'
+                    }}
+                    onMouseEnter={(e) => !isActive && (e.currentTarget.style.background = 'var(--surf-2)')}
+                    onMouseLeave={(e) => !isActive && (e.currentTarget.style.background = 'transparent')}
                   >
                     <Icon className="w-5 h-5" />
                     {link.name}
                   </Link>
                 );
               })}
-              <Button
-                variant="ghost"
+              <button
                 onClick={restartTour}
-                className="w-full justify-start px-3 py-2 text-slate-700 hover:bg-slate-50"
+                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors"
+                style={{ color: 'var(--text-80)', background: 'transparent' }}
+                onMouseEnter={(e) => e.currentTarget.style.background = 'var(--surf-2)'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
               >
                 <HelpCircle className="w-5 h-5 mr-3" />
                 Restart Tour
-              </Button>
+              </button>
             </div>
 
             {/* DISABLED: StatusBadge - Health endpoint doesn't exist yet */}
@@ -389,16 +400,16 @@ export default function Layout({ children, currentPageName }) {
       <TooltipProvider>
         <PaywallProvider>
           <style>{globalStyles}</style>
-          <div className="flex h-screen bg-gray-50">
+          <div className="flex h-screen" style={{ background: 'var(--bg)' }}>
             {/* Desktop Sidebar */}
-            <aside className="hidden md:flex w-64 flex-col bg-white border-r border-gray-200">
-              <div className="p-6 border-b border-gray-200">
+            <aside className="hidden md:flex w-64 flex-col" style={{ background: 'var(--surf-1)', borderRight: '1px solid var(--bd-weak)' }}>
+              <div className="p-6" style={{ borderBottom: '1px solid var(--bd-weak)' }}>
                 <div className="flex items-center gap-3">
                   <RezemaiLogo variant="monogram" />
                   <div>
-                    <div className="font-semibold text-lg">Rezemai</div>
+                    <div className="font-semibold text-lg" style={{ color: 'var(--text-100)' }}>Rezemai</div>
                     {user && (
-                      <div className="text-sm text-slate-500">{user.full_name}</div>
+                      <div className="text-sm" style={{ color: 'var(--text-70)' }}>{user.full_name}</div>
                     )}
                   </div>
                 </div>
@@ -413,11 +424,14 @@ export default function Layout({ children, currentPageName }) {
                       <Link
                         key={link.name}
                         to={link.href}
-                        className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                          isActive
-                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                            : 'text-slate-700 hover:bg-slate-50'
-                        }`}
+                        className="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors"
+                        style={{
+                          background: isActive ? 'var(--surf-3)' : 'transparent',
+                          color: isActive ? 'var(--text-100)' : 'var(--text-80)',
+                          border: isActive ? '1px solid var(--bd-strong)' : '1px solid transparent'
+                        }}
+                        onMouseEnter={(e) => !isActive && (e.currentTarget.style.background = 'var(--surf-2)')}
+                        onMouseLeave={(e) => !isActive && (e.currentTarget.style.background = 'transparent')}
                       >
                         <Icon className="w-5 h-5" />
                         {link.name}
@@ -427,8 +441,8 @@ export default function Layout({ children, currentPageName }) {
                 </div>
 
                 {user?.role === 'admin' && (
-                  <div className="mt-8 pt-6 border-t border-gray-200">
-                    <div className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-3">
+                  <div className="mt-8 pt-6" style={{ borderTop: '1px solid var(--bd-weak)' }}>
+                    <div className="text-xs font-medium uppercase tracking-wider mb-3" style={{ color: 'var(--text-60)' }}>
                       Admin
                     </div>
                     <div className="space-y-2">
@@ -439,11 +453,14 @@ export default function Layout({ children, currentPageName }) {
                           <Link
                             key={link.name}
                             to={link.href}
-                            className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                              isActive
-                                ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                                : 'text-slate-700 hover:bg-slate-50'
-                            }`}
+                            className="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors"
+                            style={{
+                              background: isActive ? 'var(--surf-3)' : 'transparent',
+                              color: isActive ? 'var(--text-100)' : 'var(--text-80)',
+                              border: isActive ? '1px solid var(--bd-strong)' : '1px solid transparent'
+                            }}
+                            onMouseEnter={(e) => !isActive && (e.currentTarget.style.background = 'var(--surf-2)')}
+                            onMouseLeave={(e) => !isActive && (e.currentTarget.style.background = 'transparent')}
                           >
                             <Icon className="w-5 h-5" />
                             {link.name}
@@ -455,7 +472,7 @@ export default function Layout({ children, currentPageName }) {
                 )}
               </nav>
 
-              <div className="border-t border-gray-200 p-6">
+              <div className="p-6" style={{ borderTop: '1px solid var(--bd-weak)' }}>
                 <div className="space-y-2">
                   {footerLinks.map((link) => {
                     const Icon = link.icon;
@@ -464,25 +481,30 @@ export default function Layout({ children, currentPageName }) {
                       <Link
                         key={link.name}
                         to={link.href}
-                        className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                          isActive
-                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                            : 'text-slate-700 hover:bg-slate-50'
-                        }`}
+                        className="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors"
+                        style={{
+                          background: isActive ? 'var(--surf-3)' : 'transparent',
+                          color: isActive ? 'var(--text-100)' : 'var(--text-80)',
+                          border: isActive ? '1px solid var(--bd-strong)' : '1px solid transparent'
+                        }}
+                        onMouseEnter={(e) => !isActive && (e.currentTarget.style.background = 'var(--surf-2)')}
+                        onMouseLeave={(e) => !isActive && (e.currentTarget.style.background = 'transparent')}
                       >
                         <Icon className="w-5 h-5" />
                         {link.name}
                       </Link>
                     );
                   })}
-                  <Button
-                    variant="ghost"
+                  <button
                     onClick={restartTour}
-                    className="w-full justify-start px-3 py-2 text-slate-700 hover:bg-slate-50"
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors"
+                    style={{ color: 'var(--text-80)', background: 'transparent' }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = 'var(--surf-2)'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                   >
-                    <HelpCircle className="w-5 h-5 mr-3" />
+                    <HelpCircle className="w-5 h-5" />
                     Restart Tour
-                  </Button>
+                  </button>
                 </div>
 
                 {/* DISABLED: StatusBadge - Health endpoint doesn't exist yet */}
@@ -495,9 +517,9 @@ export default function Layout({ children, currentPageName }) {
             {/* Main content */}
             <div className="flex-1 flex flex-col overflow-hidden">
               {/* Mobile header */}
-              <header className="md:hidden flex items-center justify-between p-4 bg-white border-b border-gray-200">
+              <header className="md:hidden flex items-center justify-between p-4" style={{ background: 'var(--surf-1)', borderBottom: '1px solid var(--bd-weak)' }}>
                 <MobileNav />
-                <div className="font-semibold">Rezemai</div>
+                <div className="font-semibold" style={{ color: 'var(--text-100)' }}>Rezemai</div>
                 <div className="w-10" /> {/* Spacer for centering */}
               </header>
 
