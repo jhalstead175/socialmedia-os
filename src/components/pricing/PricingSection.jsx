@@ -48,7 +48,7 @@ export function PricingSection() {
         </p>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
         {Object.entries(PRICING_TIERS).map(([key, tier]) => (
           <Card
             key={key}
@@ -103,7 +103,7 @@ export function PricingSection() {
 
               <Button
                 onClick={() => handlePlanSelect(key)}
-                className={`w-full mb-8 ${theme.radius.button} font-medium h-12`}
+                className={`w-full mb-8 ${theme.radius.button} font-medium h-12 touch-manipulation`}
                 style={{
                   backgroundColor: tier.highlighted ? theme.colors.accent : theme.colors.panel,
                   color: theme.colors.textPrimary,

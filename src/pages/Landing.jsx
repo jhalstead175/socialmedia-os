@@ -15,6 +15,7 @@ import { PricingSection } from "../components/pricing/PricingSection";
 import PromoBanner from '../components/marketing/PromoBanner';
 import WhatsNew from '../components/marketing/WhatsNew';
 import { FooterSitemapV2 } from "../components/landing/FooterSitemap";
+import SEO from "../components/shared/SEO";
 
 export default function Landing() {
   const [annual, setAnnual] = useState(true);
@@ -65,6 +66,12 @@ export default function Landing() {
 
   return (
     <main className="min-h-screen bg-[#0B0D15] text-zinc-100 flex flex-col">
+      <SEO
+        title="Rezemai — AI Resume Builder & Interview Coach"
+        description="Build ATS-optimized resumes tailored to any job description. Practice interviews with AI coaching and real-time feedback. Free to start."
+        keywords="resume builder, ATS resume, interview coach, job application, AI resume optimization, career tools, professional resume, interview practice"
+        canonical={window.location.origin}
+      />
       <PromoBanner surface="Landing" />
       
       {/* Header */}
