@@ -4,7 +4,7 @@ import { createPageUrl } from '@/utils';
 
 const RezemaiIcon = ({ size = 28 }) => (
   <img 
-    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/user_68a2540fe86af19a5c9f80f8/f7b43a2b8_logocircle.jpg" 
+    src="c:/Sites2/rezemai/public/og-rezemai.png"
     alt="REZEMAI Logo" 
     style={{ width: size, height: size }}
     className="object-cover rounded-full"
