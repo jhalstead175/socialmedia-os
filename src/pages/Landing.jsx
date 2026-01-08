@@ -1,10 +1,13 @@
 import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import CTA from "@/components/CTA";
 import Pricing from "@/components/Pricing";
+import { useNavigate } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 
 export default function Landing() {
+  const navigate = useNavigate();
+
   const scrollToSection = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -24,7 +27,12 @@ export default function Landing() {
         </p>
 
         <div className="mt-10 flex gap-4">
-          <CTA />
+          <button
+            onClick={() => navigate(createPageUrl("Signin"))}
+            className="rounded-lg bg-emerald-600 px-6 py-3 text-white hover:bg-emerald-500 transition-colors"
+          >
+            Get Early Access
+          </button>
           <button
             className="rounded-lg border border-slate-700 px-6 py-3 text-slate-200 hover:bg-slate-800 transition-colors"
             onClick={() => scrollToSection('how-it-works')}
@@ -64,7 +72,12 @@ export default function Landing() {
         <p className="text-xl text-slate-300 mb-6">
           Get interview-ready without the guesswork.
         </p>
-        <CTA />
+        <button
+          onClick={() => navigate(createPageUrl("Signin"))}
+          className="rounded-lg bg-emerald-600 px-6 py-3 text-white hover:bg-emerald-500 transition-colors"
+        >
+          Get Early Access
+        </button>
       </section>
 
       <Footer />

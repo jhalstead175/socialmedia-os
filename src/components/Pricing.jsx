@@ -1,18 +1,53 @@
 export default function Pricing() {
+  const plans = [
+    {
+      name: "Free",
+      desc: "Resume score and preview",
+      price: "$0",
+      cta: "Start Free"
+    },
+    {
+      name: "Pro",
+      desc: "Full optimization, ATS, exports",
+      price: "$29/mo",
+      cta: "Get Pro",
+      highlighted: true
+    },
+    {
+      name: "Elite",
+      desc: "Interview coaching, tone control",
+      price: "$79/mo",
+      cta: "Get Elite"
+    }
+  ];
+
   return (
     <section className="mt-32 max-w-4xl">
       <h2 className="text-3xl font-semibold mb-10 text-white">Pricing</h2>
 
       <div className="grid md:grid-cols-3 gap-6 text-slate-300">
-        {[
-          { name: "Free", desc: "Resume score and preview", price: "$0" },
-          { name: "Pro", desc: "Full optimization, ATS, exports", price: "$29/mo" },
-          { name: "Elite", desc: "Interview coaching, tone control", price: "$79/mo" }
-        ].map(p => (
-          <div key={p.name} className="border border-slate-800 rounded-xl p-6 hover:border-slate-700 transition-colors">
-            <h3 className="text-xl font-medium text-white">{p.name}</h3>
-            <p className="mt-2 text-sm">{p.desc}</p>
-            <p className="mt-6 text-2xl text-white font-semibold">{p.price}</p>
+        {plans.map(plan => (
+          <div
+            key={plan.name}
+            className={`border rounded-xl p-6 transition-colors ${
+              plan.highlighted
+                ? "border-emerald-600 bg-emerald-950/20"
+                : "border-slate-800 hover:border-slate-700"
+            }`}
+          >
+            <h3 className="text-xl font-medium text-white">{plan.name}</h3>
+            <p className="mt-2 text-sm">{plan.desc}</p>
+            <p className="mt-6 text-2xl text-white font-semibold">{plan.price}</p>
+
+            <button
+              className={`mt-6 w-full rounded-lg px-4 py-2 text-white transition-colors ${
+                plan.highlighted
+                  ? "bg-emerald-600 hover:bg-emerald-500"
+                  : "border border-slate-700 text-slate-200 hover:bg-slate-800"
+              }`}
+            >
+              {plan.cta}
+            </button>
           </div>
         ))}
       </div>
