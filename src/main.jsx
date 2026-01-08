@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { ClerkProvider } from '@clerk/clerk-react'
 import App from '@/App.jsx'
+import RootLayout from '@/layouts/RootLayout.jsx'
 import '@/index.css'
 
 // Get Clerk publishable key from environment
@@ -20,4 +21,10 @@ const AppWrapper = CLERK_PUBLISHABLE_KEY ? (
   <App />
 )
 
-ReactDOM.createRoot(document.getElementById('root')).render(AppWrapper) 
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <RootLayout>
+      {AppWrapper}
+    </RootLayout>
+  </React.StrictMode>
+) 
