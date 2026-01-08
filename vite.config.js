@@ -8,6 +8,10 @@ export default defineConfig({
   plugins: [react()],
   build: {
     outDir: 'dist',
+    target: 'esnext',
+    cssCodeSplit: true,
+    sourcemap: false,
+    minify: 'esbuild',
   },
   server: {
     // PRODUCTION FIX: Removed allowedHosts: true (security risk)

@@ -1,19 +1,20 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import CTA from "@/components/CTA";
+import Pricing from "@/components/Pricing";
 
 export default function Landing() {
-  const navigate = useNavigate();
+  const scrollToSection = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
-    <main className="py-32 px-6 max-w-7xl mx-auto">
-      {/* Header */}
-      <header className="flex items-center justify-between mb-24">
-        <div className="text-lg font-extrabold tracking-widest text-white">REZEMAI</div>
-      </header>
+    <main className="px-6 max-w-7xl mx-auto">
+      <Header />
 
       {/* Hero */}
-      <section className="max-w-3xl">
+      <section className="max-w-3xl py-24">
         <h1 className="text-5xl font-semibold tracking-tight">
           Professional Resumes.<br />Interview-Ready.
         </h1>
@@ -23,15 +24,10 @@ export default function Landing() {
         </p>
 
         <div className="mt-10 flex gap-4">
-          <button
-            onClick={() => navigate(createPageUrl("Signin"))}
-            className="rounded-lg bg-emerald-600 px-6 py-3 text-white hover:bg-emerald-500 transition-colors"
-          >
-            Get Early Access
-          </button>
+          <CTA />
           <button
             className="rounded-lg border border-slate-700 px-6 py-3 text-slate-200 hover:bg-slate-800 transition-colors"
-            onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
+            onClick={() => scrollToSection('how-it-works')}
           >
             How It Works
           </button>
@@ -39,12 +35,12 @@ export default function Landing() {
       </section>
 
       {/* Authority */}
-      <section className="mt-32 border-t border-slate-800 pt-16 text-slate-300">
+      <section className="border-t border-slate-800 pt-16 text-slate-300">
         Built for professionals who value clarity, credibility, and results.
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="mt-24 grid gap-6 max-w-2xl">
+      <section id="how-it-works" className="mt-24 max-w-2xl space-y-4 text-slate-300">
         <p>1. Upload your resume</p>
         <p>2. AI optimizes for role, tone, and seniority</p>
         <p>3. Prepare for interviews with confidence</p>
@@ -60,18 +56,18 @@ export default function Landing() {
         <p>Secure, private processing</p>
       </section>
 
-      {/* Close */}
+      {/* Pricing */}
+      <Pricing />
+
+      {/* Final CTA */}
       <section className="mt-32">
         <p className="text-xl text-slate-300 mb-6">
           Get interview-ready without the guesswork.
         </p>
-        <button
-          onClick={() => navigate(createPageUrl("Signin"))}
-          className="rounded-lg bg-emerald-600 px-6 py-3 text-white hover:bg-emerald-500 transition-colors"
-        >
-          Get Early Access
-        </button>
+        <CTA />
       </section>
+
+      <Footer />
     </main>
   );
 }
