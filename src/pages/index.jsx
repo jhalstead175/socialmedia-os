@@ -144,12 +144,13 @@ function PagesContent() {
     
     return (
         <Layout currentPageName={currentPage}>
-            <Routes>            
-                
-                    <Route path="/" element={<Dashboard />} />
-                
-                
+            <Routes>
+
+                    <Route path="/" element={<Landing />} />
+
+
                 <Route path="/Dashboard" element={<Dashboard />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 
                 <Route path="/ResumeBuilder" element={<ResumeBuilder />} />
                 
