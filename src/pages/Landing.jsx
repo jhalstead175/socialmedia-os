@@ -1,33 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import CTA from "@/components/CTA";
 import Pricing from "@/components/Pricing";
-import { getRoleCopy } from "@/lib/role";
-import { getHeadline } from "@/lib/analytics";
+import { useNavigate } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 
 export default function Landing() {
-  const [copy, setCopy] = useState(null);
-  const [headline, setHeadline] = useState("");
-
-  useEffect(() => {
-    // Get role-based copy
-    const roleCopy = getRoleCopy();
-    setCopy(roleCopy);
-
-    // Get A/B test headline (overrides role copy)
-    const abHeadline = getHeadline();
-    setHeadline(abHeadline);
-  }, []);
+  const navigate = useNavigate();
 
   const scrollToSection = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
-
-  // Show loading state briefly
-  if (!copy) {
-    return <main className="px-6 max-w-7xl mx-auto"><Header /></main>;
-  }
 
   return (
     <main className="px-6 max-w-7xl mx-auto">
@@ -36,20 +19,25 @@ export default function Landing() {
       {/* Hero */}
       <section className="max-w-3xl py-24">
         <h1 className="text-5xl font-semibold tracking-tight">
-          {headline}
+          Professional Resumes.<br />Interview-Ready.
         </h1>
 
         <p className="mt-6 text-xl text-slate-300">
-          {copy.sub}
+          AI-driven resume optimization and interview preparation for serious professionals.
         </p>
 
         <div className="mt-10 flex gap-4">
-          <CTA label={copy.primaryCTA} />
+          <button
+            onClick={() => navigate(createPageUrl("Signin"))}
+            className="rounded-lg bg-emerald-600 px-6 py-3 text-white hover:bg-emerald-500 transition-colors"
+          >
+            Get Early Access
+          </button>
           <button
             className="rounded-lg border border-slate-700 px-6 py-3 text-slate-200 hover:bg-slate-800 transition-colors"
             onClick={() => scrollToSection('how-it-works')}
           >
-            {copy.secondaryCTA}
+            How It Works
           </button>
         </div>
       </section>
@@ -84,7 +72,12 @@ export default function Landing() {
         <p className="text-xl text-slate-300 mb-6">
           Get interview-ready without the guesswork.
         </p>
-        <CTA label={copy.primaryCTA} />
+        <button
+          onClick={() => navigate(createPageUrl("Signin"))}
+          className="rounded-lg bg-emerald-600 px-6 py-3 text-white hover:bg-emerald-500 transition-colors"
+        >
+          Get Early Access
+        </button>
       </section>
 
       <Footer />

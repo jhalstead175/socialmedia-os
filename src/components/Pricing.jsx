@@ -1,41 +1,15 @@
-import { useState } from "react";
-import { startCheckout, STRIPE_PRICES } from "@/lib/stripe";
-import { track } from "@/lib/analytics";
-
 export default function Pricing() {
-  const [loading, setLoading] = useState(null);
-
-  const handleCheckout = async (plan, priceId) => {
-    if (!priceId || priceId.startsWith("price_")) {
-      alert("Stripe not configured. Please set VITE_STRIPE_PRICE_* environment variables.");
-      return;
-    }
-
-    setLoading(plan);
-    track("pricing_cta_click", { plan });
-
-    try {
-      await startCheckout(priceId);
-    } catch (error) {
-      console.error("Checkout failed:", error);
-      alert("Failed to start checkout. Please try again.");
-      setLoading(null);
-    }
-  };
-
   const plans = [
     {
       name: "Free",
       desc: "Resume score and preview",
       price: "$0",
-      priceId: null,
       cta: "Start Free"
     },
     {
       name: "Pro",
       desc: "Full optimization, ATS, exports",
       price: "$29/mo",
-      priceId: STRIPE_PRICES.PRO_MONTHLY,
       cta: "Get Pro",
       highlighted: true
     },
@@ -43,7 +17,6 @@ export default function Pricing() {
       name: "Elite",
       desc: "Interview coaching, tone control",
       price: "$79/mo",
-      priceId: STRIPE_PRICES.ELITE_MONTHLY,
       cta: "Get Elite"
     }
   ];
@@ -66,21 +39,15 @@ export default function Pricing() {
             <p className="mt-2 text-sm">{plan.desc}</p>
             <p className="mt-6 text-2xl text-white font-semibold">{plan.price}</p>
 
-            {plan.priceId ? (
-              <button
-                onClick={() => handleCheckout(plan.name, plan.priceId)}
-                disabled={loading === plan.name}
-                className="mt-6 w-full rounded-lg bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading === plan.name ? "Loading..." : plan.cta}
-              </button>
-            ) : (
-              <button
-                className="mt-6 w-full rounded-lg border border-slate-700 px-4 py-2 text-slate-200 hover:bg-slate-800 transition-colors"
-              >
-                {plan.cta}
-              </button>
-            )}
+            <button
+              className={`mt-6 w-full rounded-lg px-4 py-2 text-white transition-colors ${
+                plan.highlighted
+                  ? "bg-emerald-600 hover:bg-emerald-500"
+                  : "border border-slate-700 text-slate-200 hover:bg-slate-800"
+              }`}
+            >
+              {plan.cta}
+            </button>
           </div>
         ))}
       </div>
