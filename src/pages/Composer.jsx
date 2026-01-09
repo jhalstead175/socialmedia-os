@@ -91,6 +91,41 @@ export default function Composer() {
   const hasAnyConnection = Object.values(connectedAccounts).some(connected => connected);
   const canPublish = selectedPlatforms.length > 0 && content.trim().length > 0;
 
+  // Plan limits (v1: simple hard blocks)
+  const PLAN_LIMITS = {
+    MAX_SCHEDULED_POSTS: 50 // v1: generous limit, adjust per plan later
+  };
+
+  const checkScheduledPostsLimit = async () => {
+    if (isDemoMode || !clerkUser) return true;
+
+    try {
+      const { data: user } = await supabase
+        .from('users')
+        .select('organization_id')
+        .eq('clerk_user_id', clerkUser.id)
+        .single();
+
+      if (!user) return false;
+
+      const { count } = await supabase
+        .from('posts')
+        .select('id', { count: 'exact', head: true })
+        .eq('organization_id', user.organization_id)
+        .eq('status', 'scheduled');
+
+      if (count >= PLAN_LIMITS.MAX_SCHEDULED_POSTS) {
+        toast.error(`Maximum of ${PLAN_LIMITS.MAX_SCHEDULED_POSTS} scheduled posts reached`);
+        return false;
+      }
+
+      return true;
+    } catch (err) {
+      console.error('Error checking limits:', err);
+      return true; // Allow on error (fail open)
+    }
+  };
+
   const handleSaveDraft = async () => {
     if (isDemoMode) {
       emit(ACTION_EVENTS.DRAFT_SAVE_ATTEMPTED);
@@ -172,6 +207,10 @@ export default function Composer() {
       return;
     }
 
+    // Check limits before scheduling
+    const withinLimits = await checkScheduledPostsLimit();
+    if (!withinLimits) return;
+
     setLoading(true);
     try {
       emit(ACTION_EVENTS.PUBLISH_ATTEMPTED);
@@ -245,6 +284,10 @@ export default function Composer() {
       toast.error('Please select a platform and add content');
       return;
     }
+
+    // Check limits before scheduling
+    const withinLimits = await checkScheduledPostsLimit();
+    if (!withinLimits) return;
 
     setLoading(true);
     try {
