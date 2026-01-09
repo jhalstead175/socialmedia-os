@@ -181,7 +181,7 @@ export default function Scheduler() {
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Week view coming soon</p>
+                <p>Week view (v1.1)</p>
               </TooltipContent>
             </Tooltip>
             <Button variant="outline" size="sm" disabled style={{ cursor: 'default', opacity: 0.5 }}>
