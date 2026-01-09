@@ -55,16 +55,19 @@ export default function Landing() {
       {/* Capabilities */}
       <section id="capabilities" className="mt-32 max-w-3xl">
         <h2 className="text-3xl font-semibold mb-10 text-white">
-          Everything required. Nothing extra
+          v1: Core publishing, done right
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-slate-300">
-          <p>Multi-platform publishing</p>
-          <p>Scheduled post management</p>
-          <p>Performance analytics</p>
-          <p>Unified inbox</p>
-          <p>Brand asset library</p>
-          <p>AI-assisted drafting</p>
+          <p>✓ LinkedIn publishing</p>
+          <p>✓ Scheduled posts</p>
+          <p>✓ Publishing calendar</p>
+          <p>✓ Organization accounts</p>
+          <p className="text-slate-500">Analytics (coming soon)</p>
+          <p className="text-slate-500">Multi-platform (coming soon)</p>
         </div>
+        <p className="mt-6 text-sm text-slate-400">
+          Text-only posts. Additional platforms and features in active development.
+        </p>
       </section>
 
       {/* Who It's For */}
