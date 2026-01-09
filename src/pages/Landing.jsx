@@ -19,11 +19,11 @@ export default function Landing() {
       {/* Hero */}
       <section className="max-w-3xl py-24">
         <h1 className="text-5xl font-semibold tracking-tight">
-          Professional Resumes.<br />Interview-Ready.
+          Professional Social Media Management.
         </h1>
 
         <p className="mt-6 text-xl text-slate-300">
-          AI-driven resume optimization and interview preparation for serious professionals.
+          Agency-grade operations for executives, teams, and regulated industries.
         </p>
 
         <div className="mt-10 flex gap-4">
@@ -44,24 +44,24 @@ export default function Landing() {
 
       {/* Authority */}
       <section className="border-t border-slate-800 pt-16 text-slate-300">
-        Built for professionals who value clarity, credibility, and results.
+        Built for agencies, corporate communications, and professionals who value precision and control.
       </section>
 
       {/* How It Works */}
       <section id="how-it-works" className="mt-24 max-w-2xl space-y-4 text-slate-300">
-        <p>1. Upload your resume</p>
-        <p>2. AI optimizes for role, tone, and seniority</p>
-        <p>3. Prepare for interviews with confidence</p>
+        <p>1. Connect your social accounts</p>
+        <p>2. Create and schedule posts across platforms</p>
+        <p>3. Track performance and manage engagement</p>
       </section>
 
       {/* Capabilities */}
       <section className="mt-24 grid grid-cols-1 md:grid-cols-2 gap-6 text-slate-300 max-w-3xl">
-        <p>Resume scoring & positioning</p>
-        <p>ATS-aligned optimization</p>
-        <p>Role & seniority tone control</p>
-        <p>Interview preparation</p>
-        <p>PDF & DOCX export</p>
-        <p>Secure, private processing</p>
+        <p>Multi-platform publishing</p>
+        <p>Scheduled post management</p>
+        <p>Performance analytics</p>
+        <p>Unified inbox</p>
+        <p>Brand asset library</p>
+        <p>AI-assisted content</p>
       </section>
 
       {/* Pricing */}
@@ -70,7 +70,7 @@ export default function Landing() {
       {/* Final CTA */}
       <section className="mt-32">
         <p className="text-xl text-slate-300 mb-6">
-          Get interview-ready without the guesswork.
+          Manage social operations with precision.
         </p>
         <button
           onClick={() => navigate(createPageUrl("Signin"))}
