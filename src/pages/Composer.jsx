@@ -6,19 +6,25 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import ConnectAccountModal from '../components/ConnectAccountModal';
+import { useDemoMode, demoData, useDemoAction } from '../hooks/useDemoMode';
 
 export default function Composer() {
+  const isDemoMode = useDemoMode();
+  const { handleAction } = useDemoAction();
   const [content, setContent] = useState('');
   const [selectedPlatforms, setSelectedPlatforms] = useState([]);
   const [showConnectModal, setShowConnectModal] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState(null);
+  const [actionFeedback, setActionFeedback] = useState('');
 
-  // UI ONLY - Mock connection state
-  const [connectedAccounts] = useState({
-    x: false,
-    linkedin: false,
-    meta: false
-  });
+  // UI ONLY - Mock connection state (all connected in demo mode)
+  const [connectedAccounts] = useState(
+    isDemoMode ? demoData.connectedAccounts : {
+      x: false,
+      linkedin: false,
+      meta: false
+    }
+  );
 
   const platforms = [
     { id: 'x', name: 'X' },
@@ -43,6 +49,22 @@ export default function Composer() {
   const hasAnyConnection = Object.values(connectedAccounts).some(connected => connected);
   const canPublish = selectedPlatforms.length > 0 && content.trim().length > 0;
 
+  const handlePublish = () => {
+    const feedback = handleAction('publish');
+    if (feedback) {
+      setActionFeedback(feedback);
+      setTimeout(() => setActionFeedback(''), 3000);
+    }
+  };
+
+  const handleSaveDraft = () => {
+    const feedback = handleAction('save');
+    if (feedback) {
+      setActionFeedback(feedback);
+      setTimeout(() => setActionFeedback(''), 3000);
+    }
+  };
+
   return (
     <TooltipProvider>
       <div className="container-7xl py-8 px-4">
@@ -56,6 +78,22 @@ export default function Composer() {
               Create and schedule posts across platforms
             </p>
           </div>
+
+          {/* Action Feedback */}
+          {actionFeedback && (
+            <div
+              className="card mb-6"
+              style={{
+                padding: 'var(--s-4)',
+                background: 'var(--surf-3)',
+                border: '1px solid var(--bd-weak)'
+              }}
+            >
+              <div className="text-sm" style={{ color: 'var(--text-100)' }}>
+                {actionFeedback}
+              </div>
+            </div>
+          )}
 
           {/* No Accounts Warning */}
           {!hasAnyConnection && (
@@ -172,7 +210,11 @@ export default function Composer() {
 
             {/* Action Buttons */}
             <div className="flex gap-3 justify-end">
-              <Button variant="outline" disabled={!hasAnyConnection}>
+              <Button
+                variant="outline"
+                disabled={!hasAnyConnection}
+                onClick={handleSaveDraft}
+              >
                 Save Draft
               </Button>
               <Tooltip>
@@ -181,6 +223,7 @@ export default function Composer() {
                     <Button
                       className="btn-primary"
                       disabled={!canPublish}
+                      onClick={handlePublish}
                       aria-label={canPublish ? "Publish now" : "Select platform and add content to publish"}
                     >
                       <Send className="w-4 h-4 mr-2" />
