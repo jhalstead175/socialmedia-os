@@ -3,7 +3,7 @@ export const BillingURL = (() => {
   const PARAM = "billing";
   const DEFAULT = "annual";
   const VALID = new Set(["monthly", "annual"]);
-  const DO_NOT_INJECT = [/^\/admin\//, /^\/auth\//, /^\/api\//]; // don't auto-write billing here
+  const DO_NOT_INJECT = [/^\/admin\//, /^\/auth\//, /^\/api\//, /^\/legalprivacy/, /^\/legalterms/]; // don't auto-write billing here
 
   const clean = (v) => (VALID.has(String(v).toLowerCase()) ? String(v).toLowerCase() : null);
 
