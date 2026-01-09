@@ -127,6 +127,35 @@ export default function Account() {
     }
   };
 
+  const handleDisconnectAccount = async (platform) => {
+    if (!clerkUser) return;
+
+    try {
+      // Set is_active = false for this platform
+      const { error } = await supabase
+        .from('social_accounts')
+        .update({ is_active: false })
+        .eq('platform', platform)
+        .eq('is_active', true);
+
+      if (error) throw error;
+
+      // Update local state
+      setConnectedAccounts(prev => ({ ...prev, [platform]: false }));
+
+      const platformNames = {
+        linkedin: 'LinkedIn',
+        x: 'X',
+        meta: 'Meta'
+      };
+
+      toast.success(`${platformNames[platform]} account disconnected`);
+    } catch (err) {
+      console.error('Failed to disconnect account:', err);
+      toast.error('Failed to disconnect account');
+    }
+  };
+
   return (
     <div className="min-h-screen p-4 sm:p-6" style={{ background: 'var(--bg)' }}>
       <div className="max-w-5xl mx-auto">
@@ -154,18 +183,21 @@ export default function Account() {
                 isConnected={connectedAccounts.x}
                 onConnect={() => handleConnectAccount('x')}
                 onReconnect={() => handleConnectAccount('x')}
+                onDisconnect={() => handleDisconnectAccount('x')}
               />
               <ConnectedAccountCard
                 platform="linkedin"
                 isConnected={connectedAccounts.linkedin}
                 onConnect={() => handleConnectAccount('linkedin')}
                 onReconnect={() => handleConnectAccount('linkedin')}
+                onDisconnect={() => handleDisconnectAccount('linkedin')}
               />
               <ConnectedAccountCard
                 platform="meta"
                 isConnected={connectedAccounts.meta}
                 onConnect={() => handleConnectAccount('meta')}
                 onReconnect={() => handleConnectAccount('meta')}
+                onDisconnect={() => handleDisconnectAccount('meta')}
               />
             </div>
           </CardContent>

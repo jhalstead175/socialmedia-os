@@ -11,7 +11,8 @@ export default function ConnectedAccountCard({
   isConnected = false,
   isExpired = false,
   onConnect,
-  onReconnect
+  onReconnect,
+  onDisconnect
 }) {
   const platformConfig = {
     x: { name: 'X', color: '#1DA1F2' },
@@ -80,9 +81,8 @@ export default function ConnectedAccountCard({
           <Button
             variant="ghost"
             size="sm"
-            disabled
-            title="Coming soon"
-            aria-label={`Disconnect ${config.name} account (coming soon)`}
+            onClick={onDisconnect}
+            aria-label={`Disconnect ${config.name} account`}
           >
             Disconnect
           </Button>

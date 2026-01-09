@@ -3,21 +3,104 @@ import { Calendar, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useDemoMode, demoData } from '../hooks/useDemoMode';
 import { emit, NAV_EVENTS } from '@/utils/telemetry';
+import { supabase } from '@/lib/supabaseClient';
+import { useUser } from '@clerk/clerk-react';
 
 export default function Scheduler() {
   const isDemoMode = useDemoMode();
+  const { user: clerkUser } = useUser();
   const [currentDate, setCurrentDate] = useState(new Date());
-  const scheduledPosts = isDemoMode ? demoData.scheduledPosts : [];
-  const scheduledCount = isDemoMode ? demoData.scheduledPosts.length : 0;
-  const draftsCount = 0;
-  const publishedTodayCount = isDemoMode ? demoData.metrics.postsPublished : 0;
+  const [scheduledPosts, setScheduledPosts] = useState(isDemoMode ? demoData.scheduledPosts : []);
+  const [scheduledCount, setScheduledCount] = useState(0);
+  const [draftsCount, setDraftsCount] = useState(0);
+  const [publishedTodayCount, setPublishedTodayCount] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const hours = Array.from({ length: 24 }, (_, i) => i);
 
   useEffect(() => {
     emit(NAV_EVENTS.SCHEDULER_OPENED);
-  }, []);
+    if (!isDemoMode && clerkUser) {
+      loadScheduledPosts();
+    }
+  }, [isDemoMode, clerkUser]);
+
+  const loadScheduledPosts = async () => {
+    setLoading(true);
+    try {
+      // Get user's org_id
+      const { data: supabaseUser, error: userError } = await supabase
+        .from('users')
+        .select('organization_id')
+        .eq('clerk_user_id', clerkUser.id)
+        .single();
+
+      if (userError || !supabaseUser) return;
+
+      // Load scheduled posts with platform info
+      const { data: posts, error: postsError } = await supabase
+        .from('posts')
+        .select(`
+          id,
+          content,
+          scheduled_at,
+          post_platforms (
+            platform
+          )
+        `)
+        .eq('organization_id', supabaseUser.organization_id)
+        .eq('status', 'scheduled')
+        .order('scheduled_at', { ascending: true });
+
+      if (postsError) {
+        console.error('Failed to load scheduled posts:', postsError);
+        return;
+      }
+
+      // Transform to match UI format
+      const transformedPosts = (posts || []).map(post => {
+        const scheduledDate = new Date(post.scheduled_at);
+        return {
+          id: post.id,
+          time: scheduledDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+          platform: post.post_platforms.map(p => p.platform).join(', '),
+          scheduled_at: post.scheduled_at,
+          content: post.content
+        };
+      });
+
+      setScheduledPosts(transformedPosts);
+      setScheduledCount(transformedPosts.length);
+
+      // Load drafts count
+      const { count: draftsCount } = await supabase
+        .from('posts')
+        .select('id', { count: 'exact', head: true })
+        .eq('organization_id', supabaseUser.organization_id)
+        .eq('status', 'draft');
+
+      setDraftsCount(draftsCount || 0);
+
+      // Load published today count
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+
+      const { count: publishedCount } = await supabase
+        .from('posts')
+        .select('id', { count: 'exact', head: true })
+        .eq('organization_id', supabaseUser.organization_id)
+        .eq('status', 'published')
+        .gte('published_at', todayStart.toISOString());
+
+      setPublishedTodayCount(publishedCount || 0);
+
+    } catch (err) {
+      console.error('Error loading scheduled posts:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="container-7xl py-8 px-4">
