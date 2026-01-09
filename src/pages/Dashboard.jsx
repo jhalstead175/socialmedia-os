@@ -16,11 +16,20 @@ import {
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import WelcomeModal from "../components/onboarding/WelcomeModal";
+import ConnectedAccountCard from "../components/ConnectedAccountCard";
+import ConnectAccountModal from "../components/ConnectAccountModal";
 
 export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+  const [showConnectModal, setShowConnectModal] = useState(false);
+  const [selectedPlatform, setSelectedPlatform] = useState(null);
+  const [connectedAccounts, setConnectedAccounts] = useState({
+    x: false,
+    linkedin: false,
+    meta: false
+  });
   const [stats, setStats] = useState({
     postsPublished: 0,
     totalEngagement: 0,
@@ -70,6 +79,16 @@ export default function Dashboard() {
   const handleWelcomeComplete = () => {
     setShowWelcomeModal(false);
     loadDashboardData();
+  };
+
+  const handleConnectAccount = (platform) => {
+    setSelectedPlatform(platform);
+    setShowConnectModal(true);
+  };
+
+  const handleCloseConnectModal = () => {
+    setShowConnectModal(false);
+    setSelectedPlatform(null);
   };
 
   if (isLoading) {
@@ -270,11 +289,11 @@ export default function Dashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent style={{ padding: 'var(--s-6)' }}>
-              {stats.activeAccounts === 0 ? (
+              {!connectedAccounts.x && !connectedAccounts.linkedin && !connectedAccounts.meta ? (
                 <div className="text-center py-8">
                   <MessageSquare className="w-12 h-12 mx-auto mb-3" style={{ color: 'var(--text-60)', opacity: 0.5 }} />
                   <p className="text-sm mb-4" style={{ color: 'var(--text-60)' }}>
-                    Connect your social media accounts to get started
+                    No accounts connected
                   </p>
                   <Link to={createPageUrl("Account")}>
                     <Button variant="outline">
@@ -283,14 +302,44 @@ export default function Dashboard() {
                   </Link>
                 </div>
               ) : (
-                <div className="text-sm" style={{ color: 'var(--text-60)' }}>
-                  {stats.activeAccounts} accounts connected
+                <div className="space-y-3">
+                  <ConnectedAccountCard
+                    platform="x"
+                    isConnected={connectedAccounts.x}
+                    onConnect={() => handleConnectAccount('x')}
+                    onReconnect={() => handleConnectAccount('x')}
+                  />
+                  <ConnectedAccountCard
+                    platform="linkedin"
+                    isConnected={connectedAccounts.linkedin}
+                    onConnect={() => handleConnectAccount('linkedin')}
+                    onReconnect={() => handleConnectAccount('linkedin')}
+                  />
+                  <ConnectedAccountCard
+                    platform="meta"
+                    isConnected={connectedAccounts.meta}
+                    onConnect={() => handleConnectAccount('meta')}
+                    onReconnect={() => handleConnectAccount('meta')}
+                  />
+                  <div className="pt-3 text-center">
+                    <Link to={createPageUrl("Account")}>
+                      <Button variant="ghost" size="sm">
+                        Manage Accounts
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               )}
             </CardContent>
           </Card>
         </div>
       </div>
+
+      <ConnectAccountModal
+        isOpen={showConnectModal}
+        onClose={handleCloseConnectModal}
+        platform={selectedPlatform}
+      />
     </div>
   );
 }
