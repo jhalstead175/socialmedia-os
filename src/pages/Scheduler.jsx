@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, ChevronLeft, ChevronRight, CalendarPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useDemoMode, demoData } from '../hooks/useDemoMode';
@@ -106,7 +107,8 @@ export default function Scheduler() {
   };
 
   return (
-    <div className="container-7xl py-8 px-4">
+    <TooltipProvider>
+      <div className="container-7xl py-8 px-4">
       {/* Header */}
       <div className="mb-8 flex items-start justify-between">
         <div>
@@ -137,19 +139,54 @@ export default function Scheduler() {
       <div className="card mb-6" style={{ padding: 'var(--s-6)' }}>
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm">
-              <ChevronLeft className="w-4 h-4" />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  style={{ cursor: 'pointer' }}
+                  aria-label="Previous month"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Previous month</p>
+              </TooltipContent>
+            </Tooltip>
             <h2 className="h3" style={{ color: 'var(--text-100)' }}>
               {currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
             </h2>
-            <Button variant="ghost" size="sm">
-              <ChevronRight className="w-4 h-4" />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  style={{ cursor: 'pointer' }}
+                  aria-label="Next month"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Next month</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm">Week</Button>
-            <Button variant="outline" size="sm">Month</Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="sm" disabled style={{ cursor: 'not-allowed', opacity: 0.5 }}>
+                  Week
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Week view coming soon</p>
+              </TooltipContent>
+            </Tooltip>
+            <Button variant="outline" size="sm" disabled style={{ cursor: 'default', opacity: 0.5 }}>
+              Month
+            </Button>
           </div>
         </div>
 
@@ -259,5 +296,6 @@ export default function Scheduler() {
         </div>
       </div>
     </div>
+    </TooltipProvider>
   );
 }
