@@ -8,7 +8,7 @@
   </defs>
 
   <!-- Outer circle -->
-  <circle cx="500" cy="500" r="400" fill="black" mask="url(#vault-mask)"/>
+  <circle cx="500" cy="500" r="400" fill="white" mask="url(#vault-mask)"/>
   <!-- Inner void -->
-  <circle cx="500" cy="500" r="200" fill="white"/>
+  <circle cx="500" cy="500" r="200" fill="black"/>
 </svg>
