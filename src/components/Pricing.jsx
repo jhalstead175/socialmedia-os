@@ -2,21 +2,21 @@ export default function Pricing() {
   const plans = [
     {
       name: "Free",
-      desc: "Resume score and preview",
+      desc: "1 account, 10 posts/month",
       price: "$0",
       cta: "Start Free"
     },
     {
       name: "Pro",
-      desc: "Full optimization, ATS, exports",
-      price: "$29/mo",
+      desc: "5 accounts, unlimited posts, analytics",
+      price: "$79/mo",
       cta: "Get Pro",
       highlighted: true
     },
     {
       name: "Elite",
-      desc: "Interview coaching, tone control",
-      price: "$79/mo",
+      desc: "Unlimited accounts, team collaboration",
+      price: "$299/mo",
       cta: "Get Elite"
     }
   ];

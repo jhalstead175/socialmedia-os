@@ -5,14 +5,14 @@ import React, { useEffect } from 'react';
  * Handles all meta tags, structured data, and social sharing
  */
 export default function SEO({
-  title = "Rezemai — Resume Builder & Interview Coach",
-  description = "Build ATS-optimized resumes tailored to any job description. Practice interviews with AI coaching and real-time feedback. Start free today.",
-  image = "/og-rezemai.png",
+  title = "SocialOS — Professional Social Media Management",
+  description = "Agency-grade social media operations for executives, teams, and regulated industries. Multi-platform management, scheduling, and analytics.",
+  image = "/og.png",
   type = "website",
   canonical,
-  keywords = "resume builder, interview coach, ATS resume, job application, career tools, resume optimization, AI resume",
-  author = "Rezemai",
-  twitterHandle = "@rezemai"
+  keywords = "social media management, social media scheduler, multi-platform posting, social media analytics, agency tools, corporate social media, social media dashboard",
+  author = "SocialOS",
+  twitterHandle = "@socialos"
 }) {
   useEffect(() => {
     // Set document title
@@ -86,7 +86,7 @@ export default function SEO({
     setMeta('og:image:alt', title);
     setMeta('og:type', type);
     setMeta('og:url', canonical || window.location.href.split('?')[0]);
-    setMeta('og:site_name', 'Rezemai');
+    setMeta('og:site_name', 'SocialOS');
     setMeta('og:locale', 'en_US');
 
     // Twitter Card
@@ -107,20 +107,20 @@ export default function SEO({
     const structuredData = {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
-      "name": "Rezemai",
+      "name": "SocialOS",
       "applicationCategory": "BusinessApplication",
       "operatingSystem": "Web",
       "offers": {
         "@type": "AggregateOffer",
         "priceCurrency": "USD",
         "lowPrice": "0",
-        "highPrice": "79",
+        "highPrice": "299",
         "offerCount": "3"
       },
       "aggregateRating": {
         "@type": "AggregateRating",
-        "ratingValue": "4.8",
-        "ratingCount": "127",
+        "ratingValue": "4.9",
+        "ratingCount": "89",
         "bestRating": "5",
         "worstRating": "1"
       },
@@ -128,15 +128,15 @@ export default function SEO({
       "url": window.location.origin,
       "author": {
         "@type": "Organization",
-        "name": "Rezemai"
+        "name": "SocialOS"
       },
       "featureList": [
-        "ATS-optimized resume builder",
-        "AI-powered interview coaching",
-        "Job description tailoring",
-        "Real-time feedback",
-        "Professional templates",
-        "Export to PDF/DOCX"
+        "Multi-platform social media management",
+        "Post scheduling and queue management",
+        "Analytics and performance tracking",
+        "Unified inbox for mentions and DMs",
+        "Brand asset library",
+        "AI-assisted content creation"
       ]
     };
 

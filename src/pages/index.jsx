@@ -2,13 +2,17 @@ import Layout from "./Layout.jsx";
 
 import Dashboard from "./Dashboard";
 
-import ResumeBuilder from "./ResumeBuilder";
+import Composer from "./Composer";
+
+import Scheduler from "./Scheduler";
+
+import Analytics from "./Analytics";
+
+import Inbox from "./Inbox";
+
+import Assets from "./Assets";
 
 import Landing from "./Landing";
-
-import InterviewCoach from "./InterviewCoach";
-
-import Templates from "./Templates";
 
 import Profile from "./Profile";
 
@@ -62,17 +66,21 @@ import Pricing from "./Pricing";
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 
 const PAGES = {
-    
+
     Dashboard: Dashboard,
-    
-    ResumeBuilder: ResumeBuilder,
-    
+
+    Composer: Composer,
+
+    Scheduler: Scheduler,
+
+    Analytics: Analytics,
+
+    Inbox: Inbox,
+
+    Assets: Assets,
+
     Landing: Landing,
-    
-    InterviewCoach: InterviewCoach,
-    
-    Templates: Templates,
-    
+
     Profile: Profile,
     
     TestingDashboard: TestingDashboard,
@@ -151,15 +159,19 @@ function PagesContent() {
 
                 <Route path="/Dashboard" element={<Dashboard />} />
                 <Route path="/dashboard" element={<Dashboard />} />
-                
-                <Route path="/ResumeBuilder" element={<ResumeBuilder />} />
-                
+
+                <Route path="/Composer" element={<Composer />} />
+
+                <Route path="/Scheduler" element={<Scheduler />} />
+
+                <Route path="/Analytics" element={<Analytics />} />
+
+                <Route path="/Inbox" element={<Inbox />} />
+
+                <Route path="/Assets" element={<Assets />} />
+
                 <Route path="/Landing" element={<Landing />} />
-                
-                <Route path="/InterviewCoach" element={<InterviewCoach />} />
-                
-                <Route path="/Templates" element={<Templates />} />
-                
+
                 <Route path="/Profile" element={<Profile />} />
                 
                 <Route path="/TestingDashboard" element={<TestingDashboard />} />

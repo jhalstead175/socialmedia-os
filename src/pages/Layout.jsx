@@ -6,8 +6,11 @@ import { User } from "@/api/entities";
 import { createPageUrl } from "@/utils";
 import {
   LayoutDashboard,
-  FileText,
+  PenTool,
+  Calendar,
+  BarChart3,
   MessageSquare,
+  FolderOpen,
   User as UserIcon,
   Settings,
   HelpCircle,
@@ -223,9 +226,11 @@ export default function Layout({ children, currentPageName }) {
 
   const navLinks = useMemo(() => [
     { name: "Dashboard", href: createPageUrl("Dashboard"), icon: LayoutDashboard },
-    { name: "Resume Builder", href: createPageUrl("ResumeBuilder"), icon: FileText },
-    { name: "Interview Coach", href: createPageUrl("InterviewCoach"), icon: MessageSquare },
-    { name: "Templates", href: createPageUrl("Templates"), icon: FileText },
+    { name: "Composer", href: createPageUrl("Composer"), icon: PenTool },
+    { name: "Scheduler", href: createPageUrl("Scheduler"), icon: Calendar },
+    { name: "Analytics", href: createPageUrl("Analytics"), icon: BarChart3 },
+    { name: "Inbox", href: createPageUrl("Inbox"), icon: MessageSquare },
+    { name: "Assets", href: createPageUrl("Assets"), icon: FolderOpen },
     { name: "Profile", href: createPageUrl("Profile"), icon: UserIcon },
   ], []);
 
@@ -407,7 +412,7 @@ export default function Layout({ children, currentPageName }) {
                 <div className="flex items-center gap-3">
                   <RezemaiLogo variant="monogram" />
                   <div>
-                    <div className="font-semibold text-lg" style={{ color: 'var(--text-100)' }}>Rezemai</div>
+                    <div className="font-semibold text-lg" style={{ color: 'var(--text-100)' }}>SocialOS</div>
                     {user && (
                       <div className="text-sm" style={{ color: 'var(--text-70)' }}>{user.full_name}</div>
                     )}
@@ -519,7 +524,7 @@ export default function Layout({ children, currentPageName }) {
               {/* Mobile header */}
               <header className="md:hidden flex items-center justify-between p-4" style={{ background: 'var(--surf-1)', borderBottom: '1px solid var(--bd-weak)' }}>
                 <MobileNav />
-                <div className="font-semibold" style={{ color: 'var(--text-100)' }}>Rezemai</div>
+                <div className="font-semibold" style={{ color: 'var(--text-100)' }}>SocialOS</div>
                 <div className="w-10" /> {/* Spacer for centering */}
               </header>
 
