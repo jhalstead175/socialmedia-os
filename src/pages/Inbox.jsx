@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { MessageSquare, Filter, Star, Archive, Reply } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import { useDemoMode, demoData } from '../hooks/useDemoMode';
 import { emit, NAV_EVENTS } from '@/utils/telemetry';
 
@@ -139,9 +141,14 @@ export default function Inbox() {
                 <h3 className="h3 mb-2" style={{ color: 'var(--text-80)' }}>
                   No messages yet
                 </h3>
-                <p className="text-sm" style={{ color: 'var(--text-60)' }}>
+                <p className="text-sm mb-4" style={{ color: 'var(--text-60)' }}>
                   Connect your accounts to see mentions and messages
                 </p>
+                <Link to={createPageUrl("Account")}>
+                  <Button className="btn-primary">
+                    Connect Accounts
+                  </Button>
+                </Link>
               </div>
             )}
           </div>

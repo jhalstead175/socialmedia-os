@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FolderOpen, Upload, Image, Video, File, Grid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useDemoMode, demoData, useDemoAction } from '../hooks/useDemoMode';
 import { emit, NAV_EVENTS, ACTION_EVENTS } from '@/utils/telemetry';
 
@@ -35,7 +36,8 @@ export default function Assets() {
   }, []);
 
   return (
-    <div className="container-7xl py-8 px-4">
+    <TooltipProvider>
+      <div className="container-7xl py-8 px-4">
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <div>
@@ -143,26 +145,44 @@ export default function Assets() {
                 {assetCount} files
               </div>
               <div className="flex gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setViewMode('grid')}
-                  style={{
-                    background: viewMode === 'grid' ? 'var(--surf-3)' : 'transparent'
-                  }}
-                >
-                  <Grid className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setViewMode('list')}
-                  style={{
-                    background: viewMode === 'list' ? 'var(--surf-3)' : 'transparent'
-                  }}
-                >
-                  <List className="w-4 h-4" />
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setViewMode('grid')}
+                      style={{
+                        background: viewMode === 'grid' ? 'var(--surf-3)' : 'transparent',
+                        cursor: 'pointer'
+                      }}
+                      aria-label="Grid view"
+                    >
+                      <Grid className="w-4 h-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Grid view</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setViewMode('list')}
+                      style={{
+                        background: viewMode === 'list' ? 'var(--surf-3)' : 'transparent',
+                        cursor: 'pointer'
+                      }}
+                      aria-label="List view"
+                    >
+                      <List className="w-4 h-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>List view</p>
+                  </TooltipContent>
+                </Tooltip>
               </div>
             </div>
 
@@ -260,5 +280,6 @@ export default function Assets() {
         </div>
       </div>
     </div>
+    </TooltipProvider>
   );
 }

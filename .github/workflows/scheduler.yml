@@ -1,0 +1,42 @@
+name: SoshlOps Scheduler
+
+on:
+  # Run every minute
+  schedule:
+    - cron: '* * * * *'
+
+  # Allow manual trigger for testing
+  workflow_dispatch:
+
+jobs:
+  run-scheduler:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Call Supabase Edge Function
+        run: |
+          echo "Triggering scheduler at $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+            "${{ secrets.SUPABASE_URL }}/functions/v1/scheduler" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{}')
+
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+
+          echo "HTTP Status: $http_code"
+          echo "Response: $body"
+
+          if [ "$http_code" -ne 200 ]; then
+            echo "::error::Scheduler failed with HTTP $http_code"
+            exit 1
+          fi
+
+          echo "✅ Scheduler executed successfully"
+
+      - name: Log completion
+        if: always()
+        run: |
+          echo "Scheduler run completed at $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
