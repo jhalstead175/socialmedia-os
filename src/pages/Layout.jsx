@@ -412,7 +412,7 @@ export default function Layout({ children, currentPageName }) {
                 <div className="flex items-center gap-3">
                   <RezemaiLogo variant="monogram" />
                   <div>
-                    <div className="font-semibold text-lg" style={{ color: 'var(--text-100)' }}>SocialOS</div>
+                    <div className="font-semibold text-lg" style={{ color: 'var(--text-100)' }}>SoshlOps</div>
                     {user && (
                       <div className="text-sm" style={{ color: 'var(--text-70)' }}>{user.full_name}</div>
                     )}
@@ -524,7 +524,7 @@ export default function Layout({ children, currentPageName }) {
               {/* Mobile header */}
               <header className="md:hidden flex items-center justify-between p-4" style={{ background: 'var(--surf-1)', borderBottom: '1px solid var(--bd-weak)' }}>
                 <MobileNav />
-                <div className="font-semibold" style={{ color: 'var(--text-100)' }}>SocialOS</div>
+                <div className="font-semibold" style={{ color: 'var(--text-100)' }}>SoshlOps</div>
                 <div className="w-10" /> {/* Spacer for centering */}
               </header>
 
