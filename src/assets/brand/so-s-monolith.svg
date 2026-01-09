@@ -1,0 +1,35 @@
+<svg width="1000" height="1000" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <mask id="cut-mask" maskUnits="userSpaceOnUse">
+      <rect width="1000" height="1000" fill="white"/>
+      <!-- Horizontal cut -->
+      <rect id="cut" x="0" y="540" width="1000" height="80" fill="black"/>
+    </mask>
+  </defs>
+
+  <style>
+    #cut{transform-origin:center;animation:cutReveal .16s ease-out forwards}
+    @keyframes cutReveal{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+  </style>
+
+  <!-- S MONOLITH (final geometry) -->
+  <path
+    d="
+      M250 180
+      H750
+      V340
+      H420
+      V420
+      H650
+      V820
+      H250
+      V660
+      H580
+      V580
+      H250
+      Z
+    "
+    fill="black"
+    mask="url(#cut-mask)"
+  />
+</svg>
