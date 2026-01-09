@@ -3,7 +3,7 @@ import { PenTool, Image, Hash, Calendar, Send, AlertCircle, X as CloseIcon } fro
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import ConnectAccountModal from '../components/ConnectAccountModal';
 import { useDemoMode, demoData, useDemoAction } from '../hooks/useDemoMode';
@@ -16,6 +16,10 @@ export default function Composer() {
   const isDemoMode = useDemoMode();
   const { handleAction } = useDemoAction();
   const { user: clerkUser } = useUser();
+  const [searchParams] = useSearchParams();
+
+  // Auto-enable schedule mode if coming from Scheduler
+  const isScheduleMode = searchParams.get('mode') === 'schedule';
 
   const [content, setContent] = useState('');
   const [selectedPlatforms, setSelectedPlatforms] = useState([]);
@@ -24,7 +28,7 @@ export default function Composer() {
   const [connectedAccounts, setConnectedAccounts] = useState({ x: false, linkedin: false, meta: false });
   const [socialAccounts, setSocialAccounts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [showSchedulePicker, setShowSchedulePicker] = useState(false);
+  const [showSchedulePicker, setShowSchedulePicker] = useState(isScheduleMode);
   const [scheduledDate, setScheduledDate] = useState('');
   const [scheduledTime, setScheduledTime] = useState('');
 
@@ -256,7 +260,7 @@ export default function Composer() {
         });
       }
 
-      toast.success('Post scheduled for immediate publish. Scheduler will process it within 1 minute.');
+      toast.success('Post published');
       setContent('');
       setSelectedPlatforms([]);
 
@@ -334,7 +338,20 @@ export default function Composer() {
         });
       }
 
-      toast.success(`Post scheduled for ${new Date(scheduledAt).toLocaleString()}`);
+      // Format the scheduled time nicely
+      const scheduledDateTime = new Date(scheduledAt);
+      const formattedDate = scheduledDateTime.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+      const formattedTime = scheduledDateTime.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      });
+
+      toast.success(`Post scheduled for ${formattedDate} at ${formattedTime}`);
       setContent('');
       setSelectedPlatforms([]);
       setShowSchedulePicker(false);
@@ -469,13 +486,19 @@ export default function Composer() {
                 }}
               >
                 <div className="flex items-center justify-between mb-3">
-                  <div className="text-sm font-medium" style={{ color: 'var(--text-100)' }}>
-                    Schedule for later
+                  <div>
+                    <div className="text-sm font-medium" style={{ color: 'var(--text-100)' }}>
+                      Schedule for later
+                    </div>
+                    <div className="text-xs mt-1" style={{ color: 'var(--text-60)' }}>
+                      Your post will publish automatically at the scheduled time.
+                    </div>
                   </div>
                   <button
                     onClick={() => setShowSchedulePicker(false)}
                     className="text-sm"
                     style={{ color: 'var(--text-60)' }}
+                    aria-label="Close schedule picker"
                   >
                     <CloseIcon className="w-4 h-4" />
                   </button>
@@ -519,7 +542,7 @@ export default function Composer() {
                       onClick={handleSchedulePost}
                       disabled={loading || !scheduledDate || !scheduledTime || !canPublish}
                     >
-                      Set Schedule
+                      Schedule Post
                     </Button>
                   </div>
                 </div>
@@ -564,11 +587,11 @@ export default function Composer() {
                     <Button
                       className="btn-primary"
                       disabled={!canPublish || loading}
-                      onClick={handlePublishNow}
-                      aria-label={canPublish ? "Publish now" : "Select platform and add content to publish"}
+                      onClick={showSchedulePicker ? handleSchedulePost : handlePublishNow}
+                      aria-label={canPublish ? (showSchedulePicker ? "Schedule post" : "Publish now") : "Select platform and add content to publish"}
                     >
                       <Send className="w-4 h-4 mr-2" />
-                      {loading ? 'Publishing...' : 'Publish Now'}
+                      {loading ? (showSchedulePicker ? 'Scheduling...' : 'Publishing...') : (showSchedulePicker ? 'Schedule Post' : 'Publish Now')}
                     </Button>
                   </span>
                 </TooltipTrigger>

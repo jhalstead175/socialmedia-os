@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar, Clock, ChevronLeft, ChevronRight, CalendarPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import { useDemoMode, demoData } from '../hooks/useDemoMode';
 import { emit, NAV_EVENTS } from '@/utils/telemetry';
 import { supabase } from '@/lib/supabaseClient';
@@ -9,6 +11,7 @@ import { useUser } from '@/hooks/useUserSafe';
 export default function Scheduler() {
   const isDemoMode = useDemoMode();
   const { user: clerkUser } = useUser();
+  const navigate = useNavigate();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [scheduledPosts, setScheduledPosts] = useState(isDemoMode ? demoData.scheduledPosts : []);
   const [scheduledCount, setScheduledCount] = useState(0);
@@ -105,13 +108,29 @@ export default function Scheduler() {
   return (
     <div className="container-7xl py-8 px-4">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="h1" style={{ color: 'var(--text-100)' }}>
-          Scheduler
-        </h1>
-        <p className="lead mt-2">
-          Manage your posting schedule
-        </p>
+      <div className="mb-8 flex items-start justify-between">
+        <div>
+          <h1 className="h1" style={{ color: 'var(--text-100)' }}>
+            Scheduler
+          </h1>
+          <p className="lead mt-2">
+            View scheduled posts. New posts are scheduled from the Composer.
+          </p>
+        </div>
+        <Button
+          onClick={() => navigate(createPageUrl('Composer') + '?mode=schedule')}
+          className="gap-2"
+          style={{
+            background: 'var(--acc-a)',
+            color: 'var(--bg)',
+            padding: '10px 16px',
+            borderRadius: 'var(--r-lg)',
+            fontWeight: '600'
+          }}
+        >
+          <CalendarPlus className="w-4 h-4" />
+          Schedule Post
+        </Button>
       </div>
 
       {/* Calendar Navigation */}
@@ -189,10 +208,21 @@ export default function Scheduler() {
                     </div>
                   ) : (
                     <div
-                      className="absolute inset-0 flex items-center justify-center"
+                      className="absolute inset-0 flex flex-col items-center justify-center gap-2"
                       style={{ color: 'var(--text-60)', fontSize: 'var(--fs-xs)' }}
                     >
-                      No posts
+                      <div>No scheduled posts</div>
+                      <button
+                        onClick={() => navigate(createPageUrl('Composer') + '?mode=schedule')}
+                        className="text-xs"
+                        style={{
+                          color: 'var(--acc-a)',
+                          textDecoration: 'underline',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Schedule one
+                      </button>
                     </div>
                   )}
                 </div>
