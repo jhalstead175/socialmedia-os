@@ -74,12 +74,16 @@ export default function Account() {
     const connected = searchParams.get('connected');
     const error = searchParams.get('error');
 
-    if (connected === 'linkedin') {
-      toast.success('LinkedIn account connected successfully');
-      // Reload connected accounts
-      setLoading(true);
-      setConnectedAccounts(prev => ({ ...prev, linkedin: true }));
-      setLoading(false);
+    if (connected) {
+      const platformNames = {
+        linkedin: 'LinkedIn',
+        x: 'X (Twitter)',
+        meta: 'Meta (Facebook)'
+      };
+
+      toast.success(`${platformNames[connected] || connected} account connected successfully`);
+      // Update connected accounts state
+      setConnectedAccounts(prev => ({ ...prev, [connected]: true }));
       // Clear URL params
       setSearchParams({});
     }
@@ -90,9 +94,13 @@ export default function Account() {
         invalid_request: 'Invalid OAuth request',
         state_mismatch: 'Security verification failed',
         token_exchange_failed: 'Failed to exchange authorization code',
-        profile_fetch_failed: 'Failed to fetch LinkedIn profile',
+        profile_fetch_failed: 'Failed to fetch profile',
         user_not_found: 'User account not found',
         storage_failed: 'Failed to store account credentials',
+        no_pages_found: 'No Facebook Pages found. Please create a Page first.',
+        pages_fetch_failed: 'Failed to fetch Facebook Pages',
+        invalid_page: 'Invalid Facebook Page selected',
+        oauth_init_failed: 'Failed to initiate OAuth flow',
         unexpected_error: 'An unexpected error occurred'
       };
 
@@ -103,12 +111,19 @@ export default function Account() {
   }, [searchParams, setSearchParams]);
 
   const handleConnectAccount = (platform) => {
-    if (platform === 'linkedin') {
+    const oauthEndpoints = {
+      linkedin: '/api/oauth/linkedin/start',
+      x: '/api/oauth/x/start',
+      meta: '/api/oauth/meta/start'
+    };
+
+    const endpoint = oauthEndpoints[platform];
+
+    if (endpoint) {
       // Redirect to OAuth start endpoint
-      window.location.href = '/api/oauth/linkedin/start';
+      window.location.href = endpoint;
     } else {
-      // Other platforms not implemented yet
-      toast.info(`${platform === 'x' ? 'X' : 'Meta'} connection coming soon`);
+      toast.error(`Platform ${platform} not supported`);
     }
   };
 
