@@ -10,7 +10,7 @@ Last updated: September 3, 2025
 
 We collect information you provide (like email, resume text) and technical data (like device and usage). We use this to operate and improve the service, personalize features, and communicate with you.
 
-**Payments.** We use Stripe to process payments. Rezemai does not store full card numbers. See Stripe’s privacy policy for details.
+**Payments.** We use Stripe to process payments. SoshlOps does not store full card numbers. See Stripe's privacy policy for details.
 
 **Cookies.** We use cookies and similar technologies for authentication and analytics. You can control cookies in your browser.
 
@@ -18,13 +18,13 @@ We collect information you provide (like email, resume text) and technical data 
 
 **Retention.** We keep data as long as your account is active or as needed to provide the service.
 
-**Your Rights.** You may access, update, or delete your information. Contact support@rezemai.com.
+**Your Rights.** You may access, update, or delete your information. Contact support@soshlops.com.
 
 **Security.** We take reasonable measures to protect your data, but no method is 100% secure.
 
-**Children.** Rezemai is not intended for children under 16.
+**Children.** SoshlOps is not intended for children under 16.
 
-**Contact.** support@rezemai.com
+**Contact.** support@soshlops.com
 `;
 
 export default function LegalPrivacyPage() {
