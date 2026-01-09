@@ -120,7 +120,7 @@ export default function Inbox() {
                           {message.content}
                         </p>
                       </div>
-                      <Button variant="ghost" size="sm" disabled title="Coming soon">
+                      <Button variant="ghost" size="sm" disabled aria-label="Reply (read-only)">
                         <Reply className="w-4 h-4" />
                       </Button>
                     </div>

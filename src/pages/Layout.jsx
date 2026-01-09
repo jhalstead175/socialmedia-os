@@ -26,6 +26,7 @@ import { BillingURL } from "@/components/subscription/BillingURL";
 import { toast } from "sonner";
 import Meta from "@/components/shared/Meta";
 import { PaywallProvider } from "@/components/subscription/PaywallProvider";
+import { useUserBootstrap } from "@/hooks/useUserBootstrap";
 
 const globalStyles = `
   :root {
@@ -179,6 +180,19 @@ export default function Layout({ children, currentPageName }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+
+  // Bootstrap user/org in Supabase on first login
+  const { bootstrapped, loading: bootstrapLoading, error: bootstrapError } = useUserBootstrap();
+
+  // Log bootstrap status
+  useEffect(() => {
+    if (bootstrapError) {
+      console.error('❌ User bootstrap failed:', bootstrapError);
+      toast.error('Failed to initialize user account');
+    } else if (bootstrapped && !bootstrapLoading) {
+      console.log('✅ User bootstrap complete');
+    }
+  }, [bootstrapped, bootstrapLoading, bootstrapError]);
 
   useEffect(() => {
     // Initialize both URL utilities

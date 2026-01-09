@@ -20,9 +20,12 @@ import ConnectedAccountCard from "../components/ConnectedAccountCard";
 import ConnectAccountModal from "../components/ConnectAccountModal";
 import { useDemoMode, demoData } from "../hooks/useDemoMode";
 import { emit, NAV_EVENTS, ACTION_EVENTS } from "@/utils/telemetry";
+import { supabase } from "@/lib/supabaseClient";
+import { useUser } from "@clerk/clerk-react";
 
 export default function Dashboard() {
   const isDemoMode = useDemoMode();
+  const { user: clerkUser } = useUser();
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
@@ -49,7 +52,7 @@ export default function Dashboard() {
   useEffect(() => {
     emit(NAV_EVENTS.DASHBOARD_OPENED);
     loadDashboardData();
-  }, []);
+  }, [clerkUser]);
 
   const loadDashboardData = async () => {
     setIsLoading(true);
@@ -62,22 +65,87 @@ export default function Dashboard() {
         setShowWelcomeModal(true);
       }
 
-      // In demo mode, preserve placeholder data
-      if (!isDemoMode) {
-        // In a real app, fetch actual social media stats here
-        setStats({
-          postsPublished: 0,
-          totalEngagement: 0,
-          activeAccounts: 0,
-          scheduledPosts: 0,
-          impressions: 0,
-          newFollowers: 0
-        });
+      // Load real data from Supabase (unless in demo mode)
+      if (!isDemoMode && clerkUser) {
+        await loadSupabaseStats();
+        await loadConnectedAccounts();
       }
     } catch (err) {
       console.error("Error loading dashboard data:", err);
     }
     setIsLoading(false);
+  };
+
+  const loadSupabaseStats = async () => {
+    try {
+      // Get user's org_id
+      const { data: supabaseUser, error: userError } = await supabase
+        .from('users')
+        .select('organization_id')
+        .eq('clerk_user_id', clerkUser.id)
+        .single();
+
+      if (userError || !supabaseUser) return;
+
+      // Get count of published posts in last 7 days
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      const { count: publishedCount } = await supabase
+        .from('posts')
+        .select('id', { count: 'exact', head: true })
+        .eq('organization_id', supabaseUser.organization_id)
+        .eq('status', 'published')
+        .gte('published_at', sevenDaysAgo.toISOString());
+
+      // Get count of scheduled posts
+      const { count: scheduledCount } = await supabase
+        .from('posts')
+        .select('id', { count: 'exact', head: true })
+        .eq('organization_id', supabaseUser.organization_id)
+        .eq('status', 'scheduled');
+
+      // Get count of active social accounts
+      const { count: accountsCount } = await supabase
+        .from('social_accounts')
+        .select('id', { count: 'exact', head: true })
+        .eq('organization_id', supabaseUser.organization_id)
+        .eq('is_active', true);
+
+      setStats({
+        postsPublished: publishedCount || 0,
+        scheduledPosts: scheduledCount || 0,
+        activeAccounts: accountsCount || 0,
+        totalEngagement: 0, // v1: no analytics
+        impressions: 0, // v1: no analytics
+        newFollowers: 0 // v1: no analytics
+      });
+    } catch (err) {
+      console.error('Error loading Supabase stats:', err);
+    }
+  };
+
+  const loadConnectedAccounts = async () => {
+    try {
+      const { data: accounts, error } = await supabase
+        .from('social_accounts')
+        .select('platform')
+        .eq('is_active', true);
+
+      if (error) {
+        console.error('Failed to load connected accounts:', error);
+        return;
+      }
+
+      const accountsMap = { x: false, linkedin: false, meta: false };
+      accounts?.forEach(account => {
+        accountsMap[account.platform] = true;
+      });
+
+      setConnectedAccounts(accountsMap);
+    } catch (err) {
+      console.error('Error loading accounts:', err);
+    }
   };
 
   const getGreeting = () => {
