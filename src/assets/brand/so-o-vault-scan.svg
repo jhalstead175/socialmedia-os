@@ -12,6 +12,6 @@
     @keyframes scanOnce{from{transform:translateX(0)}to{transform:translateX(400px)}}
   </style>
 
-  <circle cx="500" cy="500" r="400" fill="black" mask="url(#scan-mask)"/>
-  <circle cx="500" cy="500" r="200" fill="white"/>
+  <circle cx="500" cy="500" r="400" fill="white" mask="url(#scan-mask)"/>
+  <circle cx="500" cy="500" r="200" fill="black"/>
 </svg>
