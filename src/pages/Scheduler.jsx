@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useDemoMode, demoData } from '../hooks/useDemoMode';
 import { emit, NAV_EVENTS } from '@/utils/telemetry';
 import { supabase } from '@/lib/supabaseClient';
-import { useUser } from '@clerk/clerk-react';
+import { useUser } from '@/hooks/useUserSafe';
 
 export default function Scheduler() {
   const isDemoMode = useDemoMode();

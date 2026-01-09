@@ -9,7 +9,7 @@ import ConnectAccountModal from '../components/ConnectAccountModal';
 import { useDemoMode, demoData, useDemoAction } from '../hooks/useDemoMode';
 import { emit, NAV_EVENTS, ACTION_EVENTS, GATE_EVENTS } from '@/utils/telemetry';
 import { supabase } from '@/lib/supabaseClient';
-import { useUser } from '@clerk/clerk-react';
+import { useUser } from '@/hooks/useUserSafe';
 import { toast } from 'sonner';
 
 export default function Composer() {
