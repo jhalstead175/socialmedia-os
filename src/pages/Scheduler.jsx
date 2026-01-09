@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useDemoMode, demoData } from '../hooks/useDemoMode';
+import { emit, NAV_EVENTS } from '@/utils/telemetry';
 
 export default function Scheduler() {
   const isDemoMode = useDemoMode();
@@ -13,6 +14,10 @@ export default function Scheduler() {
 
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const hours = Array.from({ length: 24 }, (_, i) => i);
+
+  useEffect(() => {
+    emit(NAV_EVENTS.SCHEDULER_OPENED);
+  }, []);
 
   return (
     <div className="container-7xl py-8 px-4">

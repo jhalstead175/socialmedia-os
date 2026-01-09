@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FolderOpen, Upload, Image, Video, File, Grid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useDemoMode, demoData, useDemoAction } from '../hooks/useDemoMode';
+import { emit, NAV_EVENTS, ACTION_EVENTS } from '@/utils/telemetry';
 
 export default function Assets() {
   const isDemoMode = useDemoMode();
@@ -21,12 +22,17 @@ export default function Assets() {
   ];
 
   const handleUpload = () => {
+    emit(ACTION_EVENTS.ASSET_UPLOAD_ATTEMPTED);
     const feedback = handleAction('upload');
     if (feedback) {
       setActionFeedback(feedback);
       setTimeout(() => setActionFeedback(''), 3000);
     }
   };
+
+  useEffect(() => {
+    emit(NAV_EVENTS.ASSETS_OPENED);
+  }, []);
 
   return (
     <div className="container-7xl py-8 px-4">
