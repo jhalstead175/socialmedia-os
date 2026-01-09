@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PenTool, Image, Hash, Calendar, Send, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import ConnectAccountModal from '../components/ConnectAccountModal';
 import { useDemoMode, demoData, useDemoAction } from '../hooks/useDemoMode';
+import { emit, NAV_EVENTS, ACTION_EVENTS, GATE_EVENTS } from '@/utils/telemetry';
 
 export default function Composer() {
   const isDemoMode = useDemoMode();
@@ -32,8 +33,13 @@ export default function Composer() {
     { id: 'meta', name: 'Meta' }
   ];
 
+  useEffect(() => {
+    emit(NAV_EVENTS.COMPOSER_OPENED);
+  }, []);
+
   const handlePlatformToggle = (platformId) => {
     if (!connectedAccounts[platformId]) {
+      emit(GATE_EVENTS.OAUTH_REQUIRED_ENCOUNTERED);
       setSelectedPlatform(platformId);
       setShowConnectModal(true);
       return;
@@ -50,6 +56,7 @@ export default function Composer() {
   const canPublish = selectedPlatforms.length > 0 && content.trim().length > 0;
 
   const handlePublish = () => {
+    emit(ACTION_EVENTS.PUBLISH_ATTEMPTED);
     const feedback = handleAction('publish');
     if (feedback) {
       setActionFeedback(feedback);
@@ -58,6 +65,7 @@ export default function Composer() {
   };
 
   const handleSaveDraft = () => {
+    emit(ACTION_EVENTS.DRAFT_SAVE_ATTEMPTED);
     const feedback = handleAction('save');
     if (feedback) {
       setActionFeedback(feedback);

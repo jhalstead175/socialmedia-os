@@ -19,6 +19,7 @@ import WelcomeModal from "../components/onboarding/WelcomeModal";
 import ConnectedAccountCard from "../components/ConnectedAccountCard";
 import ConnectAccountModal from "../components/ConnectAccountModal";
 import { useDemoMode, demoData } from "../hooks/useDemoMode";
+import { emit, NAV_EVENTS, ACTION_EVENTS } from "@/utils/telemetry";
 
 export default function Dashboard() {
   const isDemoMode = useDemoMode();
@@ -46,6 +47,7 @@ export default function Dashboard() {
   );
 
   useEffect(() => {
+    emit(NAV_EVENTS.DASHBOARD_OPENED);
     loadDashboardData();
   }, []);
 
@@ -91,6 +93,7 @@ export default function Dashboard() {
   };
 
   const handleConnectAccount = (platform) => {
+    emit(ACTION_EVENTS.ACCOUNT_CONNECT_ATTEMPTED);
     setSelectedPlatform(platform);
     setShowConnectModal(true);
   };

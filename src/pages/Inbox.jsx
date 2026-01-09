@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MessageSquare, Filter, Star, Archive, Reply } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useDemoMode, demoData } from '../hooks/useDemoMode';
+import { emit, NAV_EVENTS } from '@/utils/telemetry';
 
 export default function Inbox() {
   const isDemoMode = useDemoMode();
@@ -15,6 +16,10 @@ export default function Inbox() {
     { id: 'dms', label: 'Direct Messages', count: isDemoMode ? 1 : 0 },
     { id: 'comments', label: 'Comments', count: isDemoMode ? 1 : 0 }
   ];
+
+  useEffect(() => {
+    emit(NAV_EVENTS.INBOX_OPENED);
+  }, []);
 
   return (
     <div className="container-7xl py-8 px-4">

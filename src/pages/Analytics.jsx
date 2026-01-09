@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BarChart3, TrendingUp, Users, Eye } from 'lucide-react';
 import { useDemoMode, demoData } from '../hooks/useDemoMode';
+import { emit, NAV_EVENTS } from '@/utils/telemetry';
 
 export default function Analytics() {
   const isDemoMode = useDemoMode();
@@ -11,6 +12,11 @@ export default function Analytics() {
     postsPublished: 0
   };
   const analyticsData = isDemoMode ? demoData.analyticsData : [];
+
+  useEffect(() => {
+    emit(NAV_EVENTS.ANALYTICS_OPENED);
+  }, []);
+
   return (
     <div className="container-7xl py-8 px-4">
       {/* Header */}
