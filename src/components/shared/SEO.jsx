@@ -5,14 +5,14 @@ import React, { useEffect } from 'react';
  * Handles all meta tags, structured data, and social sharing
  */
 export default function SEO({
-  title = "SocialOS — Professional Social Media Management",
-  description = "Agency-grade social media operations for executives, teams, and regulated industries. Multi-platform management, scheduling, and analytics.",
+  title = "SoshlOps — Professional Social Media Operations",
+  description = "Agency-grade social media management for executives, teams, and regulated industries. Precision tools for publishing, scheduling, analytics, and engagement.",
   image = "/og.png",
   type = "website",
   canonical,
-  keywords = "social media management, social media scheduler, multi-platform posting, social media analytics, agency tools, corporate social media, social media dashboard",
-  author = "SocialOS",
-  twitterHandle = "@socialos"
+  keywords = "social media management, social media operations, multi-platform publishing, social media analytics, agency tools, corporate social media, institutional social media",
+  author = "SoshlOps",
+  twitterHandle = "@soshlops"
 }) {
   useEffect(() => {
     // Set document title
@@ -86,7 +86,7 @@ export default function SEO({
     setMeta('og:image:alt', title);
     setMeta('og:type', type);
     setMeta('og:url', canonical || window.location.href.split('?')[0]);
-    setMeta('og:site_name', 'SocialOS');
+    setMeta('og:site_name', 'SoshlOps');
     setMeta('og:locale', 'en_US');
 
     // Twitter Card
@@ -107,7 +107,7 @@ export default function SEO({
     const structuredData = {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
-      "name": "SocialOS",
+      "name": "SoshlOps",
       "applicationCategory": "BusinessApplication",
       "operatingSystem": "Web",
       "offers": {
@@ -128,7 +128,7 @@ export default function SEO({
       "url": window.location.origin,
       "author": {
         "@type": "Organization",
-        "name": "SocialOS"
+        "name": "SoshlOps"
       },
       "featureList": [
         "Multi-platform social media management",

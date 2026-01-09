@@ -4,8 +4,8 @@ import React, { useEffect } from 'react';
 // They should be replaced with actual files at the specified paths.
 
 export default function Meta() {
-  const title = "SocialOS — Professional Social Media Management";
-  const description = "Agency-grade social media operations for executives, teams, and regulated industries. Multi-platform management, scheduling, and analytics.";
+  const title = "SoshlOps — Professional Social Media Operations";
+  const description = "Agency-grade social media management for executives, teams, and regulated industries. Precision tools for publishing, scheduling, analytics, and engagement.";
   const imageUrl = `${window.location.origin}/og.png`;
 
   useEffect(() => {
