@@ -24,7 +24,6 @@ import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/comp
 import { PromoURL } from "@/components/marketing/PromoURL";
 import { BillingURL } from "@/components/subscription/BillingURL";
 import { toast } from "sonner";
-import RezemaiLogo from "@/components/Logo";
 import Meta from "@/components/shared/Meta";
 import { PaywallProvider } from "@/components/subscription/PaywallProvider";
 
@@ -286,15 +285,17 @@ export default function Layout({ children, currentPageName }) {
       <SheetContent side="left" className="w-80 p-0" style={{ background: 'var(--surf-1)', borderLeft: '1px solid var(--bd-weak)' }}>
         <div className="flex h-full flex-col">
           <div className="p-6" style={{ borderBottom: '1px solid var(--bd-weak)' }}>
-            <div className="flex items-center gap-3">
-              <RezemaiLogo variant="monogram" />
-              <div>
-                <div className="font-semibold text-lg" style={{ color: 'var(--text-100)' }}>Rezemai</div>
-                {user && (
-                  <div className="text-sm" style={{ color: 'var(--text-70)' }}>{user.full_name}</div>
-                )}
-              </div>
+            <div className="flex items-center gap-2">
+              <span
+                className="font-semibold tracking-tight"
+                style={{ color: 'var(--text-100)' }}
+              >
+                SoshlOps
+              </span>
             </div>
+            {user && (
+              <div className="text-sm mt-2" style={{ color: 'var(--text-70)' }}>{user.full_name}</div>
+            )}
           </div>
 
           <nav className="flex-1 p-6">
@@ -409,15 +410,17 @@ export default function Layout({ children, currentPageName }) {
             {/* Desktop Sidebar */}
             <aside className="hidden md:flex w-64 flex-col" style={{ background: 'var(--surf-1)', borderRight: '1px solid var(--bd-weak)' }}>
               <div className="p-6" style={{ borderBottom: '1px solid var(--bd-weak)' }}>
-                <div className="flex items-center gap-3">
-                  <RezemaiLogo variant="monogram" />
-                  <div>
-                    <div className="font-semibold text-lg" style={{ color: 'var(--text-100)' }}>SoshlOps</div>
-                    {user && (
-                      <div className="text-sm" style={{ color: 'var(--text-70)' }}>{user.full_name}</div>
-                    )}
-                  </div>
+                <div className="flex items-center gap-2">
+                  <span
+                    className="font-semibold tracking-tight"
+                    style={{ color: 'var(--text-100)' }}
+                  >
+                    SoshlOps
+                  </span>
                 </div>
+                {user && (
+                  <div className="text-sm mt-2" style={{ color: 'var(--text-70)' }}>{user.full_name}</div>
+                )}
               </div>
 
               <nav className="flex-1 p-6">
