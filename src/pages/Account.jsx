@@ -7,7 +7,7 @@ import { createPageUrl } from '@/utils';
 import { usePaywall } from '../components/subscription/PaywallProvider';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabaseClient';
-import { useUser } from '@clerk/clerk-react';
+import { useUser } from '@/hooks/useUserSafe';
 import ConnectedAccountCard from '../components/ConnectedAccountCard';
 
 export default function Account() {
