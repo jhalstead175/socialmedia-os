@@ -12,13 +12,12 @@ if (!CLERK_PUBLISHABLE_KEY) {
   console.warn('⚠️ VITE_CLERK_PUBLISHABLE_KEY not set. Authentication disabled. Landing page will work, but sign-in will not.')
 }
 
-// Conditionally wrap with ClerkProvider only if key is present
-const AppWrapper = CLERK_PUBLISHABLE_KEY ? (
-  <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
+// Always wrap with ClerkProvider to prevent hook errors
+// If key is missing, Clerk will not authenticate but hooks won't crash
+const AppWrapper = (
+  <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY || 'pk_test_placeholder'}>
     <App />
   </ClerkProvider>
-) : (
-  <App />
 )
 
 ReactDOM.createRoot(document.getElementById('root')).render(
