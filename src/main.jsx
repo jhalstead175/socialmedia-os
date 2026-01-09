@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { ClerkProvider } from '@clerk/clerk-react'
 import App from '@/App.jsx'
 import RootLayout from '@/layouts/RootLayout.jsx'
+import ErrorBoundary from '@/components/ErrorBoundary.jsx'
 import '@/index.css'
 
 // Get Clerk publishable key from environment
@@ -22,8 +23,10 @@ const AppWrapper = (
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <RootLayout>
-      {AppWrapper}
-    </RootLayout>
+    <ErrorBoundary>
+      <RootLayout>
+        {AppWrapper}
+      </RootLayout>
+    </ErrorBoundary>
   </React.StrictMode>
 ) 
