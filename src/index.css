@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body, #root {
+  background-color: #0B0F14;
+  color: #ffffff;
+  height: 100%;
+  margin: 0;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1F2937 transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #1F2937;
+  border-radius: 8px;
+}
+
 
 /* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;

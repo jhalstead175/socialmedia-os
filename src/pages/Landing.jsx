@@ -1,131 +1,86 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import Pricing from "@/components/Pricing";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { trackEvent, trackPageView } from "@/components/shared/Analytics";
-import { usePromoStore } from "@/components/marketing/PromoStore";
-import { PromoURL } from "@/components/marketing/PromoURL";
-import { BillingURL } from "@/components/subscription/BillingURL";
-
-// Import new landing page components
-import { BrandHeaderV2 } from "../components/landing/BrandHeader";
-import { HeroFullBleedV3 } from "../components/landing/HeroFullBleedV3";
-import { TrustBadgesRow } from "../components/landing/TrustBadgesRow";
-import TemplatesGallery from "../components/landing/TemplatesGallery";
-import { PricingSection } from "../components/pricing/PricingSection";
-import PromoBanner from '../components/marketing/PromoBanner';
-import WhatsNew from '../components/marketing/WhatsNew';
-import { FooterSitemapV2 } from "../components/landing/FooterSitemap";
-import SEO from "../components/shared/SEO";
 
 export default function Landing() {
-  const [annual, setAnnual] = useState(true);
   const navigate = useNavigate();
-  const promo = usePromoStore();
 
-  useEffect(() => {
-    trackPageView('landing');
-    document.documentElement.style.scrollBehavior = 'smooth';
-    
-    BillingURL.syncFromCurrentUrl();
-    PromoURL.syncFromCurrentUrl();
-    promo.loadFromUrl();
-
-    const handleBillingChange = (e) => setAnnual(e.detail?.billing === 'annual');
-    window.addEventListener('billing:changed', handleBillingChange);
-
-    return () => {
-      document.documentElement.style.scrollBehavior = 'auto';
-      window.removeEventListener('billing:changed', handleBillingChange);
-    };
-  }, [promo]);
-
-  const handleCheckout = (plan) => {
-    const baseUrl = createPageUrl(`Checkout?plan=${plan}`);
-    const withBilling = BillingURL.applyToUrl(baseUrl);
-    const href = PromoURL.applyToUrl(withBilling);
-    
-    trackEvent('tier_cta_click', { 
-      plan, 
-      billing: BillingURL.get() || 'annual', 
-      has_promo: promo.valid,
-      promo_code: promo.valid ? promo.code : null
-    });
-    
-    navigate(href);
-  };
-
-  const handleBillingToggle = (newBilling) => {
-    setAnnual(newBilling === 'annual');
-    BillingURL.set(newBilling);
-  };
-
-  const scrollToSection = (sectionId, trackingData = {}) => {
-    trackEvent('hero_cta_click', trackingData);
-    document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToSection = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <main className="min-h-screen bg-[#0B0D15] text-zinc-100 flex flex-col">
-      <SEO
-        title="Rezemai — AI Resume Builder & Interview Coach"
-        description="Build ATS-optimized resumes tailored to any job description. Practice interviews with AI coaching and real-time feedback. Free to start."
-        keywords="resume builder, ATS resume, interview coach, job application, AI resume optimization, career tools, professional resume, interview practice"
-        canonical={window.location.origin}
-      />
-      <PromoBanner surface="Landing" />
-      
-      {/* Header */}
-      <BrandHeaderV2 onCta={() => navigate(createPageUrl("Signin"))} />
+    <main className="px-6 max-w-7xl mx-auto">
+      <Header />
 
-      {/* Full-bleed Hero */}
-      <HeroFullBleedV3 
-        heroImageUrl="https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        onPrimary={() => navigate(createPageUrl("Signin"))} 
-        onSecondary={() => scrollToSection('features')} 
-      />
+      {/* Hero */}
+      <section className="max-w-3xl py-24">
+        <h1 className="text-5xl font-semibold tracking-tight">
+          Professional Resumes.<br />Interview-Ready.
+        </h1>
 
-      {/* Trust Badges row */}
-      <TrustBadgesRow />
+        <p className="mt-6 text-xl text-slate-300">
+          AI-driven resume optimization and interview preparation for serious professionals.
+        </p>
 
-      {/* Features Section */}
-      <section id="features" className="py-16 bg-zinc-900">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">Built to Win Offers</h2>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              { title: "Role-Tailored Resumes", desc: "Paste a JD, click tailor, and get keyword-aware bullets with measurable impact.", icon: "⚡" },
-              { title: "Executive & Legal Templates", desc: "Clean, ATS-ready designs for senior roles and regulated fields.", icon: "👑" },
-              { title: "Interview Simulator", desc: "Mock panels, STAR prompts, and real-time coaching.", icon: "⭐" },
-              { title: "Cover Letters & Outreach", desc: "On-brand, concise, and tuned to the company's voice.", icon: "✉️" },
-              { title: "LinkedIn Optimizer", desc: "Headlines, About, and Experience sections tuned for your role.", icon: "💼" },
-              { title: "Metrics & Progress", desc: "Track applications, callbacks, and pass rates.", icon: "📊" }
-            ].map(feature => (
-              <div key={feature.title} className="bg-zinc-800/50 p-6 rounded-2xl border border-zinc-700">
-                <div className="text-2xl mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                <p className="text-zinc-400">{feature.desc}</p>
-              </div>
-            ))}
-          </div>
+        <div className="mt-10 flex gap-4">
+          <button
+            onClick={() => navigate(createPageUrl("Signin"))}
+            className="rounded-lg bg-emerald-600 px-6 py-3 text-white hover:bg-emerald-500 transition-colors"
+          >
+            Get Early Access
+          </button>
+          <button
+            className="rounded-lg border border-slate-700 px-6 py-3 text-slate-200 hover:bg-slate-800 transition-colors"
+            onClick={() => scrollToSection('how-it-works')}
+          >
+            How It Works
+          </button>
         </div>
       </section>
 
-      {/* Templates gallery */}
-      <section id="templates" className="py-16 bg-zinc-900">
-        <TemplatesGallery />
+      {/* Authority */}
+      <section className="border-t border-slate-800 pt-16 text-slate-300">
+        Built for professionals who value clarity, credibility, and results.
       </section>
 
-      <WhatsNew />
-
-      {/* Pricing plans */}
-      <section id="pricing">
-        <PricingSection />
+      {/* How It Works */}
+      <section id="how-it-works" className="mt-24 max-w-2xl space-y-4 text-slate-300">
+        <p>1. Upload your resume</p>
+        <p>2. AI optimizes for role, tone, and seniority</p>
+        <p>3. Prepare for interviews with confidence</p>
       </section>
 
-      {/* Footer */}
-      <FooterSitemapV2 />
+      {/* Capabilities */}
+      <section className="mt-24 grid grid-cols-1 md:grid-cols-2 gap-6 text-slate-300 max-w-3xl">
+        <p>Resume scoring & positioning</p>
+        <p>ATS-aligned optimization</p>
+        <p>Role & seniority tone control</p>
+        <p>Interview preparation</p>
+        <p>PDF & DOCX export</p>
+        <p>Secure, private processing</p>
+      </section>
+
+      {/* Pricing */}
+      <Pricing />
+
+      {/* Final CTA */}
+      <section className="mt-32">
+        <p className="text-xl text-slate-300 mb-6">
+          Get interview-ready without the guesswork.
+        </p>
+        <button
+          onClick={() => navigate(createPageUrl("Signin"))}
+          className="rounded-lg bg-emerald-600 px-6 py-3 text-white hover:bg-emerald-500 transition-colors"
+        >
+          Get Early Access
+        </button>
+      </section>
+
+      <Footer />
     </main>
   );
 }
