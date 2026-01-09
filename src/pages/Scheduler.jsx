@@ -1,12 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useDemoMode, demoData } from '../hooks/useDemoMode';
+import { emit, NAV_EVENTS } from '@/utils/telemetry';
 
 export default function Scheduler() {
+  const isDemoMode = useDemoMode();
   const [currentDate, setCurrentDate] = useState(new Date());
+  const scheduledPosts = isDemoMode ? demoData.scheduledPosts : [];
+  const scheduledCount = isDemoMode ? demoData.scheduledPosts.length : 0;
+  const draftsCount = 0;
+  const publishedTodayCount = isDemoMode ? demoData.metrics.postsPublished : 0;
 
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const hours = Array.from({ length: 24 }, (_, i) => i);
+
+  useEffect(() => {
+    emit(NAV_EVENTS.SCHEDULER_OPENED);
+  }, []);
 
   return (
     <div className="container-7xl py-8 px-4">
@@ -61,29 +72,50 @@ export default function Scheduler() {
 
         {/* Time Slots (simplified view) */}
         <div className="mt-4 grid grid-cols-7 gap-2">
-          {Array.from({ length: 7 }).map((_, dayIndex) => (
-            <div key={dayIndex}>
-              <div
-                className="card card-quiet"
-                style={{
-                  padding: 'var(--s-3)',
-                  minHeight: '200px',
-                  position: 'relative'
-                }}
-              >
-                <div className="text-sm font-semibold mb-2" style={{ color: 'var(--text-80)' }}>
-                  {new Date(currentDate.getFullYear(), currentDate.getMonth(), dayIndex + 1).getDate()}
-                </div>
-                {/* Empty state for posts */}
+          {Array.from({ length: 7 }).map((_, dayIndex) => {
+            const postsForDay = scheduledPosts.filter((_, i) => i % 7 === dayIndex);
+            return (
+              <div key={dayIndex}>
                 <div
-                  className="absolute inset-0 flex items-center justify-center"
-                  style={{ color: 'var(--text-60)', fontSize: 'var(--fs-xs)' }}
+                  className="card card-quiet"
+                  style={{
+                    padding: 'var(--s-3)',
+                    minHeight: '200px',
+                    position: 'relative'
+                  }}
                 >
-                  No posts
+                  <div className="text-sm font-semibold mb-2" style={{ color: 'var(--text-80)' }}>
+                    {new Date(currentDate.getFullYear(), currentDate.getMonth(), dayIndex + 1).getDate()}
+                  </div>
+                  {postsForDay.length > 0 ? (
+                    <div className="space-y-2">
+                      {postsForDay.map((post) => (
+                        <div
+                          key={post.id}
+                          className="text-xs px-2 py-1 rounded"
+                          style={{
+                            background: 'var(--surf-3)',
+                            borderLeft: '2px solid var(--acc-a)',
+                            color: 'var(--text-100)'
+                          }}
+                        >
+                          <div className="font-semibold">{post.time}</div>
+                          <div style={{ color: 'var(--text-60)' }}>{post.platform}</div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div
+                      className="absolute inset-0 flex items-center justify-center"
+                      style={{ color: 'var(--text-60)', fontSize: 'var(--fs-xs)' }}
+                    >
+                      No posts
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -92,7 +124,7 @@ export default function Scheduler() {
         <div className="card" style={{ padding: 'var(--s-6)' }}>
           <div className="flex items-center gap-3 mb-2">
             <Calendar className="w-5 h-5" style={{ color: 'var(--acc-a)' }} />
-            <h3 className="h3" style={{ color: 'var(--text-100)' }}>0</h3>
+            <h3 className="h3" style={{ color: 'var(--text-100)' }}>{scheduledCount}</h3>
           </div>
           <p className="text-sm" style={{ color: 'var(--text-60)' }}>Scheduled Posts</p>
         </div>
@@ -100,7 +132,7 @@ export default function Scheduler() {
         <div className="card" style={{ padding: 'var(--s-6)' }}>
           <div className="flex items-center gap-3 mb-2">
             <Clock className="w-5 h-5" style={{ color: 'var(--acc-b)' }} />
-            <h3 className="h3" style={{ color: 'var(--text-100)' }}>0</h3>
+            <h3 className="h3" style={{ color: 'var(--text-100)' }}>{draftsCount}</h3>
           </div>
           <p className="text-sm" style={{ color: 'var(--text-60)' }}>Drafts</p>
         </div>
@@ -108,7 +140,7 @@ export default function Scheduler() {
         <div className="card" style={{ padding: 'var(--s-6)' }}>
           <div className="flex items-center gap-3 mb-2">
             <Calendar className="w-5 h-5" style={{ color: 'var(--acc-c)' }} />
-            <h3 className="h3" style={{ color: 'var(--text-100)' }}>0</h3>
+            <h3 className="h3" style={{ color: 'var(--text-100)' }}>{publishedTodayCount}</h3>
           </div>
           <p className="text-sm" style={{ color: 'var(--text-60)' }}>Published Today</p>
         </div>

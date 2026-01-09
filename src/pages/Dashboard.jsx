@@ -18,28 +18,36 @@ import { Skeleton } from "@/components/ui/skeleton";
 import WelcomeModal from "../components/onboarding/WelcomeModal";
 import ConnectedAccountCard from "../components/ConnectedAccountCard";
 import ConnectAccountModal from "../components/ConnectAccountModal";
+import { useDemoMode, demoData } from "../hooks/useDemoMode";
+import { emit, NAV_EVENTS, ACTION_EVENTS } from "@/utils/telemetry";
 
 export default function Dashboard() {
+  const isDemoMode = useDemoMode();
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const [showConnectModal, setShowConnectModal] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState(null);
-  const [connectedAccounts, setConnectedAccounts] = useState({
-    x: false,
-    linkedin: false,
-    meta: false
-  });
-  const [stats, setStats] = useState({
-    postsPublished: 0,
-    totalEngagement: 0,
-    activeAccounts: 0,
-    scheduledPosts: 0,
-    impressions: 0,
-    newFollowers: 0
-  });
+  const [connectedAccounts, setConnectedAccounts] = useState(
+    isDemoMode ? demoData.connectedAccounts : {
+      x: false,
+      linkedin: false,
+      meta: false
+    }
+  );
+  const [stats, setStats] = useState(
+    isDemoMode ? demoData.metrics : {
+      postsPublished: 0,
+      totalEngagement: 0,
+      activeAccounts: 0,
+      scheduledPosts: 0,
+      impressions: 0,
+      newFollowers: 0
+    }
+  );
 
   useEffect(() => {
+    emit(NAV_EVENTS.DASHBOARD_OPENED);
     loadDashboardData();
   }, []);
 
@@ -54,15 +62,18 @@ export default function Dashboard() {
         setShowWelcomeModal(true);
       }
 
-      // In a real app, fetch actual social media stats here
-      setStats({
-        postsPublished: 0,
-        totalEngagement: 0,
-        activeAccounts: 0,
-        scheduledPosts: 0,
-        impressions: 0,
-        newFollowers: 0
-      });
+      // In demo mode, preserve placeholder data
+      if (!isDemoMode) {
+        // In a real app, fetch actual social media stats here
+        setStats({
+          postsPublished: 0,
+          totalEngagement: 0,
+          activeAccounts: 0,
+          scheduledPosts: 0,
+          impressions: 0,
+          newFollowers: 0
+        });
+      }
     } catch (err) {
       console.error("Error loading dashboard data:", err);
     }
@@ -82,6 +93,7 @@ export default function Dashboard() {
   };
 
   const handleConnectAccount = (platform) => {
+    emit(ACTION_EVENTS.ACCOUNT_CONNECT_ATTEMPTED);
     setSelectedPlatform(platform);
     setShowConnectModal(true);
   };
