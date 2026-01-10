@@ -10,6 +10,17 @@ import { supabase } from '@/lib/supabaseClient';
 import { useUser } from '@/hooks/useUserSafe';
 import ConnectedAccountCard from '../components/ConnectedAccountCard';
 
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseAnonKey) {
+  throw new Error('Missing VITE_SUPABASE_ANON_KEY when invoking Supabase Edge Functions');
+}
+
+const SUPABASE_FUNCTIONS_AUTH_HEADER = {
+  Authorization: `Bearer ${supabaseAnonKey}`,
+  apikey: supabaseAnonKey
+};
+
 export default function Account() {
   const navigate = useNavigate();
   const { createPortalSession } = usePaywall();
@@ -131,6 +142,7 @@ export default function Account() {
       }
 
       const { data, error } = await supabase.functions.invoke(functionName, {
+        headers: SUPABASE_FUNCTIONS_AUTH_HEADER,
         body: { userId: clerkUser.id }
       });
 

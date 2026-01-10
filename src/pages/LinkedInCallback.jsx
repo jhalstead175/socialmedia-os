@@ -4,6 +4,17 @@ import { useUser } from '@clerk/clerk-react';
 import { supabase } from '../lib/supabaseClient';
 import toast from 'react-hot-toast';
 
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseAnonKey) {
+  throw new Error('Missing VITE_SUPABASE_ANON_KEY when invoking Supabase Edge Functions');
+}
+
+const SUPABASE_FUNCTIONS_AUTH_HEADER = {
+  Authorization: `Bearer ${supabaseAnonKey}`,
+  apikey: supabaseAnonKey
+};
+
 /**
  * LinkedIn OAuth Callback Page
  *
@@ -45,6 +56,7 @@ export default function LinkedInCallback() {
 
         // Call Supabase Edge Function with proper authentication
         const { data, error: callbackError } = await supabase.functions.invoke('oauth-linkedin-callback', {
+          headers: SUPABASE_FUNCTIONS_AUTH_HEADER,
           body: {
             code,
             state,
