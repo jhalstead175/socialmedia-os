@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@clerk/clerk-react';
-import supabase from '../config/supabaseClient';
+import { supabase } from '../lib/supabaseClient';
 import toast from 'react-hot-toast';
 
 /**
