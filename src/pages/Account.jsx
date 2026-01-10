@@ -116,10 +116,12 @@ export default function Account() {
       return;
     }
 
+    // Use Supabase Edge Functions for OAuth
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     const oauthEndpoints = {
-      linkedin: '/api/oauth/linkedin/start',
-      x: '/api/oauth/x/start',
-      meta: '/api/oauth/meta/start'
+      linkedin: `${supabaseUrl}/functions/v1/oauth-linkedin-start`,
+      x: `${supabaseUrl}/functions/v1/oauth-x-start`,
+      meta: `${supabaseUrl}/functions/v1/oauth-meta-start'`
     };
 
     const endpoint = oauthEndpoints[platform];
