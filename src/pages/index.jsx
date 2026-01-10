@@ -30,6 +30,8 @@ import Signin from "./Signin";
 
 import Account from "./Account";
 
+import LinkedInCallback from "./LinkedInCallback";
+
 import WebhookTools from "./WebhookTools";
 
 import Status from "./Status";
@@ -96,7 +98,9 @@ const PAGES = {
     Signin: Signin,
     
     Account: Account,
-    
+
+    LinkedInCallback: LinkedInCallback,
+
     WebhookTools: WebhookTools,
     
     Status: Status,
@@ -187,7 +191,9 @@ function PagesContent() {
                 <Route path="/Signin" element={<Signin />} />
                 
                 <Route path="/Account" element={<Account />} />
-                
+
+                <Route path="/oauth/linkedin/callback" element={<LinkedInCallback />} />
+
                 <Route path="/WebhookTools" element={<WebhookTools />} />
                 
                 <Route path="/Status" element={<Status />} />

@@ -18,6 +18,12 @@ const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+// CORS headers for OAuth callback
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
 /**
  * Encrypt token using AES-256-GCM
  */
@@ -65,44 +71,48 @@ function parseCookies(cookieHeader: string | null): Record<string, string> {
 }
 
 serve(async (req) => {
-  try {
-    const url = new URL(req.url);
-    const code = url.searchParams.get('code');
-    const state = url.searchParams.get('state');
-    const error = url.searchParams.get('error');
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
+  }
 
-    // Handle OAuth errors
-    if (error) {
-      console.error('LinkedIn OAuth error:', error);
-      return Response.redirect(`${APP_ORIGIN}/Account?error=oauth_failed`, 302);
-    }
+  try {
+    // Get OAuth parameters from request body (called from frontend)
+    const { code, state, userId } = await req.json();
 
     if (!code || !state) {
-      return Response.redirect(`${APP_ORIGIN}/Account?error=invalid_request`, 302);
+      return new Response(
+        JSON.stringify({ error: 'invalid_request' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
-    // Decode state
-    let userId: string;
+    // Decode and verify state
     let stateNonce: string;
     try {
       const decoded = JSON.parse(atob(state));
-      userId = decoded.userId;
       stateNonce = decoded.nonce;
+      // Verify userId matches the one in state
+      if (decoded.userId !== userId) {
+        console.error('User ID mismatch between state and request');
+        return new Response(
+          JSON.stringify({ error: 'state_mismatch' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
     } catch (e) {
       console.error('Invalid state format:', e);
-      return Response.redirect(`${APP_ORIGIN}/Account?error=state_mismatch`, 302);
-    }
-
-    // Verify nonce (CSRF protection)
-    const cookies = parseCookies(req.headers.get('cookie'));
-    const storedNonce = cookies.linkedin_oauth_nonce;
-
-    if (!storedNonce || storedNonce !== stateNonce) {
-      return Response.redirect(`${APP_ORIGIN}/Account?error=state_mismatch`, 302);
+      return new Response(
+        JSON.stringify({ error: 'state_mismatch' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     if (!userId) {
-      return Response.redirect(`${APP_ORIGIN}/signin?redirect=/Account`, 302);
+      return new Response(
+        JSON.stringify({ error: 'user_id_required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     // Exchange code for access token
@@ -121,13 +131,27 @@ serve(async (req) => {
     if (!tokenResponse.ok) {
       const errorText = await tokenResponse.text();
       console.error('LinkedIn token exchange failed:', errorText);
-      return Response.redirect(`${APP_ORIGIN}/Account?error=token_exchange_failed`, 302);
+      return new Response(
+        JSON.stringify({ error: 'token_exchange_failed' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     const tokenData = await tokenResponse.json();
     const { access_token, expires_in } = tokenData;
 
+    console.log('Token exchange successful, token length:', access_token?.length);
+
+    if (!access_token) {
+      console.error('Access token is null or undefined');
+      return new Response(
+        JSON.stringify({ error: 'token_exchange_failed' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Fetch LinkedIn profile using v2 API (works with 'profile' scope)
+    console.log('Fetching LinkedIn profile with token:', access_token.substring(0, 20) + '...');
     const profileResponse = await fetch('https://api.linkedin.com/v2/me', {
       headers: {
         'Authorization': `Bearer ${access_token}`,
@@ -138,7 +162,10 @@ serve(async (req) => {
     if (!profileResponse.ok) {
       const errorText = await profileResponse.text();
       console.error('LinkedIn profile fetch failed:', errorText);
-      return Response.redirect(`${APP_ORIGIN}/Account?error=profile_fetch_failed`, 302);
+      return new Response(
+        JSON.stringify({ error: 'profile_fetch_failed' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     const profileData = await profileResponse.json();
@@ -154,7 +181,10 @@ serve(async (req) => {
 
     if (userError || !user) {
       console.error('User not found in database:', userError);
-      return Response.redirect(`${APP_ORIGIN}/Account?error=user_not_found`, 302);
+      return new Response(
+        JSON.stringify({ error: 'user_not_found' }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     // Encrypt access token
@@ -182,19 +212,23 @@ serve(async (req) => {
 
     if (insertError) {
       console.error('Failed to store LinkedIn credentials:', insertError);
-      return Response.redirect(`${APP_ORIGIN}/Account?error=storage_failed`, 302);
+      return new Response(
+        JSON.stringify({ error: 'storage_failed' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
-    // Clear nonce cookie and redirect
-    const headers = new Headers({
-      'Location': `${APP_ORIGIN}/Account?connected=linkedin`,
-      'Set-Cookie': 'linkedin_oauth_nonce=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0',
-    });
-
-    return new Response(null, { status: 302, headers });
+    // Success! Return success response
+    return new Response(
+      JSON.stringify({ success: true, platform: 'linkedin', username: displayName }),
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
 
   } catch (error) {
     console.error('LinkedIn OAuth callback error:', error);
-    return Response.redirect(`${APP_ORIGIN}/Account?error=unexpected_error`, 302);
+    return new Response(
+      JSON.stringify({ error: 'unexpected_error' }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
   }
 });
