@@ -21,6 +21,7 @@ if (!LINKEDIN_CLIENT_ID || !LINKEDIN_REDIRECT_URI) {
 // Scopes required for v1
 // Using Sign In with LinkedIn v2 (most apps have this approved by default)
 const SCOPES = [
+  'openid',
   'profile',            // Read basic profile
   'email',              // Read email
   'w_member_social'     // Post on behalf of user
