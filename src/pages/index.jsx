@@ -193,6 +193,7 @@ function PagesContent() {
                 <Route path="/Account" element={<Account />} />
 
                 <Route path="/oauth/linkedin/callback" element={<LinkedInCallback />} />
+                <Route path="/LinkedInCallback" element={<LinkedInCallback />} />
 
                 <Route path="/WebhookTools" element={<WebhookTools />} />
                 
