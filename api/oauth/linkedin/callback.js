@@ -9,8 +9,8 @@
  * 5. Redirect to Profile page with success
  */
 
-import { supabaseServer } from '../lib/supabase-server.js';
-import { encryptToken } from '../lib/crypto.js';
+import { supabaseServer } from '../../lib/supabase-server.js';
+import { encryptToken } from '../../lib/crypto.js';
 
 const LINKEDIN_CLIENT_ID = process.env.LINKEDIN_CLIENT_ID;
 const LINKEDIN_CLIENT_SECRET = process.env.LINKEDIN_CLIENT_SECRET;
