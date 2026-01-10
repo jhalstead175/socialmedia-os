@@ -9,14 +9,13 @@
  * 5. Redirect to Profile page with success
  */
 
-import { supabaseServer } from '../../lib/supabase-server.js';
-import { encryptToken } from '../../lib/crypto.js';
-import { getAuth } from '@clerk/nextjs/server';
+import { supabaseServer } from '../lib/supabase-server.js';
+import { encryptToken } from '../lib/crypto.js';
 
 const LINKEDIN_CLIENT_ID = process.env.LINKEDIN_CLIENT_ID;
 const LINKEDIN_CLIENT_SECRET = process.env.LINKEDIN_CLIENT_SECRET;
 const LINKEDIN_REDIRECT_URI = process.env.LINKEDIN_REDIRECT_URI;
-const APP_ORIGIN = process.env.ORIGIN;
+const APP_ORIGIN = process.env.VITE_APP_URL || 'https://soshlops.vercel.app';
 
 if (!LINKEDIN_CLIENT_ID || !LINKEDIN_CLIENT_SECRET || !LINKEDIN_REDIRECT_URI) {
   throw new Error('Missing LinkedIn OAuth configuration');
@@ -41,16 +40,25 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Verify state (CSRF protection)
-    const cookies = parseCookies(req.headers.cookie);
-    const storedState = cookies.linkedin_oauth_state;
-
-    if (!storedState || storedState !== state) {
+    // Decode state to get user ID and nonce
+    let userId, stateNonce;
+    try {
+      const decoded = JSON.parse(Buffer.from(state, 'base64').toString('utf8'));
+      userId = decoded.userId;
+      stateNonce = decoded.nonce;
+    } catch (e) {
+      console.error('Invalid state format:', e);
       return res.redirect(302, `${APP_ORIGIN}/Account?error=state_mismatch`);
     }
 
-    // Get authenticated user from Clerk
-    const { userId } = getAuth(req);
+    // Verify nonce (CSRF protection)
+    const cookies = parseCookies(req.headers.cookie);
+    const storedNonce = cookies.linkedin_oauth_nonce;
+
+    if (!storedNonce || storedNonce !== stateNonce) {
+      return res.redirect(302, `${APP_ORIGIN}/Account?error=state_mismatch`);
+    }
+
     if (!userId) {
       return res.redirect(302, `${APP_ORIGIN}/signin?redirect=/Account`);
     }
@@ -131,8 +139,8 @@ export default async function handler(req, res) {
       return res.redirect(302, `${APP_ORIGIN}/Account?error=storage_failed`);
     }
 
-    // Clear state cookie
-    res.setHeader('Set-Cookie', 'linkedin_oauth_state=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0');
+    // Clear nonce cookie
+    res.setHeader('Set-Cookie', 'linkedin_oauth_nonce=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0');
 
     // Redirect to Profile with success
     return res.redirect(302, `${APP_ORIGIN}/Account?connected=linkedin`);

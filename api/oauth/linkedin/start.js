@@ -18,11 +18,12 @@ if (!LINKEDIN_CLIENT_ID || !LINKEDIN_REDIRECT_URI) {
   throw new Error('Missing LinkedIn OAuth configuration');
 }
 
-// Scopes required for v1
+// Scopes required for v1 (using OpenID Connect + new LinkedIn API)
 const SCOPES = [
-  'r_liteprofile',      // Read basic profile
-  'r_emailaddress',     // Read email
-  'w_member_social'     // Post on behalf of user (for later)
+  'openid',             // OpenID Connect
+  'profile',            // Read basic profile (replaces r_liteprofile)
+  'email',              // Read email (replaces r_emailaddress)
+  'w_member_social'     // Post on behalf of user
 ];
 
 export default async function handler(req, res) {
@@ -31,12 +32,19 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Generate CSRF state token
-    const state = crypto.randomBytes(32).toString('hex');
+    // Get Clerk user ID from header (passed by frontend fetch or URL param)
+    const clerkUserId = req.headers['x-clerk-user-id'] || req.query.userId;
 
-    // TODO: Store state in session or signed cookie for verification
-    // For now, we'll use a simple in-memory approach (production should use Redis or similar)
-    // Clerk will handle user context on callback
+    if (!clerkUserId) {
+      return res.status(401).json({ error: 'Unauthorized - user ID required' });
+    }
+
+    // Generate CSRF state token and encode user ID in it
+    const stateNonce = crypto.randomBytes(16).toString('hex');
+    const state = Buffer.from(JSON.stringify({
+      nonce: stateNonce,
+      userId: clerkUserId
+    })).toString('base64');
 
     // Build LinkedIn authorization URL
     const authUrl = new URL('https://www.linkedin.com/oauth/v2/authorization');
@@ -46,8 +54,8 @@ export default async function handler(req, res) {
     authUrl.searchParams.append('state', state);
     authUrl.searchParams.append('scope', SCOPES.join(' '));
 
-    // Store state in cookie for verification (signed with secret)
-    res.setHeader('Set-Cookie', `linkedin_oauth_state=${state}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=600`);
+    // Store nonce in cookie for CSRF verification
+    res.setHeader('Set-Cookie', `linkedin_oauth_nonce=${stateNonce}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=600`);
 
     // Redirect user to LinkedIn
     return res.redirect(302, authUrl.toString());

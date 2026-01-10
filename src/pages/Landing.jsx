@@ -62,8 +62,8 @@ export default function Landing() {
           <p>✓ Scheduled posts</p>
           <p>✓ Publishing calendar</p>
           <p>✓ Organization accounts</p>
-          <p className="text-slate-500">Analytics (coming soon)</p>
-          <p className="text-slate-500">Multi-platform (coming soon)</p>
+          <p className="text-slate-500">Analytics (v1.1)</p>
+          <p className="text-slate-500">Multi-platform (v1.1)</p>
         </div>
         <p className="mt-6 text-sm text-slate-400">
           Text-only posts. Additional platforms and features in active development.
@@ -106,8 +106,8 @@ export default function Landing() {
           <p>Institutional design</p>
           <p>Audit-friendly workflows</p>
           <p>Multi-account by default</p>
-          <p>Assistive AI only</p>
           <p>Professional-grade reliability</p>
+          <p>No AI gimmicks</p>
         </div>
       </section>
 

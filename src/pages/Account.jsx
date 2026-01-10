@@ -111,6 +111,11 @@ export default function Account() {
   }, [searchParams, setSearchParams]);
 
   const handleConnectAccount = (platform) => {
+    if (!clerkUser) {
+      toast.error('Please sign in first');
+      return;
+    }
+
     const oauthEndpoints = {
       linkedin: '/api/oauth/linkedin/start',
       x: '/api/oauth/x/start',
@@ -120,8 +125,8 @@ export default function Account() {
     const endpoint = oauthEndpoints[platform];
 
     if (endpoint) {
-      // Redirect to OAuth start endpoint
-      window.location.href = endpoint;
+      // Redirect to OAuth start endpoint with user ID
+      window.location.href = `${endpoint}?userId=${encodeURIComponent(clerkUser.id)}`;
     } else {
       toast.error(`Platform ${platform} not supported`);
     }
