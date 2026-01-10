@@ -110,29 +110,45 @@ export default function Account() {
     }
   }, [searchParams, setSearchParams]);
 
-  const handleConnectAccount = (platform) => {
+  const handleConnectAccount = async (platform) => {
     if (!clerkUser) {
       toast.error('Please sign in first');
       return;
     }
 
-    // Use Supabase Edge Functions for OAuth
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    try {
+      // Use Supabase client to invoke Edge Function (handles auth automatically)
+      const functionNames = {
+        linkedin: 'oauth-linkedin-start',
+        x: 'oauth-x-start',
+        meta: 'oauth-meta-start'
+      };
 
-    const oauthEndpoints = {
-      linkedin: `${supabaseUrl}/functions/v1/oauth-linkedin-start`,
-      x: `${supabaseUrl}/functions/v1/oauth-x-start`,
-      meta: `${supabaseUrl}/functions/v1/oauth-meta-start`
-    };
+      const functionName = functionNames[platform];
+      if (!functionName) {
+        toast.error(`Platform ${platform} not supported`);
+        return;
+      }
 
-    const endpoint = oauthEndpoints[platform];
+      const { data, error } = await supabase.functions.invoke(functionName, {
+        body: { userId: clerkUser.id }
+      });
 
-    if (endpoint) {
-      // Redirect to OAuth start endpoint with user ID and auth
-      window.location.href = `${endpoint}?userId=${encodeURIComponent(clerkUser.id)}&apikey=${anonKey}`;
-    } else {
-      toast.error(`Platform ${platform} not supported`);
+      if (error) {
+        console.error('OAuth start error:', error);
+        toast.error('Failed to start OAuth flow');
+        return;
+      }
+
+      // Redirect to LinkedIn authorization page
+      if (data?.redirectUrl) {
+        window.location.href = data.redirectUrl;
+      } else {
+        toast.error('Failed to get authorization URL');
+      }
+    } catch (err) {
+      console.error('Failed to start OAuth:', err);
+      toast.error('Failed to connect account');
     }
   };
 
