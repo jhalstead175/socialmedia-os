@@ -127,19 +127,23 @@ serve(async (req) => {
     const tokenData = await tokenResponse.json();
     const { access_token, expires_in } = tokenData;
 
-    // Fetch LinkedIn profile
-    const profileResponse = await fetch('https://api.linkedin.com/v2/userinfo', {
-      headers: { 'Authorization': `Bearer ${access_token}` },
+    // Fetch LinkedIn profile using v2 API (works with 'profile' scope)
+    const profileResponse = await fetch('https://api.linkedin.com/v2/me', {
+      headers: {
+        'Authorization': `Bearer ${access_token}`,
+        'X-Restli-Protocol-Version': '2.0.0',
+      },
     });
 
     if (!profileResponse.ok) {
-      console.error('LinkedIn profile fetch failed');
+      const errorText = await profileResponse.text();
+      console.error('LinkedIn profile fetch failed:', errorText);
       return Response.redirect(`${APP_ORIGIN}/Account?error=profile_fetch_failed`, 302);
     }
 
     const profileData = await profileResponse.json();
-    const linkedinUserId = profileData.sub; // OpenID Connect subject
-    const displayName = profileData.name || profileData.given_name || 'LinkedIn User';
+    const linkedinUserId = profileData.id;
+    const displayName = `${profileData.localizedFirstName || ''} ${profileData.localizedLastName || ''}`.trim() || 'LinkedIn User';
 
     // Get user's org from Supabase
     const { data: user, error: userError } = await supabase
