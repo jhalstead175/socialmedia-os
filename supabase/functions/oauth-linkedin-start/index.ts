@@ -4,6 +4,7 @@
  * Initiates OAuth flow by redirecting to LinkedIn authorization page
  */
 
+// @ts-ignore
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const LINKEDIN_CLIENT_ID = Deno.env.get('LINKEDIN_CLIENT_ID');
@@ -15,8 +16,8 @@ if (!LINKEDIN_CLIENT_ID || !LINKEDIN_REDIRECT_URI) {
 
 const SCOPES = ['profile', 'email', 'w_member_social'];
 
-serve(async (req) => {
-  // CORS headers
+serve(async (req: Request) => {
+  // CORS headers - allow all origins for OAuth redirect
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',

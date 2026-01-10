@@ -118,17 +118,19 @@ export default function Account() {
 
     // Use Supabase Edge Functions for OAuth
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
     const oauthEndpoints = {
       linkedin: `${supabaseUrl}/functions/v1/oauth-linkedin-start`,
       x: `${supabaseUrl}/functions/v1/oauth-x-start`,
-      meta: `${supabaseUrl}/functions/v1/oauth-meta-start'`
+      meta: `${supabaseUrl}/functions/v1/oauth-meta-start`
     };
 
     const endpoint = oauthEndpoints[platform];
 
     if (endpoint) {
-      // Redirect to OAuth start endpoint with user ID
-      window.location.href = `${endpoint}?userId=${encodeURIComponent(clerkUser.id)}`;
+      // Redirect to OAuth start endpoint with user ID and auth
+      window.location.href = `${endpoint}?userId=${encodeURIComponent(clerkUser.id)}&apikey=${anonKey}`;
     } else {
       toast.error(`Platform ${platform} not supported`);
     }
