@@ -18,11 +18,11 @@ if (!LINKEDIN_CLIENT_ID || !LINKEDIN_REDIRECT_URI) {
   throw new Error('Missing LinkedIn OAuth configuration');
 }
 
-// Scopes required for v1 (using OpenID Connect + new LinkedIn API)
+// Scopes required for v1
+// Using Sign In with LinkedIn v2 (most apps have this approved by default)
 const SCOPES = [
-  'openid',             // OpenID Connect
-  'profile',            // Read basic profile (replaces r_liteprofile)
-  'email',              // Read email (replaces r_emailaddress)
+  'profile',            // Read basic profile
+  'email',              // Read email
   'w_member_social'     // Post on behalf of user
 ];
 
