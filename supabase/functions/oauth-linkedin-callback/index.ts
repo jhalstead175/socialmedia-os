@@ -83,10 +83,7 @@ serve(async (req) => {
     const state = url.searchParams.get('state');
 
     if (!code || !state) {
-      return new Response(
-        JSON.stringify({ error: 'missing_code_or_state' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return Response.redirect(`${APP_ORIGIN}/Account?error=missing_code_or_state`, 302);
     }
 
     // Decode and verify state - extract userId from state
@@ -99,17 +96,11 @@ serve(async (req) => {
 
       if (!userId) {
         console.error('User ID missing in state');
-        return new Response(
-          JSON.stringify({ error: 'invalid_state' }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
+        return Response.redirect(`${APP_ORIGIN}/Account?error=invalid_state`, 302);
       }
     } catch (e) {
       console.error('Invalid state format:', e);
-      return new Response(
-        JSON.stringify({ error: 'state_mismatch' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return Response.redirect(`${APP_ORIGIN}/Account?error=state_mismatch`, 302);
     }
 
     // Exchange code for access token
@@ -128,10 +119,7 @@ serve(async (req) => {
     if (!tokenResponse.ok) {
       const errorText = await tokenResponse.text();
       console.error('LinkedIn token exchange failed:', errorText);
-      return new Response(
-        JSON.stringify({ error: 'token_exchange_failed' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return Response.redirect(`${APP_ORIGIN}/Account?error=token_exchange_failed`, 302);
     }
 
     const tokenData = await tokenResponse.json();
@@ -141,10 +129,7 @@ serve(async (req) => {
 
     if (!access_token) {
       console.error('Access token is null or undefined');
-      return new Response(
-        JSON.stringify({ error: 'token_exchange_failed' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return Response.redirect(`${APP_ORIGIN}/Account?error=token_exchange_failed`, 302);
     }
 
     // Fetch LinkedIn profile using v2 API (works with 'profile' scope)
@@ -159,10 +144,7 @@ serve(async (req) => {
     if (!profileResponse.ok) {
       const errorText = await profileResponse.text();
       console.error('LinkedIn profile fetch failed:', errorText);
-      return new Response(
-        JSON.stringify({ error: 'profile_fetch_failed' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return Response.redirect(`${APP_ORIGIN}/Account?error=profile_fetch_failed`, 302);
     }
 
     const profileData = await profileResponse.json();
@@ -178,10 +160,7 @@ serve(async (req) => {
 
     if (userError || !user) {
       console.error('User not found in database:', userError);
-      return new Response(
-        JSON.stringify({ error: 'user_not_found' }),
-        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return Response.redirect(`${APP_ORIGIN}/Account?error=user_not_found`, 302);
     }
 
     // Encrypt access token
@@ -209,23 +188,14 @@ serve(async (req) => {
 
     if (insertError) {
       console.error('Failed to store LinkedIn credentials:', insertError);
-      return new Response(
-        JSON.stringify({ error: 'storage_failed' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return Response.redirect(`${APP_ORIGIN}/Account?error=storage_failed`, 302);
     }
 
-    // Success! Return success response
-    return new Response(
-      JSON.stringify({ success: true, platform: 'linkedin', username: displayName }),
-      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    // Success! Redirect back to app
+    return Response.redirect(`${APP_ORIGIN}/Account?connected=linkedin`, 302);
 
   } catch (error) {
     console.error('LinkedIn OAuth callback error:', error);
-    return new Response(
-      JSON.stringify({ error: 'unexpected_error' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    return Response.redirect(`${APP_ORIGIN}/Account?error=unexpected_error`, 302);
   }
 });
