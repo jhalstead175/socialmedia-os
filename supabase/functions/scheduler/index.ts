@@ -24,9 +24,14 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL");
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+const ENCRYPTION_KEY = Deno.env.get("ENCRYPTION_KEY");
 
 if (!supabaseUrl || !supabaseServiceKey) {
   throw new Error("Missing Supabase environment variables");
+}
+
+if (!ENCRYPTION_KEY) {
+  throw new Error("Missing ENCRYPTION_KEY environment variable");
 }
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey, {
@@ -35,6 +40,43 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
     persistSession: false
   }
 });
+
+/**
+ * Decrypt token using AES-256-GCM
+ *
+ * Format: base64(IV + ciphertext) - matches oauth-linkedin-callback encryption
+ * IV is first 12 bytes, rest is ciphertext (includes GCM auth tag)
+ */
+async function decryptToken(encryptedToken: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const decoder = new TextDecoder();
+
+  // Use first 32 chars of ENCRYPTION_KEY as the key (matches callback encryption)
+  const keyData = encoder.encode(ENCRYPTION_KEY!.slice(0, 32));
+
+  const key = await crypto.subtle.importKey(
+    'raw',
+    keyData,
+    { name: 'AES-GCM' },
+    false,
+    ['decrypt']
+  );
+
+  // Decode base64 to get combined IV + ciphertext
+  const combined = Uint8Array.from(atob(encryptedToken), c => c.charCodeAt(0));
+
+  // Extract IV (first 12 bytes) and ciphertext (rest)
+  const iv = combined.slice(0, 12);
+  const ciphertext = combined.slice(12);
+
+  const decrypted = await crypto.subtle.decrypt(
+    { name: 'AES-GCM', iv },
+    key,
+    ciphertext
+  );
+
+  return decoder.decode(decrypted);
+}
 
 serve(async () => {
   const now = new Date().toISOString();
@@ -139,7 +181,7 @@ serve(async () => {
  * Publish to LinkedIn
  *
  * v1: Text-only posts (no media)
- * Fetches access token, calls LinkedIn UGC API
+ * Fetches access token, DECRYPTS it, calls LinkedIn UGC API
  *
  * @param post - Post data from database
  * @param platform - Platform configuration
@@ -157,11 +199,22 @@ async function publishToLinkedIn(post: any, platform: any): Promise<string> {
     throw new Error("Social account not found");
   }
 
-  // TODO: Decrypt access_token if encryption is implemented
-  // For v1, assuming tokens are stored as-is (will be encrypted later)
-  const accessToken = account.access_token;
+  // 2. DECRYPT the access token (CRITICAL FIX)
+  let accessToken: string;
+  try {
+    accessToken = await decryptToken(account.access_token);
+    console.log(`Decrypted LinkedIn token for account ${platform.social_account_id}`);
+  } catch (decryptError: any) {
+    console.error("Token decryption failed:", decryptError);
+    throw new Error(`Token decryption failed: ${decryptError.message}`);
+  }
 
-  // 2. Call LinkedIn UGC Posts API
+  // 3. Validate token is non-empty
+  if (!accessToken || accessToken.length < 10) {
+    throw new Error("Decrypted token is empty or invalid");
+  }
+
+  // 4. Call LinkedIn UGC Posts API
   // https://learn.microsoft.com/en-us/linkedin/marketing/community-management/shares/ugc-post-api
   const response = await fetch("https://api.linkedin.com/v2/ugcPosts", {
     method: "POST",
@@ -189,8 +242,8 @@ async function publishToLinkedIn(post: any, platform: any): Promise<string> {
 
   if (!response.ok) {
     const errorText = await response.text();
-    console.error("LinkedIn API error:", errorText);
-    throw new Error(`LinkedIn publish failed: ${response.status}`);
+    console.error("LinkedIn API error:", response.status, errorText);
+    throw new Error(`LinkedIn publish failed: ${response.status} - ${errorText}`);
   }
 
   const responseData = await response.json();
@@ -221,10 +274,16 @@ async function publishToX(post: any, platform: any): Promise<string> {
     throw new Error("Social account not found");
   }
 
-  // TODO: Decrypt access_token if encryption is implemented
-  const accessToken = account.access_token;
+  // 2. Decrypt access token
+  let accessToken: string;
+  try {
+    accessToken = await decryptToken(account.access_token);
+  } catch (decryptError: any) {
+    console.error("Token decryption failed:", decryptError);
+    throw new Error(`Token decryption failed: ${decryptError.message}`);
+  }
 
-  // 2. Call Twitter API v2 (create tweet)
+  // 3. Call Twitter API v2 (create tweet)
   const response = await fetch("https://api.twitter.com/2/tweets", {
     method: "POST",
     headers: {
@@ -270,11 +329,18 @@ async function publishToMeta(post: any, platform: any): Promise<string> {
     throw new Error("Social account not found");
   }
 
-  // TODO: Decrypt access_token if encryption is implemented
-  const pageAccessToken = account.access_token;
+  // 2. Decrypt page access token
+  let pageAccessToken: string;
+  try {
+    pageAccessToken = await decryptToken(account.access_token);
+  } catch (decryptError: any) {
+    console.error("Token decryption failed:", decryptError);
+    throw new Error(`Token decryption failed: ${decryptError.message}`);
+  }
+
   const pageId = account.platform_user_id; // IMPORTANT: This is PAGE ID, not user ID
 
-  // 2. Call Facebook Graph API (publish to page feed)
+  // 3. Call Facebook Graph API (publish to page feed)
   const response = await fetch(
     `https://graph.facebook.com/v19.0/${pageId}/feed`,
     {
