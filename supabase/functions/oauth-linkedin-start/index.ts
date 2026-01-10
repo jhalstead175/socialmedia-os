@@ -29,8 +29,8 @@ serve(async (req: Request) => {
   }
 
   try {
-    const url = new URL(req.url);
-    const userId = url.searchParams.get('userId');
+    // Get userId from request body
+    const { userId } = await req.json();
 
     if (!userId) {
       return new Response(
@@ -57,17 +57,17 @@ serve(async (req: Request) => {
     authUrl.searchParams.set('state', state);
     authUrl.searchParams.set('scope', SCOPES.join(' '));
 
-    // Set nonce cookie for CSRF verification
+    // Return redirect URL and set cookie
     const headers = new Headers({
       ...corsHeaders,
-      'Location': authUrl.toString(),
-      'Set-Cookie': `linkedin_oauth_nonce=${nonce}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=600`,
+      'Content-Type': 'application/json',
+      'Set-Cookie': `linkedin_oauth_nonce=${nonce}; Path=/; Domain=.supabase.co; HttpOnly; Secure; SameSite=None; Max-Age=600`,
     });
 
-    return new Response(null, {
-      status: 302,
-      headers,
-    });
+    return new Response(
+      JSON.stringify({ redirectUrl: authUrl.toString() }),
+      { status: 200, headers }
+    );
 
   } catch (error) {
     console.error('LinkedIn OAuth start error:', error);
