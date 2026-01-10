@@ -77,26 +77,30 @@ serve(async (req) => {
   }
 
   try {
-    // Get OAuth parameters from request body (called from frontend)
-    const { code, state, userId } = await req.json();
+    // Get OAuth parameters from URL (GET request from LinkedIn)
+    const url = new URL(req.url);
+    const code = url.searchParams.get('code');
+    const state = url.searchParams.get('state');
 
     if (!code || !state) {
       return new Response(
-        JSON.stringify({ error: 'invalid_request' }),
+        JSON.stringify({ error: 'missing_code_or_state' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Decode and verify state
+    // Decode and verify state - extract userId from state
+    let userId: string;
     let stateNonce: string;
     try {
       const decoded = JSON.parse(atob(state));
+      userId = decoded.userId;
       stateNonce = decoded.nonce;
-      // Verify userId matches the one in state
-      if (decoded.userId !== userId) {
-        console.error('User ID mismatch between state and request');
+
+      if (!userId) {
+        console.error('User ID missing in state');
         return new Response(
-          JSON.stringify({ error: 'state_mismatch' }),
+          JSON.stringify({ error: 'invalid_state' }),
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
@@ -105,13 +109,6 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ error: 'state_mismatch' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    if (!userId) {
-      return new Response(
-        JSON.stringify({ error: 'user_id_required' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
