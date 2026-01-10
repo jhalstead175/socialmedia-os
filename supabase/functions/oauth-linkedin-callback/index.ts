@@ -127,7 +127,15 @@ serve(async (req) => {
     const tokenData = await tokenResponse.json();
     const { access_token, expires_in } = tokenData;
 
+    console.log('Token exchange successful, token length:', access_token?.length);
+
+    if (!access_token) {
+      console.error('Access token is null or undefined');
+      return Response.redirect(`${APP_ORIGIN}/Account?error=token_exchange_failed`, 302);
+    }
+
     // Fetch LinkedIn profile using v2 API (works with 'profile' scope)
+    console.log('Fetching LinkedIn profile with token:', access_token.substring(0, 20) + '...');
     const profileResponse = await fetch('https://api.linkedin.com/v2/me', {
       headers: {
         'Authorization': `Bearer ${access_token}`,
