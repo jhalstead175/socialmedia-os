@@ -27,9 +27,8 @@ export const trackEvent = (eventName, properties = {}) => {
     
     localStorage.setItem('rezemai_events', JSON.stringify(events));
 
-    // If Base44 has a built-in analytics API, we'd call it here
-    // Example: base44.analytics.track(eventName, eventData);
-    
+    // Future: Integrate with analytics service (e.g., PostHog, Mixpanel, etc.)
+
   } catch (error) {
     console.warn('Analytics tracking failed:', error);
   }

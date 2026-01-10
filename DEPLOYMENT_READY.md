@@ -2,10 +2,9 @@
 
 ## ✅ What's Been Completed
 
-### 1. Authentication Migration: Base44 → Clerk
-- ✅ Removed Base44 SDK entirely
-- ✅ Installed @clerk/clerk-react (v5.x)
-- ✅ Created Clerk auth adapter for seamless migration
+### 1. Authentication System
+- ✅ Installed @clerk/clerk-react (v5.x) for authentication
+- ✅ Supabase integration for social media OAuth flows
 - ✅ Updated Signin page with Clerk's SignIn component
 - ✅ Wrapped app in ClerkProvider
 
@@ -225,22 +224,15 @@ Preference persists in localStorage across sessions.
 
 ## 🚨 Known Issues / Limitations
 
-### Backend Still Uses Base44 Entities
-The app is configured for Clerk auth, but **dashboard features still reference Base44 entities**:
-- `Resume`, `InterviewSession`, `Subscription`, etc.
-- These will error until you migrate to a new backend
+### Backend Migration to Supabase
+The app is transitioning to Supabase for backend services:
+- Social media OAuth flows implemented with Supabase Edge Functions
+- Additional backend features (Resume, InterviewSession, Subscription) pending migration
 
-**Recommendation:**
-- For now, only ship the **landing page + auth**
-- Disable/hide dashboard routes until backend migration complete
-- Or accept that dashboard will show errors until migration
-
-### Alternative: Static Landing Only
-If you want to ship TODAY without any backend:
-- Disable all routes except Landing, FAQ, Legal pages
-- Replace "Get Early Access" with "Join Waitlist" (email capture)
-- Ship a beautiful marketing site now
-- Add functionality later
+**Current State:**
+- Landing page and authentication fully functional
+- Social media account connection (LinkedIn, X, Meta) in development
+- Dashboard features awaiting Supabase backend implementation
 
 ---
 
