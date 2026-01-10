@@ -13,7 +13,7 @@ const LINKEDIN_REDIRECT_URI = Deno.env.get('LINKEDIN_REDIRECT_URI')!;
 const ENCRYPTION_KEY = Deno.env.get('ENCRYPTION_KEY')!;
 const APP_ORIGIN = Deno.env.get('APP_ORIGIN') || 'https://soshlops.vercel.app';
 
-// Initialize Supabase client
+// Initialize Supabase client (use Supabase built-in env vars)
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
