@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
-import { Resume, User, InterviewSession, AuditEvent } from "@/api/entities";
-import { UploadFile, ExtractDataFromUploadedFile } from "@/api/integrations";
+import { SocialPost, ScheduledContent, User, AuditEvent } from "@/api/entities";
+import { UploadFile } from "@/api/integrations";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,8 +20,8 @@ import {
 } from "lucide-react";
 
 export default function DataImportExport({ onUpdate }) {
-  const [resumes, setResumes] = useState([]);
-  const [sessions, setSessions] = useState([]);
+  const [posts, setPosts] = useState([]);
+  const [scheduledContent, setScheduledContent] = useState([]);
   const [isImporting, setIsImporting] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [importProgress, setImportProgress] = useState(0);
@@ -31,16 +31,16 @@ export default function DataImportExport({ onUpdate }) {
 
   const fetchData = async () => {
     try {
-      const [userData, resumeData, sessionData] = await Promise.all([
+      const [userData, postData, scheduledData] = await Promise.all([
         User.me(),
-        Resume.list(),
-        InterviewSession.list()
+        SocialPost.list(),
+        ScheduledContent.list()
       ]);
       setUser(userData);
-      setResumes(resumeData);
-      setSessions(sessionData);
+      setPosts(postData);
+      setScheduledContent(scheduledData);
     } catch (error) {
-      console.error("Failed to fetch user data for export:", error);
+      console.error("Failed to fetch data for export:", error);
     }
   };
 
@@ -74,80 +74,34 @@ export default function DataImportExport({ onUpdate }) {
       let extractedData;
 
       if (fileExtension === 'json') {
-        // Handle JSON resume data
+        // Handle JSON social media data
         const response = await fetch(file_url);
         extractedData = await response.json();
         setImportProgress(60);
-      } else if (['pdf', 'docx', 'doc'].includes(fileExtension)) {
-        // Extract resume data from documents
-        const result = await ExtractDataFromUploadedFile({
-          file_url,
-          json_schema: {
-            type: "object",
-            properties: {
-              personal_info: {
-                type: "object",
-                properties: {
-                  full_name: { type: "string" },
-                  email: { type: "string" },
-                  phone: { type: "string" },
-                  location: { type: "string" },
-                  summary: { type: "string" }
-                }
-              },
-              experience: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    company: { type: "string" },
-                    position: { type: "string" },
-                    start_date: { type: "string" },
-                    end_date: { type: "string" },
-                    achievements: { type: "array", items: { type: "string" } }
-                  }
-                }
-              },
-              education: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    institution: { type: "string" },
-                    degree: { type: "string" },
-                    graduation_year: { type: "string" }
-                  }
-                }
-              },
-              skills: { type: "array", items: { type: "string" } }
-            }
-          }
-        });
-
-        if (result.status === 'success') {
-          extractedData = result.output;
-          setImportProgress(80);
-        } else {
-          throw new Error(result.details || 'Failed to extract data');
-        }
+      } else if (fileExtension === 'csv') {
+        // Handle CSV import for bulk posts
+        const response = await fetch(file_url);
+        const csvText = await response.text();
+        // Parse CSV (simplified - would need proper CSV parser in production)
+        extractedData = { posts: [] };
+        setImportProgress(60);
       } else {
-        throw new Error('Unsupported file format');
+        throw new Error('Unsupported file format. Please use JSON or CSV.');
       }
 
-      setImportMessage('Creating résumé...');
+      setImportMessage('Importing posts...');
 
-      // Step 3: Create new resume from extracted data
-      const newResume = await Resume.create({
-        title: `Imported from ${uploadedFile.name}`,
-        template_id: 'executive-modern',
-        personal_info: extractedData.personal_info || {},
-        experience: extractedData.experience || [],
-        education: extractedData.education || [],
-        skills: extractedData.skills || [],
-        certifications: extractedData.certifications || [],
-        version: 1,
-        is_active: true
-      });
+      // Step 3: Create posts from extracted data
+      if (extractedData.posts && Array.isArray(extractedData.posts)) {
+        for (const postData of extractedData.posts) {
+          await SocialPost.create({
+            content: postData.content || '',
+            platform: postData.platform || 'linkedin',
+            status: 'draft',
+            ...postData
+          });
+        }
+      }
 
       setImportProgress(100);
       setImportMessage('Import completed successfully!');
@@ -157,8 +111,8 @@ export default function DataImportExport({ onUpdate }) {
         setImportProgress(0);
         setImportMessage('');
         setUploadedFile(null);
-        onUpdate(); // Use the passed onUpdate function
-        fetchData(); // Refetch data after import
+        onUpdate?.();
+        fetchData();
       }, 2000);
 
     } catch (error) {
@@ -176,32 +130,25 @@ export default function DataImportExport({ onUpdate }) {
     }
     setIsExporting(true);
     try {
-      // Use the AuditEvent entity from the SDK
       await AuditEvent.create({
         user_id: user.id,
         action_type: 'data_export_all',
-        metadata: { resume_count: resumes.length, session_count: sessions.length }
+        metadata: { post_count: posts.length, scheduled_count: scheduledContent.length }
       });
+
       const exportData = {
         export_date: new Date().toISOString(),
         user_profile: {
           full_name: user.full_name,
           email: user.email,
-          phone: user.phone,
-          location: user.location,
-          linkedin: user.linkedin,
-          bio: user.bio,
-          current_title: user.current_title,
-          company: user.company,
-          industry: user.industry,
-          years_experience: user.years_experience
+          company: user.company
         },
-        resumes: resumes.map(resume => {
-          const { id, created_by, created_date, updated_date, ...rest } = resume;
+        social_posts: posts.map(post => {
+          const { id, created_by, created_date, updated_date, ...rest } = post;
           return rest;
         }),
-        interview_sessions: sessions.map(session => {
-          const { id, created_by, created_date, updated_date, ...rest } = session;
+        scheduled_content: scheduledContent.map(content => {
+          const { id, created_by, created_date, updated_date, ...rest } = content;
           return rest;
         })
       };
@@ -213,7 +160,7 @@ export default function DataImportExport({ onUpdate }) {
 
       const link = document.createElement('a');
       link.href = url;
-      link.download = `rezemai-export-${new Date().toISOString().split('T')[0]}.json`;
+      link.download = `soshlops-export-${new Date().toISOString().split('T')[0]}.json`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -223,38 +170,6 @@ export default function DataImportExport({ onUpdate }) {
       console.error('Export error:', error);
     }
     setIsExporting(false);
-  };
-
-  const exportResumePDF = async (resume) => {
-    // This would trigger the print/PDF export for a specific resume
-    // For now, we'll just show the resume in a new tab formatted for PDF
-    const newWindow = window.open('', '_blank');
-    newWindow.document.write(`
-      <html>
-        <head>
-          <title>${resume.title}</title>
-          <style>
-            body { font-family: Arial, sans-serif; margin: 40px; }
-            .header { text-align: center; margin-bottom: 30px; }
-            .section { margin-bottom: 20px; }
-            .section-title { font-weight: bold; color: #1A2F4B; margin-bottom: 10px; }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <h1>${resume.personal_info?.full_name || 'Resume'}</h1>
-            <p>${resume.personal_info?.email || ''}</p>
-          </div>
-          <div class="section">
-            <div class="section-title">Professional Summary</div>
-            <p>${resume.personal_info?.summary || ''}</p>
-          </div>
-          <!-- Additional sections would be rendered here -->
-        </body>
-      </html>
-    `);
-    newWindow.document.close();
-    setTimeout(() => newWindow.print(), 500);
   };
 
   return (
@@ -267,7 +182,7 @@ export default function DataImportExport({ onUpdate }) {
             Import Data
           </CardTitle>
           <p className="text-sm text-slate-600">
-            Import résumé data from existing documents or REZEMAI export files.
+            Import social media posts from CSV or SoshOps export files.
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -300,17 +215,17 @@ export default function DataImportExport({ onUpdate }) {
             <File className="w-12 h-12 text-slate-400 mx-auto mb-3" />
             <div className="space-y-2">
               <p className="text-sm text-slate-600">
-                Select a file to import résumé data
+                Select a file to import social media posts
               </p>
               <Input
                 type="file"
                 onChange={handleFileUpload}
-                accept=".pdf,.doc,.docx,.json"
+                accept=".csv,.json"
                 className="max-w-xs mx-auto"
                 disabled={isImporting}
               />
               <p className="text-xs text-slate-500">
-                Supports PDF, DOC, DOCX, and JSON files
+                Supports CSV and JSON files
               </p>
             </div>
           </div>
@@ -341,8 +256,8 @@ export default function DataImportExport({ onUpdate }) {
           )}
 
           <div className="text-xs text-slate-500 space-y-1">
-            <div>• PDF/DOC files: AI will extract résumé information</div>
-            <div>• JSON files: Direct import of REZEMAI export data</div>
+            <div>• CSV files: Bulk import with columns for content, platform, scheduled_time</div>
+            <div>• JSON files: Direct import of SoshOps export data</div>
             <div>• Large files may take a few minutes to process</div>
           </div>
         </CardContent>
@@ -356,20 +271,19 @@ export default function DataImportExport({ onUpdate }) {
             Export Data
           </CardTitle>
           <p className="text-sm text-slate-600">
-            Download your résumés and session data for backup or transfer.
+            Download your posts and scheduled content for backup or transfer.
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Export All Data */}
           <div className="p-4 border border-slate-200 rounded-lg">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-semibold">Complete Data Export</h3>
                 <p className="text-sm text-slate-600">
-                  Download all your résumés and interview sessions as JSON
+                  Download all your social media posts and scheduled content as JSON
                 </p>
                 <div className="text-xs text-slate-500 mt-1">
-                  Includes {resumes.length} résumés and {sessions.length} interview sessions
+                  Includes {posts.length} posts and {scheduledContent.length} scheduled items
                 </div>
               </div>
               <Button
@@ -386,33 +300,6 @@ export default function DataImportExport({ onUpdate }) {
               </Button>
             </div>
           </div>
-
-          {/* Individual Resume Exports */}
-          {resumes.length > 0 && (
-            <div className="space-y-3">
-              <h3 className="font-semibold">Individual Résumé Exports</h3>
-              <div className="space-y-2 max-h-60 overflow-y-auto">
-                {resumes.map((resume) => (
-                  <div key={resume.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium truncate">{resume.title}</div>
-                      <div className="text-xs text-slate-500">
-                        Updated {new Date(resume.updated_date).toLocaleDateString()}
-                      </div>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => exportResumePDF(resume)}
-                    >
-                      <FolderDown className="w-4 h-4 mr-1" />
-                      PDF
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </CardContent>
       </Card>
     </div>

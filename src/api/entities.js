@@ -33,14 +33,37 @@ const createMockEntity = (name) => ({
 });
 
 // Export entity stubs
-export const Resume = createMockEntity('Resume');
-export const InterviewSession = createMockEntity('InterviewSession');
+
+// Social Media Operations (SoshOps-specific entities)
+export const SocialPost = createMockEntity('SocialPost');
+export const ScheduledContent = createMockEntity('ScheduledContent');
+export const SocialAccount = createMockEntity('SocialAccount');
+export const Campaign = createMockEntity('Campaign');
+export const PostAnalytics = createMockEntity('PostAnalytics');
+
+// Subscription & Usage
 export const Subscription = createMockEntity('Subscription');
 export const Usage = createMockEntity('Usage');
+
+// Support & Feedback
 export const SupportTicket = createMockEntity('SupportTicket');
+
+// Marketing & Referrals
 export const Referral = createMockEntity('Referral');
-export const PerformanceLog = createMockEntity('PerformanceLog');
+export const ReferralCode = createMockEntity('ReferralCode');
+export const ReferralAttribution = createMockEntity('ReferralAttribution');
+export const Promo = createMockEntity('Promo');
+export const PromoRedemption = createMockEntity('PromoRedemption');
+export const PromoBanner = createMockEntity('PromoBanner');
+export const CampaignLink = createMockEntity('CampaignLink');
+
+// Email & Communication
 export const EmailCampaign = createMockEntity('EmailCampaign');
+export const EmailTemplate = createMockEntity('EmailTemplate');
+export const ScheduledEmail = createMockEntity('ScheduledEmail');
+
+// System & Monitoring
+export const PerformanceLog = createMockEntity('PerformanceLog');
 export const AuditEvent = createMockEntity('AuditEvent');
 export const ProcessedEvent = createMockEntity('ProcessedEvent');
 export const WebhookLog = createMockEntity('WebhookLog');
@@ -48,16 +71,11 @@ export const StatusComponent = createMockEntity('StatusComponent');
 export const Incident = createMockEntity('Incident');
 export const Maintenance = createMockEntity('Maintenance');
 export const ChangelogEntry = createMockEntity('ChangelogEntry');
-export const DraftResume = createMockEntity('DraftResume');
-export const EmailTemplate = createMockEntity('EmailTemplate');
-export const ScheduledEmail = createMockEntity('ScheduledEmail');
-export const Promo = createMockEntity('Promo');
-export const PromoRedemption = createMockEntity('PromoRedemption');
-export const ReferralCode = createMockEntity('ReferralCode');
-export const ReferralAttribution = createMockEntity('ReferralAttribution');
-export const PromoBanner = createMockEntity('PromoBanner');
-export const CampaignLink = createMockEntity('CampaignLink');
+
+// Features & Configuration
 export const FeatureFlag = createMockEntity('FeatureFlag');
+
+// Team Management
 export const Team = createMockEntity('Team');
 export const TeamMember = createMockEntity('TeamMember');
 

@@ -63,11 +63,11 @@ export default function TestingDashboard() {
         }
       },
       {
-        name: 'Resume Entity SDK',
+        name: 'SocialPost Entity SDK',
         test: async () => {
           try {
-            const { Resume } = await import('@/api/entities');
-            return typeof Resume.list === 'function';
+            const { SocialPost } = await import('@/api/entities');
+            return typeof SocialPost.list === 'function';
           } catch (e) {
             return false;
           }

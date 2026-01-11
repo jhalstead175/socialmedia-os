@@ -1,12 +1,9 @@
 import React from 'react';
-import { InterviewCoachWidget } from './InterviewCoachWidget';
 
 export function HeroSectionWithAvaV2({
-  avatarUrl = "/img/ava-bridge.png",
-  heroImageUrl = "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=2832&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  title = "Your Resume Has 7 Seconds to Impress. Let's Make it Count.",
-  subtitle = "REZEMAI | Helps you craft expert-level resumes with AI precision and clarity to land your dream job.",
-  showAva = false,
+  heroImageUrl = "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=2832&auto=format&fit=crop",
+  title = "Streamline Your Social Media Operations",
+  subtitle = "SoshOps | Manage, schedule, and optimize your social presence across all platforms with professional-grade tools.",
   onPrimary = () => {},
   onSecondary = () => {},
 }) {
@@ -44,13 +41,8 @@ export function HeroSectionWithAvaV2({
         {/* Right visual: wide hero image */}
         <div className="relative md:justify-self-end w-full max-w-xl">
           <div className="overflow-hidden rounded-3xl border border-zinc-800/70 bg-zinc-950/40 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.6)]">
-            <img src={heroImageUrl} alt="Interview panel in a modern office" className="w-full h-full object-cover" />
+            <img src={heroImageUrl} alt="Social media dashboard" className="w-full h-full object-cover" />
           </div>
-          {showAva && (
-            <div className="absolute -bottom-5 left-5 right-auto max-w-[80%]">
-              <InterviewCoachWidget avatarUrl={avatarUrl} className="shadow-lg" />
-            </div>
-          )}
         </div>
       </div>
     </section>
