@@ -1,10 +1,9 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { User } from "@/api/entities";
 import {
   Sparkles,
   Share2,
@@ -66,23 +65,23 @@ const onboardingSteps = [
     description: 'Everything you need for social media success',
     icon: Target,
     content: (
-      <div className="grid gap-4">
+      <div className="grid gap-3">
         <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
-          <Calendar className="w-6 h-6 text-blue-600 mt-1" />
+          <Calendar className="w-6 h-6 text-blue-600 mt-1 flex-shrink-0" />
           <div>
             <h4 className="font-semibold text-navy">Content Scheduler</h4>
             <p className="text-sm text-slate-600">Plan and schedule posts across all platforms</p>
           </div>
         </div>
         <div className="flex items-start gap-3 p-3 bg-purple-50 rounded-lg">
-          <BarChart3 className="w-6 h-6 text-purple-600 mt-1" />
+          <BarChart3 className="w-6 h-6 text-purple-600 mt-1 flex-shrink-0" />
           <div>
             <h4 className="font-semibold text-navy">Analytics Dashboard</h4>
             <p className="text-sm text-slate-600">Track engagement and optimize performance</p>
           </div>
         </div>
         <div className="flex items-start gap-3 p-3 bg-emerald-50 rounded-lg">
-          <Zap className="w-6 h-6 text-emerald-600 mt-1" />
+          <Zap className="w-6 h-6 text-emerald-600 mt-1 flex-shrink-0" />
           <div>
             <h4 className="font-semibold text-navy">Multi-Platform Publishing</h4>
             <p className="text-sm text-slate-600">Post to LinkedIn, Twitter, and more from one place</p>
@@ -122,16 +121,9 @@ export default function WelcomeModal({ isOpen, onClose }) {
   const completeOnboarding = async () => {
     setIsCompleting(true);
     try {
-      // Mark user as onboarded (when User API is implemented)
-      // await User.updateMyUserData({
-      //   onboarding_completed: true,
-      //   onboarding_completed_date: new Date().toISOString()
-      // });
-
-      // Store onboarding completion in localStorage as fallback
+      // Store onboarding completion in localStorage
       localStorage.setItem('onboarding_completed', 'true');
       localStorage.setItem('onboarding_completed_date', new Date().toISOString());
-
     } catch (error) {
       console.error("Error completing onboarding:", error);
     }
@@ -162,46 +154,48 @@ export default function WelcomeModal({ isOpen, onClose }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader className="space-y-4">
+      <DialogContent className="sm:max-w-lg max-h-[90vh] flex flex-col">
+        <DialogHeader className="space-y-3 flex-shrink-0">
           <div className="flex items-center justify-between">
             <DialogTitle className="flex items-center gap-2">
-              <currentStepData.icon className="w-5 h-5 text-gold" />
+              <currentStepData.icon className="w-5 h-5 text-blue-600" />
               {currentStepData.title}
             </DialogTitle>
-            <Badge variant="outline">{currentStep + 1} of {onboardingSteps.length}</Badge>
+            <Badge variant="outline" className="text-xs">{currentStep + 1} of {onboardingSteps.length}</Badge>
           </div>
-          <DialogDescription>{currentStepData.description}</DialogDescription>
+          <DialogDescription className="text-sm">{currentStepData.description}</DialogDescription>
           <Progress value={progress} className="h-2" />
         </DialogHeader>
 
-        <div className="py-6">
+        <div className="py-4 overflow-y-auto flex-1">
           {currentStepData.content}
         </div>
 
-        <div className="flex justify-between">
-          <Button 
-            variant="outline" 
+        <div className="flex justify-between pt-4 border-t flex-shrink-0">
+          <Button
+            variant="outline"
             onClick={handlePrevious}
             disabled={currentStep === 0}
+            size="sm"
           >
             Previous
           </Button>
-          
+
           <div className="flex gap-2">
-            <Button variant="ghost" onClick={onClose}>
-              Skip Setup
+            <Button variant="ghost" onClick={handleComplete} size="sm">
+              Skip
             </Button>
             <Button
               onClick={currentStep === onboardingSteps.length - 1 ? handleComplete : handleNext}
               disabled={isCompleting}
-              className="bg-navy hover:bg-navy/90"
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+              size="sm"
             >
               {currentStep === onboardingSteps.length - 1 ? (
                 isCompleting ? 'Completing...' : 'Get Started'
               ) : (
                 <>
-                  Next <ArrowRight className="w-4 h-4 ml-2" />
+                  Next <ArrowRight className="w-4 h-4 ml-1" />
                 </>
               )}
             </Button>
