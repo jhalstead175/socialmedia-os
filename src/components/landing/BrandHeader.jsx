@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { RezemaiLogo } from '../Logo';
+import Logo from '../Logo';
 
 export function BrandHeaderV2({
   links = [
@@ -18,8 +18,8 @@ export function BrandHeaderV2({
   return (
     <header className="sticky top-0 z-40 border-b border-zinc-800/60 bg-[color:rgba(10,12,20,0.7)] backdrop-blur supports-[backdrop-filter]:bg-[color:rgba(10,12,20,0.5)]">
       <div className="mx-auto max-w-7xl px-6 md:px-8 h-14 flex items-center justify-between">
-        <Link to={createPageUrl("Landing")} className="flex items-center" aria-label="Rezemai Home">
-          <RezemaiLogo />
+        <Link to={createPageUrl("Landing")} className="flex items-center" aria-label="SoshOps Home">
+          <Logo />
         </Link>
         <nav className="hidden md:flex items-center gap-6" aria-label="Primary">
           {links.map((l) => (

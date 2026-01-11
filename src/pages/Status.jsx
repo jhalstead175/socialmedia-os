@@ -19,7 +19,7 @@ import { createPageUrl } from '@/utils';
 import { StatusComponent, Incident, Maintenance } from '@/api/entities';
 import { format, isWithinInterval, parseISO } from 'date-fns';
 import { trackEvent } from '@/components/shared/Analytics';
-import RezemaiLogo from '@/components/Logo';
+import Logo from '@/components/Logo';
 
 const getStatusConfig = (status) => {
   const configs = {
@@ -142,7 +142,7 @@ export default function Status() {
         <div className="max-w-5xl mx-auto py-8 px-4 sm:px-6">
           <div className="flex items-center justify-between">
             <Link to={createPageUrl('Landing')}>
-              <RezemaiLogo variant="full" theme="light" />
+              <Logo />
             </Link>
             <Link to={createPageUrl('Dashboard')} className="hidden sm:inline-block">
               <Button variant="outline">Go to Dashboard <ExternalLink className="w-4 h-4 ml-2" /></Button>
