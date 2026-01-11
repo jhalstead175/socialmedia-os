@@ -1,57 +1,57 @@
 
 export const copyLines = {
-  multi_resume: {
-    headline: "Keep multiple versions ready for every role.",
+  multi_account: {
+    headline: "Manage all your accounts from one dashboard.",
     bullets: [
-      "Unlimited resume slots (no more overwriting)",
-      "Side-by-side comparisons to pick the best version",
-      "1-click PDF export for each variant",
-      "ATS-clean formatting that parses correctly"
+      "Connect unlimited social media accounts",
+      "Switch between profiles seamlessly",
+      "Unified analytics across all platforms",
+      "Centralized content calendar view"
     ]
   },
-  interview_sim: {
-    headline: "Sharpen answers with real-world drills.",
+  advanced_scheduling: {
+    headline: "Schedule smarter with AI-powered timing.",
     bullets: [
-      "Panel-style interview simulator with live feedback",
-      "STAR prompts auto-generated from your experience",
-      "Follow-up question engine that probes weak spots",
-      "Answer grading with specific improvement tips"
+      "Optimal posting time suggestions based on engagement",
+      "Queue management with auto-publish",
+      "Recurring post templates for regular content",
+      "Bulk scheduling for campaigns and events"
     ]
   },
-  role_tailor: {
-    headline: "Turn job descriptions into targeted bullets.",
+  multi_platform: {
+    headline: "Post everywhere at once—perfectly formatted.",
     bullets: [
-      "Keyword-aware rewrites to match the JD",
-      "Impact metrics suggested automatically",
-      "Tone & seniority adjusted for each role",
-      "Save tailored versions without losing originals"
+      "One-click publishing to LinkedIn, Twitter, Facebook",
+      "Platform-specific formatting optimization",
+      "Preview how posts appear on each network",
+      "Character limits and hashtag suggestions per platform"
     ]
   },
-  executive_narrative: {
-    headline: "Tell a board-ready story in one page.",
+  analytics_insights: {
+    headline: "Track what works with detailed analytics.",
     bullets: [
-      "Executive summary that frames your value clearly",
-      "Themes across roles: growth, ops, turnaround",
-      "Metric-driven outcomes for credibility",
-      "Optional cover email for recruiters & partners"
+      "Engagement metrics across all platforms",
+      "Best-performing content identification",
+      "Follower growth and reach tracking",
+      "Export reports for clients or stakeholders"
     ]
   },
-  industry_templates: {
-    headline: "Templates that fit the field—and the ATS.",
+  campaign_management: {
+    headline: "Organize content with campaign tracking.",
     bullets: [
-      "Legal, Finance, and Tech variations included",
-      "Structure & headings tuned for parsing",
-      "Minimal, professional typographic system",
-      "Instant preview across multiple ATS formats"
+      "Group posts by campaign or theme",
+      "Track campaign performance end-to-end",
+      "Share campaign reports with your team",
+      "Compare campaign effectiveness over time"
     ]
   },
-  portfolio_builder: {
-    headline: "Package wins into compelling case studies.",
+  team_collaboration: {
+    headline: "Collaborate with your team efficiently.",
     bullets: [
-      "Reusable case-study blocks (Problem → Action → Result)",
-      "Link projects, filings, or press with context",
-      "Export to PDF or share as a private link",
-      "Perfect for interviews and executive screens"
+      "Invite team members with role-based access",
+      "Approval workflows for content review",
+      "Team activity logs and audit trails",
+      "Shared content calendars and draft posts"
     ]
   }
 };

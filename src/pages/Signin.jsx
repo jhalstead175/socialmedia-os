@@ -3,8 +3,7 @@ import { SignIn } from "@clerk/clerk-react";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { useClerkAuth } from "@/api/clerkClient";
-import RezemaiLogo from "../components/Logo";
-import { theme } from "@/styles/rezemai.tokens";
+import Logo from "../components/Logo";
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
 
@@ -23,21 +22,15 @@ export default function Signin() {
   }, [isAuthenticated, isLoading, navigate]);
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center p-4"
-      style={{ backgroundColor: theme.colors.bg }}
-    >
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[#0B0F14]">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <RezemaiLogo className="mx-auto mb-4" />
-          <h1
-            className="text-2xl font-semibold mb-2"
-            style={{ color: theme.colors.textPrimary }}
-          >
-            Welcome to Rezemai
+          <Logo className="mx-auto mb-4" />
+          <h1 className="text-2xl font-semibold mb-2 text-zinc-100">
+            Welcome to SoshOps
           </h1>
-          <p style={{ color: theme.colors.textSecondary }}>
-            Build resumes and practice interviews
+          <p className="text-zinc-400">
+            Manage your social media operations
           </p>
         </div>
 
@@ -70,14 +63,14 @@ export default function Signin() {
                 baseTheme: "dark",
                 elements: {
                   rootBox: "mx-auto",
-                  card: `${theme.radius.card} border`,
+                  card: "rounded-xl border",
                   cardBox: "shadow-xl"
                 },
                 variables: {
-                  colorPrimary: theme.colors.accent,
-                  colorBackground: theme.colors.panel,
-                  colorInputBackground: theme.colors.bg,
-                  colorText: theme.colors.textPrimary,
+                  colorPrimary: "#3B82F6",
+                  colorBackground: "#111827",
+                  colorInputBackground: "#0B0F14",
+                  colorText: "#FFFFFF",
                 }
               }}
               redirectUrl={createPageUrl("Dashboard")}
@@ -88,17 +81,13 @@ export default function Signin() {
         <div className="text-center mt-6">
           <Link
             to={createPageUrl("Landing")}
-            className="text-sm hover:opacity-80 transition-opacity"
-            style={{ color: theme.colors.textSecondary }}
+            className="text-sm text-zinc-400 hover:opacity-80 transition-opacity"
           >
             ← Back to homepage
           </Link>
         </div>
 
-        <p
-          className="text-center text-xs mt-8"
-          style={{ color: theme.colors.textSecondary }}
-        >
+        <p className="text-center text-xs mt-8 text-zinc-400">
           By signing in, you agree to our{' '}
           <Link to={createPageUrl("LegalTerms")} className="underline hover:opacity-80">
             Terms

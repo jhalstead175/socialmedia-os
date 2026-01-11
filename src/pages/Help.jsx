@@ -5,17 +5,15 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  HelpCircle, 
-  Search, 
-  FileText, 
-  Video, 
-  MessageSquare, 
+import {
+  HelpCircle,
+  Search,
+  FileText,
+  Video,
+  MessageSquare,
   BookOpen,
   ChevronRight,
-  Star,
   Clock,
-  CheckCircle,
   ArrowRight,
   Zap,
   Users,
@@ -31,16 +29,16 @@ const faqCategories = [
     icon: BookOpen,
     questions: [
       {
-        q: 'How do I create my first résumé?',
-        a: 'Click "New Résumé" on your dashboard, fill in your personal information, add your experience and education, then choose from our professional templates. Our AI will help optimize your content for ATS systems.'
+        q: 'How do I connect my first social media account?',
+        a: 'Navigate to Settings > Connected Accounts, click "Add Account," select your platform (LinkedIn, Twitter, etc.), and authorize SoshOps to post on your behalf. Your credentials are securely stored and encrypted.'
       },
       {
-        q: 'What makes REZEMAI different from other résumé builders?',
-        a: 'REZEMAI is specifically designed for executives and senior leaders. We offer AI-powered optimization, executive-grade templates, interview coaching, and ATS scoring that understands C-suite requirements.'
+        q: 'What makes SoshOps different from other social media tools?',
+        a: 'SoshOps is designed for professionals who need streamlined operations. We offer intelligent scheduling, multi-platform publishing, advanced analytics, and a clean interface built for efficiency—not overwhelming feature bloat.'
       },
       {
-        q: 'How does the AI optimization work?',
-        a: 'Our AI analyzes your résumé against your target role, checks for ATS compatibility, suggests keywords, and provides a score with specific recommendations for improvement.'
+        q: 'How does the content scheduler work?',
+        a: 'Create a post, select your target platforms, choose a date and time (or use optimal timing suggestions), and save. SoshOps will automatically publish your content at the scheduled time across all selected platforms.'
       }
     ]
   },
@@ -50,16 +48,16 @@ const faqCategories = [
     icon: Zap,
     questions: [
       {
-        q: 'Can I practice interviews for specific roles?',
-        a: 'Yes! Our Interview Coach allows you to select different interview types (behavioral, executive, technical) and specify your target role for personalized questions and feedback.'
+        q: 'Can I schedule posts to multiple platforms at once?',
+        a: 'Yes! When creating a post, select all platforms you want to publish to. SoshOps will optimize formatting for each platform while maintaining your core message.'
       },
       {
-        q: 'How do I share my résumé with others?',
-        a: 'Go to your résumé, click "Share," and generate a secure link. You can set permissions for viewing only or allow comments for collaboration with mentors or recruiters.'
+        q: 'How do I view analytics for my posts?',
+        a: 'Go to Analytics in the dashboard to see engagement metrics across all your posts. Filter by platform, date range, or campaign to track performance and identify what content resonates.'
       },
       {
-        q: 'What file formats can I export?',
-        a: 'You can export your résumé as PDF, Word document, or plain text. Our templates are optimized to maintain formatting across all export formats.'
+        q: 'Can I collaborate with team members?',
+        a: 'Business plan users can invite team members, assign roles (admin, editor, viewer), and collaborate on content calendars with built-in approval workflows.'
       }
     ]
   },
@@ -70,15 +68,15 @@ const faqCategories = [
     questions: [
       {
         q: 'What\'s included in the free plan?',
-        a: 'The free plan includes up to 2 résumés, basic templates, limited AI optimization (2/month), and 5 interview practice sessions per month.'
+        a: 'The free plan includes 1 connected account, up to 5 scheduled posts per month, basic analytics, and access to LinkedIn and Twitter posting.'
       },
       {
         q: 'Can I upgrade or downgrade my plan?',
-        a: 'Yes, you can change your plan anytime in your account settings. Upgrades take effect immediately, and downgrades take effect at your next billing cycle.'
+        a: 'Yes, you can change your plan anytime in account settings. Upgrades take effect immediately, and downgrades take effect at your next billing cycle.'
       },
       {
         q: 'Do you offer refunds?',
-        a: 'We offer a 14-day free trial for premium features. After that, subscriptions are non-refundable, but you can cancel anytime and your access continues until the end of your billing period.'
+        a: 'We offer a 14-day money-back guarantee for new premium subscriptions. After that, subscriptions are non-refundable, but you can cancel anytime and access continues until the end of your billing period.'
       }
     ]
   },
@@ -88,16 +86,16 @@ const faqCategories = [
     icon: Users,
     questions: [
       {
-        q: 'My résumé isn\'t saving properly',
-        a: 'Try refreshing the page and saving again. Make sure you\'re connected to the internet. If the problem persists, contact our support team with details about your browser and any error messages.'
+        q: 'My post didn\'t publish at the scheduled time',
+        a: 'Check that your social account is still connected in Settings. Sometimes platforms require re-authorization. If the connection is active, contact support with the post ID for investigation.'
       },
       {
-        q: 'Can I use REZEMAI on mobile devices?',
-        a: 'Yes! Our platform is fully responsive and works on phones and tablets. For the best experience creating résumés, we recommend using a desktop or laptop computer.'
+        q: 'Can I use SoshOps on mobile devices?',
+        a: 'Yes! Our platform is fully responsive and works on phones and tablets. For the best experience creating and scheduling content, we recommend using a desktop or laptop.'
       },
       {
         q: 'How secure is my data?',
-        a: 'We use enterprise-grade security with SSL encryption, secure cloud storage, and regular security audits. Your data is never shared with third parties without your explicit consent.'
+        a: 'We use enterprise-grade security with SSL encryption, OAuth 2.0 authentication, secure cloud storage, and regular security audits. Your credentials and content are never shared with third parties.'
       }
     ]
   }
@@ -105,27 +103,27 @@ const faqCategories = [
 
 const tutorials = [
   {
-    title: 'Creating Your First Executive Résumé',
-    duration: '5 min',
-    description: 'Step-by-step guide to building a professional résumé from scratch',
+    title: 'Connecting Your Social Accounts',
+    duration: '4 min',
+    description: 'Learn how to securely connect LinkedIn, Twitter, and other platforms',
     url: '#tutorial-1'
   },
   {
-    title: 'Optimizing for ATS Systems',
-    duration: '3 min', 
-    description: 'Learn how to maximize your ATS score and get past automated screening',
+    title: 'Creating Your First Scheduled Post',
+    duration: '5 min',
+    description: 'Step-by-step guide to writing, scheduling, and publishing content',
     url: '#tutorial-2'
   },
   {
-    title: 'Interview Preparation Best Practices',
-    duration: '7 min',
-    description: 'Use our AI coach effectively to prepare for executive interviews',
+    title: 'Understanding Analytics & Insights',
+    duration: '6 min',
+    description: 'Track engagement, reach, and performance across platforms',
     url: '#tutorial-3'
   },
   {
-    title: 'Template Selection Guide',
-    duration: '4 min',
-    description: 'Choose the right template for your industry and role level',
+    title: 'Campaign Management Best Practices',
+    duration: '7 min',
+    description: 'Organize content with campaigns and measure ROI effectively',
     url: '#tutorial-4'
   }
 ];
@@ -136,20 +134,13 @@ export default function Help() {
 
   const filteredQuestions = faqCategories
     .find(cat => cat.id === selectedCategory)
-    ?.questions.filter(q => 
+    ?.questions.filter(q =>
       q.q.toLowerCase().includes(searchQuery.toLowerCase()) ||
       q.a.toLowerCase().includes(searchQuery.toLowerCase())
     ) || [];
 
   return (
     <div className="min-h-screen bg-warm-white">
-      {/* 
-        SEO Meta Tags should be managed using a library like React Helmet 
-        or a framework's built-in solution (e.g., Next.js head component) 
-        and not directly rendered within the component's JSX return.
-        Removed the invalid <head> tag directly here to fix parsing errors.
-      */}
-
       <div className="p-4 sm:p-6">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
@@ -187,7 +178,7 @@ export default function Help() {
               </CardHeader>
               <CardContent className="text-center">
                 <p className="text-slate-600 mb-4">Find quick answers to common questions</p>
-                <Badge variant="secondary">50+ Articles</Badge>
+                <Badge variant="secondary">40+ Articles</Badge>
               </CardContent>
             </Card>
 
@@ -200,7 +191,7 @@ export default function Help() {
               </CardHeader>
               <CardContent className="text-center">
                 <p className="text-slate-600 mb-4">Step-by-step video guides</p>
-                <Badge variant="secondary">12 Videos</Badge>
+                <Badge variant="secondary">10 Videos</Badge>
               </CardContent>
             </Card>
 

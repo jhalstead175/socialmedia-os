@@ -1,40 +1,60 @@
 import { useState, useEffect } from 'react';
-import { ROLE_COPY } from '@/styles/rezemai.tokens';
+
+const COPY_VARIANTS = {
+  default: {
+    headline: "Manage Your Social Presence Professionally",
+    sub: "SoshOps helps you schedule, publish, and analyze social media content across all platforms from one dashboard.",
+    primaryCTA: "Get Started Free",
+    secondaryCTA: "See How It Works"
+  },
+  creator: {
+    headline: "Content Scheduling Made Simple",
+    sub: "Focus on creating great content while SoshOps handles scheduling and publishing across all your social platforms.",
+    primaryCTA: "Start Creating",
+    secondaryCTA: "View Features"
+  },
+  business: {
+    headline: "Scale Your Social Media Operations",
+    sub: "Professional tools for teams who need to manage multiple accounts, schedule campaigns, and track performance.",
+    primaryCTA: "Get Started",
+    secondaryCTA: "See Pricing"
+  }
+};
 
 /**
- * Hook to get role-based copy variants
- * Auto-detects from URL param: ?role=executive|legal|tech
- * Falls back to localStorage, then default to "executive"
+ * Hook to get copy variants
+ * Auto-detects from URL param: ?variant=default|creator|business
+ * Falls back to localStorage, then default to "default"
  */
 export function useRoleCopy() {
-  const [role, setRole] = useState(() => {
+  const [variant, setVariant] = useState(() => {
     // Check URL param first
     const params = new URLSearchParams(window.location.search);
-    const urlRole = params.get('role');
+    const urlVariant = params.get('variant');
 
-    if (urlRole && ['executive', 'legal', 'tech'].includes(urlRole)) {
-      localStorage.setItem('rezemai_role', urlRole);
-      return urlRole;
+    if (urlVariant && ['default', 'creator', 'business'].includes(urlVariant)) {
+      localStorage.setItem('soshlops_variant', urlVariant);
+      return urlVariant;
     }
 
     // Fall back to localStorage
-    const storedRole = localStorage.getItem('rezemai_role');
-    if (storedRole && ['executive', 'legal', 'tech'].includes(storedRole)) {
-      return storedRole;
+    const storedVariant = localStorage.getItem('soshlops_variant');
+    if (storedVariant && ['default', 'creator', 'business'].includes(storedVariant)) {
+      return storedVariant;
     }
 
-    // Default to executive
-    return 'executive';
+    // Default
+    return 'default';
   });
 
   useEffect(() => {
-    // Update localStorage when role changes
-    localStorage.setItem('rezemai_role', role);
-  }, [role]);
+    // Update localStorage when variant changes
+    localStorage.setItem('soshlops_variant', variant);
+  }, [variant]);
 
   return {
-    role,
-    copy: ROLE_COPY[role],
-    setRole
+    role: variant, // Keep 'role' for backward compatibility
+    copy: COPY_VARIANTS[variant],
+    setRole: setVariant
   };
 }
