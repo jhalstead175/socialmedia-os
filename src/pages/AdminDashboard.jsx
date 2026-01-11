@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Shield, Users, LifeBuoy, BarChart3, Mail, LineChart, Ticket, AlertCircle } from 'lucide-react';
-import { User } from '@/api/entities';
+import { useClerkAuth } from '@/api/clerkClient';
 import { createPageUrl } from '@/utils';
 import UserManagement from '../components/admin/UserManagement';
 import SupportTicketViewer from '../components/admin/SupportTicketViewer';
@@ -15,31 +15,29 @@ import AdminPromos from './AdminPromos';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
+  const { user, isAuthenticated, isLoading } = useClerkAuth();
   const [isAuthorized, setIsAuthorized] = useState(false);
-  const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
-    const checkAdminAccess = async () => {
-      try {
-        const currentUser = await User.me();
-        // SECURITY: Client-side guard (server-side enforcement in Base44 SDK)
-        if (currentUser?.role === 'admin') {
-          setIsAuthorized(true);
-        } else {
-          // Non-admin user - redirect to dashboard
-          navigate(createPageUrl('Dashboard'), { replace: true });
-        }
-      } catch (error) {
-        // Not authenticated - redirect to landing
-        navigate(createPageUrl('Landing'), { replace: true });
-      }
-      setIsChecking(false);
-    };
-    checkAdminAccess();
-  }, [navigate]);
+    if (isLoading) return;
+
+    if (!isAuthenticated || !user) {
+      // Not authenticated - redirect to landing
+      navigate(createPageUrl('Landing'), { replace: true });
+      return;
+    }
+
+    // Check if user has admin role
+    if (user.role === 'admin') {
+      setIsAuthorized(true);
+    } else {
+      // Non-admin user - redirect to dashboard
+      navigate(createPageUrl('Dashboard'), { replace: true });
+    }
+  }, [isAuthenticated, user, isLoading, navigate]);
 
   // Show loading state while checking authorization
-  if (isChecking) {
+  if (isLoading || (!isAuthorized && isAuthenticated)) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <Card className="w-96">

@@ -1,61 +1,78 @@
-import { base44 } from './base44Client';
+/**
+ * Entity Stubs - Awaiting Supabase Migration
+ *
+ * These are placeholder stubs to prevent build errors.
+ * Backend features need to be migrated to Supabase.
+ */
 
+const createMockEntity = (name) => ({
+  list: async () => {
+    console.warn(`${name}.list() - Backend not implemented. Migrate to Supabase.`);
+    return [];
+  },
+  get: async (id) => {
+    console.warn(`${name}.get() - Backend not implemented. Migrate to Supabase.`);
+    return null;
+  },
+  create: async (data) => {
+    console.warn(`${name}.create() - Backend not implemented. Migrate to Supabase.`);
+    throw new Error('Backend not implemented. Migrate to Supabase.');
+  },
+  update: async (id, data) => {
+    console.warn(`${name}.update() - Backend not implemented. Migrate to Supabase.`);
+    throw new Error('Backend not implemented. Migrate to Supabase.');
+  },
+  delete: async (id) => {
+    console.warn(`${name}.delete() - Backend not implemented. Migrate to Supabase.`);
+    throw new Error('Backend not implemented. Migrate to Supabase.');
+  },
+  filter: async (query) => {
+    console.warn(`${name}.filter() - Backend not implemented. Migrate to Supabase.`);
+    return [];
+  },
+});
 
-export const Resume = base44.entities.Resume;
+// Export entity stubs
+export const Resume = createMockEntity('Resume');
+export const InterviewSession = createMockEntity('InterviewSession');
+export const Subscription = createMockEntity('Subscription');
+export const Usage = createMockEntity('Usage');
+export const SupportTicket = createMockEntity('SupportTicket');
+export const Referral = createMockEntity('Referral');
+export const PerformanceLog = createMockEntity('PerformanceLog');
+export const EmailCampaign = createMockEntity('EmailCampaign');
+export const AuditEvent = createMockEntity('AuditEvent');
+export const ProcessedEvent = createMockEntity('ProcessedEvent');
+export const WebhookLog = createMockEntity('WebhookLog');
+export const StatusComponent = createMockEntity('StatusComponent');
+export const Incident = createMockEntity('Incident');
+export const Maintenance = createMockEntity('Maintenance');
+export const ChangelogEntry = createMockEntity('ChangelogEntry');
+export const DraftResume = createMockEntity('DraftResume');
+export const EmailTemplate = createMockEntity('EmailTemplate');
+export const ScheduledEmail = createMockEntity('ScheduledEmail');
+export const Promo = createMockEntity('Promo');
+export const PromoRedemption = createMockEntity('PromoRedemption');
+export const ReferralCode = createMockEntity('ReferralCode');
+export const ReferralAttribution = createMockEntity('ReferralAttribution');
+export const PromoBanner = createMockEntity('PromoBanner');
+export const CampaignLink = createMockEntity('CampaignLink');
+export const FeatureFlag = createMockEntity('FeatureFlag');
+export const Team = createMockEntity('Team');
+export const TeamMember = createMockEntity('TeamMember');
 
-export const InterviewSession = base44.entities.InterviewSession;
-
-export const Subscription = base44.entities.Subscription;
-
-export const Usage = base44.entities.Usage;
-
-export const SupportTicket = base44.entities.SupportTicket;
-
-export const Referral = base44.entities.Referral;
-
-export const PerformanceLog = base44.entities.PerformanceLog;
-
-export const EmailCampaign = base44.entities.EmailCampaign;
-
-export const AuditEvent = base44.entities.AuditEvent;
-
-export const ProcessedEvent = base44.entities.ProcessedEvent;
-
-export const WebhookLog = base44.entities.WebhookLog;
-
-export const StatusComponent = base44.entities.StatusComponent;
-
-export const Incident = base44.entities.Incident;
-
-export const Maintenance = base44.entities.Maintenance;
-
-export const ChangelogEntry = base44.entities.ChangelogEntry;
-
-export const DraftResume = base44.entities.DraftResume;
-
-export const EmailTemplate = base44.entities.EmailTemplate;
-
-export const ScheduledEmail = base44.entities.ScheduledEmail;
-
-export const Promo = base44.entities.Promo;
-
-export const PromoRedemption = base44.entities.PromoRedemption;
-
-export const ReferralCode = base44.entities.ReferralCode;
-
-export const ReferralAttribution = base44.entities.ReferralAttribution;
-
-export const PromoBanner = base44.entities.PromoBanner;
-
-export const CampaignLink = base44.entities.CampaignLink;
-
-export const FeatureFlag = base44.entities.FeatureFlag;
-
-export const Team = base44.entities.Team;
-
-export const TeamMember = base44.entities.TeamMember;
-
-
-
-// auth sdk:
-export const User = base44.auth;
+// Auth - redirect to Clerk
+export const User = {
+  me: async () => {
+    console.warn('User.me() - Use useClerkAuth() hook instead');
+    throw new Error('Use useClerkAuth() hook in React components');
+  },
+  loginWithRedirect: async () => {
+    console.warn('User.loginWithRedirect() - Use useClerkAuth() hook instead');
+    throw new Error('Use useClerkAuth() hook in React components');
+  },
+  logout: async () => {
+    console.warn('User.logout() - Use useClerkAuth() hook instead');
+    throw new Error('Use useClerkAuth() hook in React components');
+  },
+};
