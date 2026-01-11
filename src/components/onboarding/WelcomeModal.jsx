@@ -4,58 +4,57 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { User, Resume } from "@/api/entities";
-import RezemaiLogo from '../Logo'; // Import the logo
-import { 
-  Sparkles, 
-  FileText, 
-  Video, 
-  Palette, 
-  ArrowRight, 
+import { User } from "@/api/entities";
+import {
+  Sparkles,
+  Share2,
+  Calendar,
+  BarChart3,
+  ArrowRight,
   CheckCircle,
   User as UserIcon,
   Target,
-  Crown
+  Zap
 } from "lucide-react";
 
 const onboardingSteps = [
   {
     id: 'welcome',
-    title: 'Welcome to REZEMAI',
-    description: 'Your AI-powered executive career platform',
+    title: 'Welcome to SoshOps',
+    description: 'Professional social media operations platform',
     icon: Sparkles,
     content: (
       <div className="space-y-4 text-center">
-        <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto overflow-hidden">
-          <RezemaiLogo variant="monogram" theme="dark" className="w-full h-full" />
+        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mx-auto">
+          <Share2 className="w-10 h-10 text-white" />
         </div>
         <p className="text-slate-600">
-          REZEMAI helps C-suite executives and senior leaders create outstanding résumés and ace interviews using AI technology.
+          SoshOps helps you manage, schedule, and optimize your social media presence across multiple platforms with professional-grade tools.
         </p>
-        <Badge className="bg-gold/20 text-gold">Premium Platform</Badge>
+        <Badge className="bg-blue-500/20 text-blue-700">Professional Platform</Badge>
       </div>
     )
   },
   {
     id: 'profile',
-    title: 'Complete Your Profile',
-    description: 'Help us personalize your experience',
+    title: 'Set Up Your Profile',
+    description: 'Personalize your workspace',
     icon: UserIcon,
     content: (
       <div className="space-y-4">
-        <p className="text-slate-600">We'll use your profile information to:</p>
+        <p className="text-slate-600">Your profile helps us:</p>
         <ul className="space-y-2 text-sm">
           <li className="flex items-center gap-2">
             <CheckCircle className="w-4 h-4 text-green-500" />
-            Pre-fill your résumé with basic information
+            Customize your dashboard and preferences
           </li>
           <li className="flex items-center gap-2">
             <CheckCircle className="w-4 h-4 text-green-500" />
-            Customize AI recommendations for your industry
+            Connect your social media accounts
           </li>
           <li className="flex items-center gap-2">
             <CheckCircle className="w-4 h-4 text-green-500" />
-            Track your career advancement progress
+            Track your posting performance
           </li>
         </ul>
       </div>
@@ -64,51 +63,51 @@ const onboardingSteps = [
   {
     id: 'features',
     title: 'Platform Features',
-    description: 'Everything you need for career success',
+    description: 'Everything you need for social media success',
     icon: Target,
     content: (
       <div className="grid gap-4">
         <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
-          <FileText className="w-6 h-6 text-blue-600 mt-1" />
+          <Calendar className="w-6 h-6 text-blue-600 mt-1" />
           <div>
-            <h4 className="font-semibold text-navy">AI Resume Builder</h4>
-            <p className="text-sm text-slate-600">Create ATS-optimized résumés with AI assistance</p>
+            <h4 className="font-semibold text-navy">Content Scheduler</h4>
+            <p className="text-sm text-slate-600">Plan and schedule posts across all platforms</p>
           </div>
         </div>
         <div className="flex items-start gap-3 p-3 bg-purple-50 rounded-lg">
-          <Video className="w-6 h-6 text-purple-600 mt-1" />
+          <BarChart3 className="w-6 h-6 text-purple-600 mt-1" />
           <div>
-            <h4 className="font-semibold text-navy">Interview Coach</h4>
-            <p className="text-sm text-slate-600">Practice with AI and get instant feedback</p>
+            <h4 className="font-semibold text-navy">Analytics Dashboard</h4>
+            <p className="text-sm text-slate-600">Track engagement and optimize performance</p>
           </div>
         </div>
-        <div className="flex items-start gap-3 p-3 bg-amber-50 rounded-lg">
-          <Palette className="w-6 h-6 text-amber-600 mt-1" />
+        <div className="flex items-start gap-3 p-3 bg-emerald-50 rounded-lg">
+          <Zap className="w-6 h-6 text-emerald-600 mt-1" />
           <div>
-            <h4 className="font-semibold text-navy">Premium Templates</h4>
-            <p className="text-sm text-slate-600">Professional designs for executive roles</p>
+            <h4 className="font-semibold text-navy">Multi-Platform Publishing</h4>
+            <p className="text-sm text-slate-600">Post to LinkedIn, Twitter, and more from one place</p>
           </div>
         </div>
       </div>
     )
   },
   {
-    id: 'sample-data',
-    title: 'Create Sample Resume',
-    description: 'Let us create an example to get you started',
-    icon: FileText,
+    id: 'getting-started',
+    title: 'Ready to Get Started',
+    description: 'Your workspace is all set up',
+    icon: CheckCircle,
     content: (
       <div className="space-y-4">
         <p className="text-slate-600">
-          We'll create a sample résumé with placeholder data so you can see how everything works. You can edit or delete it anytime.
+          You're ready to start managing your social media presence professionally. Connect your accounts and schedule your first post!
         </p>
         <div className="p-4 bg-slate-50 rounded-lg">
-          <h4 className="font-semibold mb-2">Sample Resume Will Include:</h4>
+          <h4 className="font-semibold mb-2">Next Steps:</h4>
           <ul className="text-sm space-y-1 text-slate-600">
-            <li>• Executive summary template</li>
-            <li>• Professional experience format</li>
-            <li>• Education and skills sections</li>
-            <li>• ATS-optimized structure</li>
+            <li>• Connect your social media accounts</li>
+            <li>• Explore the content scheduler</li>
+            <li>• Create your first scheduled post</li>
+            <li>• Check out the analytics dashboard</li>
           </ul>
         </div>
       </div>
@@ -118,80 +117,25 @@ const onboardingSteps = [
 
 export default function WelcomeModal({ isOpen, onClose }) {
   const [currentStep, setCurrentStep] = useState(0);
-  const [isCreatingSample, setIsCreatingSample] = useState(false);
-  const [user, setUser] = useState(null);
+  const [isCompleting, setIsCompleting] = useState(false);
 
-  useEffect(() => {
-    if (isOpen) {
-      loadUser();
-    }
-  }, [isOpen]);
-
-  const loadUser = async () => {
+  const completeOnboarding = async () => {
+    setIsCompleting(true);
     try {
-      const userData = await User.me();
-      setUser(userData);
-    } catch (error) {
-      console.error("Error loading user:", error);
-    }
-  };
+      // Mark user as onboarded (when User API is implemented)
+      // await User.updateMyUserData({
+      //   onboarding_completed: true,
+      //   onboarding_completed_date: new Date().toISOString()
+      // });
 
-  const createSampleResume = async () => {
-    setIsCreatingSample(true);
-    try {
-      const sampleData = {
-        title: "Sample Executive Resume - Getting Started",
-        template_id: "executive-modern",
-        personal_info: {
-          full_name: user?.full_name || "Your Name",
-          email: user?.email || "your.email@example.com",
-          phone: "+1 (555) 123-4567",
-          location: "City, State",
-          linkedin: "linkedin.com/in/yourprofile",
-          summary: "Dynamic executive leader with 15+ years of experience driving organizational transformation and sustainable growth. Proven track record of leading cross-functional teams, optimizing operations, and delivering measurable results in competitive markets."
-        },
-        experience: [{
-          company: "Your Current Company",
-          position: "Chief Executive Officer",
-          location: "City, State",
-          start_date: "2020-01",
-          current: true,
-          achievements: [
-            "Led organizational transformation resulting in 35% revenue growth over 3 years",
-            "Expanded market presence to 8 new regions while maintaining operational efficiency",
-            "Built and managed high-performing executive team of 12 direct reports"
-          ]
-        }],
-        education: [{
-          institution: "Your University",
-          degree: "MBA",
-          field: "Business Administration",
-          graduation_year: "2010",
-          honors: "Magna Cum Laude"
-        }],
-        skills: [
-          "Strategic Leadership",
-          "P&L Management", 
-          "Digital Transformation",
-          "Mergers & Acquisitions",
-          "Global Operations",
-          "Stakeholder Management"
-        ],
-        target_role: "Chief Executive Officer"
-      };
+      // Store onboarding completion in localStorage as fallback
+      localStorage.setItem('onboarding_completed', 'true');
+      localStorage.setItem('onboarding_completed_date', new Date().toISOString());
 
-      await Resume.create(sampleData);
-      
-      // Mark user as onboarded
-      await User.updateMyUserData({ 
-        onboarding_completed: true,
-        onboarding_completed_date: new Date().toISOString()
-      });
-      
     } catch (error) {
-      console.error("Error creating sample resume:", error);
+      console.error("Error completing onboarding:", error);
     }
-    setIsCreatingSample(false);
+    setIsCompleting(false);
   };
 
   const handleNext = () => {
@@ -208,7 +152,7 @@ export default function WelcomeModal({ isOpen, onClose }) {
 
   const handleComplete = async () => {
     if (currentStep === onboardingSteps.length - 1) {
-      await createSampleResume();
+      await completeOnboarding();
     }
     onClose();
   };
@@ -248,13 +192,13 @@ export default function WelcomeModal({ isOpen, onClose }) {
             <Button variant="ghost" onClick={onClose}>
               Skip Setup
             </Button>
-            <Button 
+            <Button
               onClick={currentStep === onboardingSteps.length - 1 ? handleComplete : handleNext}
-              disabled={isCreatingSample}
+              disabled={isCompleting}
               className="bg-navy hover:bg-navy/90"
             >
               {currentStep === onboardingSteps.length - 1 ? (
-                isCreatingSample ? 'Creating...' : 'Get Started'
+                isCompleting ? 'Completing...' : 'Get Started'
               ) : (
                 <>
                   Next <ArrowRight className="w-4 h-4 ml-2" />
