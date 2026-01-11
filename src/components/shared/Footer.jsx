@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import RezemaiLogo from '../Logo';
+import Logo from '../Logo';
 import { createPageUrl } from '@/utils';
 
 export default function Footer() {
@@ -18,9 +18,9 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6">
         {/* Logo and social links section */}
         <div className="mb-10">
-          <RezemaiLogo />
+          <Logo />
           <p className="mt-4 text-sm text-slate-400">
-            AI-powered career platform for executives.
+            Professional social media operations platform.
           </p>
           <div className="mt-4 flex space-x-4">
             {socialLinks.map((item) => (

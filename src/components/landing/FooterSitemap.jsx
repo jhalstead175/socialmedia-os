@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { RezemaiLogo } from '../Logo';
+import Logo from '../Logo';
 
 export function FooterSitemapV2({
-  description = "AI-powered resume & interview coaching to land offers faster.",
+  description = "Professional social media operations platform for scheduling, publishing, and analytics.",
   year = new Date().getFullYear(),
 }) {
   const cols = [
@@ -50,16 +50,15 @@ export function FooterSitemapV2({
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
           <div className="md:col-span-4">
             <div className="flex items-center gap-3">
-              <RezemaiLogo size={28} showWordmark={false} />
-              <span className="text-xl font-extrabold tracking-widest text-zinc-100">REZEMAI</span>
+              <Logo size={28} showWordmark={true} />
             </div>
             <p className="mt-3 max-w-sm text-sm text-zinc-400">{description}</p>
             <div className="mt-4 flex items-center gap-3 text-zinc-400">
-              <a href="https://x.com/rezemai" className="hover:text-zinc-200">X</a>
+              <a href="https://x.com/soshlops" className="hover:text-zinc-200">X</a>
               <span aria-hidden>•</span>
-              <a href="https://linkedin.com/company/rezemai" className="hover:text-zinc-200">LinkedIn</a>
+              <a href="https://linkedin.com/company/soshlops" className="hover:text-zinc-200">LinkedIn</a>
               <span aria-hidden>•</span>
-              <a href="mailto:support@rezemai.com" className="hover:text-zinc-200">Email</a>
+              <a href="mailto:support@soshlops.com" className="hover:text-zinc-200">Email</a>
             </div>
           </div>
           <div className="md:col-span-8 grid grid-cols-2 sm:grid-cols-4 gap-8">
