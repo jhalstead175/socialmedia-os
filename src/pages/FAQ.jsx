@@ -6,7 +6,7 @@ import { FooterSitemapV2 } from "../components/landing/FooterSitemap";
 
 export default function FaqPage() {
   const navigate = useNavigate();
-  
+
   return (
     <main className="min-h-screen bg-[#0B0D15] text-zinc-100">
       <BrandHeaderV2 onCta={() => navigate(createPageUrl("Signin"))} />
@@ -15,43 +15,43 @@ export default function FaqPage() {
 
         <div className="space-y-8">
           <div className="border-b border-zinc-800 pb-6">
-            <h2 className="text-xl font-semibold mb-3">Is Rezemai ATS-friendly?</h2>
-            <p className="text-zinc-400">Yes. All our templates use clean formatting that applicant tracking systems can parse correctly. No complex tables, graphics, or unusual fonts that might cause parsing errors.</p>
+            <h2 className="text-xl font-semibold mb-3">Which social media platforms does SoshOps support?</h2>
+            <p className="text-zinc-400">SoshOps currently supports LinkedIn, Twitter (X), and Facebook. We're actively working on adding Instagram, TikTok, and YouTube. Pro and Business plan users get early access to new platform integrations.</p>
           </div>
 
           <div className="border-b border-zinc-800 pb-6">
-            <h2 className="text-xl font-semibold mb-3">Can I import my existing resume?</h2>
-            <p className="text-zinc-400">Yes. You can paste your resume content directly or upload a document to get started quickly. Rezemai will help you reorganize and optimize the content for your target role.</p>
+            <h2 className="text-xl font-semibold mb-3">Can I schedule posts across multiple platforms at once?</h2>
+            <p className="text-zinc-400">Yes! When creating a post, select all target platforms and SoshOps will publish to all of them simultaneously at your scheduled time. Each platform gets optimized formatting while maintaining your core message.</p>
           </div>
 
           <div className="border-b border-zinc-800 pb-6">
-            <h2 className="text-xl font-semibold mb-3">Who is Rezemai built for?</h2>
-            <p className="text-zinc-400">Professionals seeking their next role—from individual contributors to executives. Whether you're changing industries, advancing your career, or exploring new opportunities, Rezemai helps you present your experience effectively.</p>
+            <h2 className="text-xl font-semibold mb-3">Who is SoshOps built for?</h2>
+            <p className="text-zinc-400">Professionals and businesses who want to maintain a consistent social media presence without the overhead. From solo creators to agencies managing multiple clients, SoshOps streamlines scheduling, publishing, and analytics.</p>
           </div>
 
           <div className="border-b border-zinc-800 pb-6">
-            <h2 className="text-xl font-semibold mb-3">How does the interview practice work?</h2>
-            <p className="text-zinc-400">You can run mock interview sessions with common questions for your role. Get real-time feedback on your answers, including structure, clarity, and impact. Practice behavioral questions with the STAR framework built in.</p>
+            <h2 className="text-xl font-semibold mb-3">How does the analytics dashboard work?</h2>
+            <p className="text-zinc-400">The analytics dashboard shows engagement metrics (likes, comments, shares, reach) across all connected accounts. Filter by platform, date range, or campaign to identify what content performs best and optimize your strategy.</p>
           </div>
 
           <div className="border-b border-zinc-800 pb-6">
             <h2 className="text-xl font-semibold mb-3">What's included in the free plan?</h2>
-            <p className="text-zinc-400">The Starter plan includes one active resume, ATS-ready formatting, PDF export, and 10 interview Q&A per day. Upgrade to Pro for unlimited resumes, cover letters, and advanced features.</p>
+            <p className="text-zinc-400">The free plan includes 1 connected account, up to 5 scheduled posts per month, basic analytics, and access to LinkedIn and Twitter. Upgrade to Pro for unlimited accounts, posts, and advanced features.</p>
           </div>
 
           <div className="border-b border-zinc-800 pb-6">
             <h2 className="text-xl font-semibold mb-3">Can I cancel my subscription anytime?</h2>
-            <p className="text-zinc-400">Yes. You can cancel from your account settings at any time. Your access continues until the end of your billing period.</p>
+            <p className="text-zinc-400">Yes. You can cancel from your account settings at any time. Your access continues until the end of your billing period, and all your scheduled posts will still publish.</p>
           </div>
 
           <div className="border-b border-zinc-800 pb-6">
             <h2 className="text-xl font-semibold mb-3">Is my data private and secure?</h2>
-            <p className="text-zinc-400">Yes. We use Google OAuth for authentication (no passwords stored), and all data is encrypted. Your resumes and interview practice are private to your account. See our <a href={createPageUrl("LegalPrivacy")} className="text-indigo-400 hover:text-indigo-300 underline">Privacy Policy</a> for details.</p>
+            <p className="text-zinc-400">Yes. We use OAuth 2.0 for social platform authentication, and all data is encrypted in transit and at rest. Your credentials and content are private to your account. See our <a href={createPageUrl("LegalPrivacy")} className="text-indigo-400 hover:text-indigo-300 underline">Privacy Policy</a> for details.</p>
           </div>
 
           <div className="pb-6">
             <h2 className="text-xl font-semibold mb-3">How do I get support?</h2>
-            <p className="text-zinc-400">Free users get community access and documentation. Pro and Elite plans include priority email support. Visit <a href={createPageUrl("Support")} className="text-indigo-400 hover:text-indigo-300 underline">Support</a> to submit a ticket.</p>
+            <p className="text-zinc-400">Free users get community access and documentation. Pro and Business plans include priority email support. Visit <a href={createPageUrl("Support")} className="text-indigo-400 hover:text-indigo-300 underline">Support</a> to submit a ticket.</p>
           </div>
         </div>
       </section>
