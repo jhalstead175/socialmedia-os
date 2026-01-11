@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { User } from "@/api/entities";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -25,9 +24,8 @@ import { useUser } from "@clerk/clerk-react";
 
 export default function Dashboard() {
   const isDemoMode = useDemoMode();
-  const { user: clerkUser } = useUser();
+  const { user: clerkUser, isLoaded } = useUser();
   const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState(null);
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const [showConnectModal, setShowConnectModal] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState(null);
@@ -55,18 +53,21 @@ export default function Dashboard() {
   }, [clerkUser]);
 
   const loadDashboardData = async () => {
+    if (!isLoaded || !clerkUser) {
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const userData = await User.me();
-      setUser(userData);
-
-      // Check if user needs onboarding
-      if (!userData.onboarding_complete) {
+      // Check if user needs onboarding (stored in Clerk metadata)
+      const showOnboarding = clerkUser.publicMetadata?.showWelcome !== false;
+      if (showOnboarding) {
         setShowWelcomeModal(true);
       }
 
       // Load real data from Supabase (unless in demo mode)
-      if (!isDemoMode && clerkUser) {
+      if (!isDemoMode) {
         await loadSupabaseStats();
         await loadConnectedAccounts();
       }
@@ -199,7 +200,7 @@ export default function Dashboard() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div>
               <h1 className="h1 mb-2" style={{ color: 'var(--text-100)' }}>
-                {getGreeting()}, {user?.full_name?.split(' ')[0] || 'there'}
+                {getGreeting()}, {clerkUser?.firstName || 'there'}
               </h1>
               <p className="lead">
                 Manage your social media operations from one place

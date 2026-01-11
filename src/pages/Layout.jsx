@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { User } from "@/api/entities";
+import { useUser } from "@clerk/clerk-react";
 import { createPageUrl } from "@/utils";
 import {
   LayoutDashboard,
@@ -178,42 +178,44 @@ const StatusBadge = () => {
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
+  const { user: clerkUser, isLoaded, isSignedIn } = useUser();
 
   useEffect(() => {
     // Initialize both URL utilities
     PromoURL.syncFromCurrentUrl();
     BillingURL.syncFromCurrentUrl();
 
-    const fetchUser = async () => {
-      try {
-        const currentUser = await User.me();
-        setUser(currentUser);
+    if (!isLoaded) return; // Wait for Clerk to load
 
-        // Clean URL once user is authenticated and in-app
-        if (currentUser && PromoURL.has() && !['Landing', 'Signin', 'Checkout'].includes(currentPageName)) {
-          PromoURL.remove({ replaceHistory: true });
-        }
+    // Clean URL once user is authenticated and in-app
+    if (clerkUser && PromoURL.has() && !['Landing', 'Signin', 'Checkout'].includes(currentPageName)) {
+      PromoURL.remove({ replaceHistory: true });
+    }
 
-        if (currentUser && !currentUser.onboarding_complete && !['Onboarding', 'Signin', 'Landing', 'LegalTerms', 'LegalPrivacy'].includes(currentPageName)) {
-          navigate(createPageUrl('Onboarding'));
-          return;
-        }
-      } catch (e) {
-        setUser(null);
-        const publicPages = ['Landing', 'Signin', 'LegalTerms', 'LegalPrivacy', 'ReferralRedirect', 'CampaignRedirect', 'Status', 'Changelog', 'SupportSLA'];
-        if (!publicPages.includes(currentPageName)) {
-           navigate(createPageUrl('Landing'));
-        }
-      }
-    };
-    fetchUser();
-  }, [currentPageName, navigate]);
+    // Check if onboarding is needed (stored in Clerk metadata)
+    const needsOnboarding = clerkUser?.publicMetadata?.onboardingComplete === false;
+    if (clerkUser && needsOnboarding && !['Onboarding', 'Signin', 'Landing', 'LegalTerms', 'LegalPrivacy'].includes(currentPageName)) {
+      navigate(createPageUrl('Onboarding'));
+      return;
+    }
+
+    // Redirect to landing if not signed in and not on a public page
+    const publicPages = ['Landing', 'Signin', 'LegalTerms', 'LegalPrivacy', 'ReferralRedirect', 'CampaignRedirect', 'Status', 'Changelog', 'SupportSLA'];
+    if (!isSignedIn && !publicPages.includes(currentPageName)) {
+      navigate(createPageUrl('Landing'));
+    }
+  }, [clerkUser, isLoaded, isSignedIn, currentPageName, navigate]);
 
   const restartTour = useCallback(async () => {
     try {
-      if (user) {
-        await User.updateMyUserData({ guided_tour_complete: false });
+      if (clerkUser) {
+        // Update Clerk user metadata to reset tour
+        await clerkUser.update({
+          publicMetadata: {
+            ...clerkUser.publicMetadata,
+            guided_tour_complete: false
+          }
+        });
         navigate(0); // Refreshes the page to restart tour state
         toast.info("Guided tour has been reset.");
       }
@@ -221,7 +223,7 @@ export default function Layout({ children, currentPageName }) {
       console.error("Failed to restart tour:", error);
       toast.error("Could not restart the tour.");
     }
-  }, [user, navigate]);
+  }, [clerkUser, navigate]);
 
   const navLinks = useMemo(() => [
     { name: "Dashboard", href: createPageUrl("Dashboard"), icon: LayoutDashboard },
@@ -293,8 +295,8 @@ export default function Layout({ children, currentPageName }) {
                 SoshlOps
               </span>
             </div>
-            {user && (
-              <div className="text-sm mt-2" style={{ color: 'var(--text-70)' }}>{user.full_name}</div>
+            {clerkUser && (
+              <div className="text-sm mt-2" style={{ color: 'var(--text-70)' }}>{clerkUser.fullName}</div>
             )}
           </div>
 
@@ -323,7 +325,7 @@ export default function Layout({ children, currentPageName }) {
               })}
             </div>
 
-            {user?.role === 'admin' && (
+            {clerkUser?.publicMetadata?.role === 'admin' && (
               <div className="mt-8 pt-6" style={{ borderTop: '1px solid var(--bd-weak)' }}>
                 <div className="text-xs font-medium uppercase tracking-wider mb-3" style={{ color: 'var(--text-60)' }}>
                   Admin
@@ -448,7 +450,7 @@ export default function Layout({ children, currentPageName }) {
                   })}
                 </div>
 
-                {user?.role === 'admin' && (
+                {clerkUser?.publicMetadata?.role === 'admin' && (
                   <div className="mt-8 pt-6" style={{ borderTop: '1px solid var(--bd-weak)' }}>
                     <div className="text-xs font-medium uppercase tracking-wider mb-3" style={{ color: 'var(--text-60)' }}>
                       Admin
