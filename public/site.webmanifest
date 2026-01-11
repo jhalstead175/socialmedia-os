@@ -1,11 +1,11 @@
 {
-  "name": "Rezemai",
-  "short_name": "Rezemai",
-  "description": "AI Resume Builder & Interview Coach",
+  "name": "SoshOps",
+  "short_name": "SoshOps",
+  "description": "Professional Social Media Operations Platform",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0B0F14",
-  "theme_color": "#10B981",
+  "theme_color": "#3B82F6",
   "icons": [
     {
       "src": "/icons/icon-192.png",
