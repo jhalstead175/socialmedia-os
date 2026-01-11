@@ -420,8 +420,8 @@ export default function Layout({ children, currentPageName }) {
                     SoshlOps
                   </span>
                 </div>
-                {user && (
-                  <div className="text-sm mt-2" style={{ color: 'var(--text-70)' }}>{user.full_name}</div>
+                {clerkUser && (
+                  <div className="text-sm mt-2" style={{ color: 'var(--text-70)' }}>{clerkUser.fullName}</div>
                 )}
               </div>
 
