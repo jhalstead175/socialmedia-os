@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  HelpCircle,
+  LifeBuoy,
   Search,
   FileText,
   Video,
@@ -147,7 +147,7 @@ export default function Help() {
           <div className="text-center mb-12">
             <div className="flex justify-center mb-4">
               <div className="p-4 bg-blue-100 rounded-full">
-                <HelpCircle className="w-8 h-8 text-blue-600" />
+                <LifeBuoy className="w-8 h-8 text-blue-600" />
               </div>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-navy mb-4">How can we help you?</h1>
@@ -249,7 +249,7 @@ export default function Help() {
                       <Card key={index} className="border-0 shadow-sm">
                         <CardContent className="p-6">
                           <h4 className="font-semibold text-navy mb-3 flex items-start gap-2">
-                            <HelpCircle className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                            <LifeBuoy className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
                             {faq.q}
                           </h4>
                           <p className="text-slate-700 leading-relaxed ml-7">{faq.a}</p>
