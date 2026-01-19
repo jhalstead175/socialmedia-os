@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useUser } from '@clerk/clerk-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -115,15 +116,27 @@ const onboardingSteps = [
 ];
 
 export default function WelcomeModal({ isOpen, onClose }) {
+  const { user } = useUser();
   const [currentStep, setCurrentStep] = useState(0);
   const [isCompleting, setIsCompleting] = useState(false);
 
   const completeOnboarding = async () => {
     setIsCompleting(true);
     try {
-      // Store onboarding completion in localStorage
+      // Store onboarding completion in localStorage (fallback)
       localStorage.setItem('onboarding_completed', 'true');
       localStorage.setItem('onboarding_completed_date', new Date().toISOString());
+
+      // CRITICAL: Update Clerk metadata to prevent modal from showing again
+      if (user) {
+        await user.update({
+          publicMetadata: {
+            ...user.publicMetadata,
+            showWelcome: false,
+            onboardingCompletedAt: new Date().toISOString()
+          }
+        });
+      }
     } catch (error) {
       console.error("Error completing onboarding:", error);
     }
