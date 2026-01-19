@@ -6,12 +6,13 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useDemoMode, demoData } from '../hooks/useDemoMode';
 import { emit, NAV_EVENTS } from '@/utils/telemetry';
-import { supabase } from '@/lib/supabaseClient';
+import { useSupabaseClient } from '@/hooks/useSupabaseClient';
 import { useUser } from '@/hooks/useUserSafe';
 
 export default function Scheduler() {
   const isDemoMode = useDemoMode();
   const { user: clerkUser } = useUser();
+  const supabase = useSupabaseClient();
   const navigate = useNavigate();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [scheduledPosts, setScheduledPosts] = useState(isDemoMode ? demoData.scheduledPosts : []);
