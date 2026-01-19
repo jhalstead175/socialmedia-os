@@ -46,6 +46,22 @@ export function useUserBootstrap() {
           // User already bootstrapped
           setOrganizationId(existingUser.organization_id);
           setBootstrapped(true);
+
+          // Sync organization_id to Clerk metadata if missing (for JWT template)
+          if (!clerkUser.unsafeMetadata?.organization_id) {
+            try {
+              await clerkUser.update({
+                unsafeMetadata: {
+                  ...clerkUser.unsafeMetadata,
+                  organization_id: existingUser.organization_id
+                }
+              });
+              console.log(`✅ Synced existing organization_id to Clerk metadata`);
+            } catch (metadataError) {
+              console.warn('Failed to sync organization_id to Clerk metadata:', metadataError);
+            }
+          }
+
           setLoading(false);
           return;
         }
@@ -81,10 +97,26 @@ export function useUserBootstrap() {
           throw new Error(`Failed to create user: ${userError.message}`);
         }
 
-        // 4. Success
+        // 4. Success - also sync organization_id to Clerk metadata for JWT template
         setOrganizationId(newOrg.id);
         setBootstrapped(true);
         console.log(`✅ User bootstrapped: org_id = ${newOrg.id}`);
+
+        // CRITICAL: Update Clerk metadata so JWT template can access organization_id
+        // Note: Client-side can only update unsafeMetadata, not publicMetadata
+        // For production, use Clerk webhook to sync to publicMetadata via Backend API
+        try {
+          await clerkUser.update({
+            unsafeMetadata: {
+              ...clerkUser.unsafeMetadata,
+              organization_id: newOrg.id
+            }
+          });
+          console.log(`✅ Synced organization_id to Clerk metadata`);
+        } catch (metadataError) {
+          console.warn('Failed to sync organization_id to Clerk metadata:', metadataError);
+          // Non-fatal - organization_id is in Supabase, JWT template just won't have it
+        }
 
       } catch (err) {
         console.error('Bootstrap error:', err);
