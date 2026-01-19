@@ -128,11 +128,12 @@ export default function WelcomeModal({ isOpen, onClose }) {
       localStorage.setItem('onboarding_completed_date', new Date().toISOString());
 
       // CRITICAL: Update Clerk metadata to prevent modal from showing again
+      // Note: Client-side can only update unsafeMetadata, not publicMetadata
       if (user) {
         await user.update({
-          publicMetadata: {
-            ...user.publicMetadata,
-            showWelcome: false,
+          unsafeMetadata: {
+            ...user.unsafeMetadata,
+            onboardingCompleted: true,
             onboardingCompletedAt: new Date().toISOString()
           }
         });

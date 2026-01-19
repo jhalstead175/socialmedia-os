@@ -133,7 +133,14 @@ export default function Account() {
 
     try {
       // Get Clerk JWT for authentication
-      const clerkToken = await getToken({ template: 'supabase' });
+      let clerkToken = null;
+      try {
+        clerkToken = await getToken({ template: 'supabase' });
+      } catch (error) {
+        console.warn('JWT template not found, OAuth will use standard token');
+        // Fall back to standard Clerk session token
+        clerkToken = await getToken();
+      }
 
       if (!clerkToken) {
         toast.error('Authentication token not available');
