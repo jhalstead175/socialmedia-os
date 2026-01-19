@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PenTool, Image, Hash, Calendar, Send, AlertCircle, X as CloseIcon } from 'lucide-react';
+import { Paperclip, Hash, Clock, Send, Info, X as CloseIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -392,7 +392,7 @@ export default function Composer() {
               }}
             >
               <div className="flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 mt-0.5" style={{ color: 'var(--text-60)' }} />
+                <Info className="w-5 h-5 mt-0.5" style={{ color: 'var(--text-60)' }} />
                 <div className="flex-1">
                   <div className="text-sm font-medium" style={{ color: 'var(--text-100)' }}>
                     Connect an account
@@ -554,7 +554,7 @@ export default function Composer() {
             <div className="flex items-center justify-between mb-6 pb-6" style={{ borderBottom: '1px solid var(--bd-weak)' }}>
               <div className="flex gap-3">
                 <Button variant="ghost" size="sm" disabled={!hasAnyConnection}>
-                  <Image className="w-4 h-4 mr-2" />
+                  <Paperclip className="w-4 h-4 mr-2" />
                   Media
                 </Button>
                 <Button variant="ghost" size="sm" disabled={!hasAnyConnection}>
@@ -567,7 +567,7 @@ export default function Composer() {
                   disabled={!hasAnyConnection}
                   onClick={() => setShowSchedulePicker(!showSchedulePicker)}
                 >
-                  <Calendar className="w-4 h-4 mr-2" />
+                  <Clock className="w-4 h-4 mr-2" />
                   Schedule
                 </Button>
               </div>
