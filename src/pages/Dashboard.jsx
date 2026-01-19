@@ -19,21 +19,21 @@ import ConnectedAccountCard from "../components/ConnectedAccountCard";
 import ConnectAccountModal from "../components/ConnectAccountModal";
 import { useDemoMode, demoData } from "../hooks/useDemoMode";
 import { emit, NAV_EVENTS, ACTION_EVENTS } from "@/utils/telemetry";
-import { supabase } from "@/lib/supabaseClient";
+import { useSupabaseClient } from "@/hooks/useSupabaseClient";
 import { useUser } from "@clerk/clerk-react";
 
 export default function Dashboard() {
   const isDemoMode = useDemoMode();
   const { user: clerkUser, isLoaded } = useUser();
+  const supabase = useSupabaseClient();
   const [isLoading, setIsLoading] = useState(true);
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const [showConnectModal, setShowConnectModal] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState(null);
   const [connectedAccounts, setConnectedAccounts] = useState(
     isDemoMode ? demoData.connectedAccounts : {
-      x: false,
       linkedin: false,
-      meta: false
+      // X and Meta removed for LinkedIn-only MVP
     }
   );
   const [stats, setStats] = useState(
@@ -138,9 +138,11 @@ export default function Dashboard() {
         return;
       }
 
-      const accountsMap = { x: false, linkedin: false, meta: false };
+      const accountsMap = { linkedin: false };
       accounts?.forEach(account => {
-        accountsMap[account.platform] = true;
+        if (account.platform === 'linkedin') {
+          accountsMap[account.platform] = true;
+        }
       });
 
       setConnectedAccounts(accountsMap);
@@ -370,7 +372,7 @@ export default function Dashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent style={{ padding: 'var(--s-6)' }}>
-              {!connectedAccounts.x && !connectedAccounts.linkedin && !connectedAccounts.meta ? (
+              {!connectedAccounts.linkedin ? (
                 <div className="text-center py-8">
                   <MessageSquare className="w-12 h-12 mx-auto mb-3" style={{ color: 'var(--text-60)', opacity: 0.5 }} />
                   <p className="text-sm mb-4" style={{ color: 'var(--text-60)' }}>
@@ -378,30 +380,32 @@ export default function Dashboard() {
                   </p>
                   <Link to={createPageUrl("Account")}>
                     <Button variant="outline">
-                      Connect Accounts
+                      Connect LinkedIn
                     </Button>
                   </Link>
                 </div>
               ) : (
                 <div className="space-y-3">
-                  <ConnectedAccountCard
-                    platform="x"
-                    isConnected={connectedAccounts.x}
-                    onConnect={() => handleConnectAccount('x')}
-                    onReconnect={() => handleConnectAccount('x')}
-                  />
+                  {/* LinkedIn-only MVP */}
                   <ConnectedAccountCard
                     platform="linkedin"
                     isConnected={connectedAccounts.linkedin}
                     onConnect={() => handleConnectAccount('linkedin')}
                     onReconnect={() => handleConnectAccount('linkedin')}
                   />
-                  <ConnectedAccountCard
-                    platform="meta"
-                    isConnected={connectedAccounts.meta}
-                    onConnect={() => handleConnectAccount('meta')}
-                    onReconnect={() => handleConnectAccount('meta')}
-                  />
+                  <div
+                    className="card-quiet"
+                    style={{
+                      padding: 'var(--s-3)',
+                      background: 'var(--surf-1)',
+                      border: '1px dashed var(--bd-weak)',
+                      borderRadius: 'var(--r-lg)'
+                    }}
+                  >
+                    <p className="text-xs text-center" style={{ color: 'var(--text-60)' }}>
+                      Additional platforms (X, Meta) coming soon
+                    </p>
+                  </div>
                   <div className="pt-3 text-center">
                     <Link to={createPageUrl("Account")}>
                       <Button variant="ghost" size="sm">

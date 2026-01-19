@@ -98,8 +98,25 @@ serve(async (req) => {
         console.error('User ID missing in state');
         return Response.redirect(`${APP_ORIGIN}/Account?error=invalid_state`, 302);
       }
+
+      if (!stateNonce) {
+        console.error('Nonce missing in state');
+        return Response.redirect(`${APP_ORIGIN}/Account?error=invalid_state`, 302);
+      }
     } catch (e) {
       console.error('Invalid state format:', e);
+      return Response.redirect(`${APP_ORIGIN}/Account?error=state_mismatch`, 302);
+    }
+
+    // Verify nonce matches cookie (CSRF protection)
+    const cookies = parseCookies(req.headers.get('Cookie'));
+    const cookieNonce = cookies['linkedin_oauth_nonce'];
+
+    if (!cookieNonce || cookieNonce !== stateNonce) {
+      console.error('Nonce mismatch - CSRF attempt detected', {
+        cookieNonce,
+        stateNonce,
+      });
       return Response.redirect(`${APP_ORIGIN}/Account?error=state_mismatch`, 302);
     }
 

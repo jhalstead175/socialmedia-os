@@ -6,8 +6,9 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { usePaywall } from '../components/subscription/PaywallProvider';
 import { toast } from 'sonner';
-import { supabase } from '@/lib/supabaseClient';
+import { useSupabaseClient } from '@/hooks/useSupabaseClient';
 import { useUser } from '@/hooks/useUserSafe';
+import { useAuth } from '@clerk/clerk-react';
 import ConnectedAccountCard from '../components/ConnectedAccountCard';
 
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -16,21 +17,17 @@ if (!supabaseAnonKey) {
   throw new Error('Missing VITE_SUPABASE_ANON_KEY when invoking Supabase Edge Functions');
 }
 
-const SUPABASE_FUNCTIONS_AUTH_HEADER = {
-  Authorization: `Bearer ${supabaseAnonKey}`,
-  apikey: supabaseAnonKey
-};
-
 export default function Account() {
   const navigate = useNavigate();
   const { createPortalSession } = usePaywall();
   const [searchParams, setSearchParams] = useSearchParams();
   const { user: clerkUser } = useUser();
+  const { getToken } = useAuth();
+  const supabase = useSupabaseClient();
 
   const [connectedAccounts, setConnectedAccounts] = useState({
-    x: false,
     linkedin: false,
-    meta: false
+    // X and Meta removed for LinkedIn-only MVP
   });
   const [loading, setLoading] = useState(true);
 
@@ -60,13 +57,14 @@ export default function Account() {
         }
 
         const accountsMap = {
-          x: false,
           linkedin: false,
-          meta: false
+          // X and Meta removed for LinkedIn-only MVP
         };
 
         accounts?.forEach(account => {
-          accountsMap[account.platform] = true;
+          if (account.platform === 'linkedin') {
+            accountsMap[account.platform] = true;
+          }
         });
 
         setConnectedAccounts(accountsMap);
@@ -127,23 +125,30 @@ export default function Account() {
       return;
     }
 
-    try {
-      // Use Supabase client to invoke Edge Function (handles auth automatically)
-      const functionNames = {
-        linkedin: 'oauth-linkedin-start',
-        x: 'oauth-x-start',
-        meta: 'oauth-meta-start'
-      };
+    // LinkedIn-only MVP - block other platforms
+    if (platform !== 'linkedin') {
+      toast.error('Only LinkedIn is supported in this version');
+      return;
+    }
 
-      const functionName = functionNames[platform];
-      if (!functionName) {
-        toast.error(`Platform ${platform} not supported`);
+    try {
+      // Get Clerk JWT for authentication
+      const clerkToken = await getToken({ template: 'supabase' });
+
+      if (!clerkToken) {
+        toast.error('Authentication token not available');
         return;
       }
 
+      // Use Supabase client to invoke Edge Function
+      const functionName = 'oauth-linkedin-start';
+
       const { data, error } = await supabase.functions.invoke(functionName, {
-        headers: SUPABASE_FUNCTIONS_AUTH_HEADER,
-        body: { userId: clerkUser.id }
+        headers: {
+          Authorization: `Bearer ${clerkToken}`,
+          apikey: supabaseAnonKey,
+        },
+        body: {}, // No need to send userId - extracted from JWT
       });
 
       if (error) {
@@ -215,13 +220,7 @@ export default function Account() {
           </CardHeader>
           <CardContent style={{ padding: 'var(--s-6)' }}>
             <div className="space-y-3">
-              <ConnectedAccountCard
-                platform="x"
-                isConnected={connectedAccounts.x}
-                onConnect={() => handleConnectAccount('x')}
-                onReconnect={() => handleConnectAccount('x')}
-                onDisconnect={() => handleDisconnectAccount('x')}
-              />
+              {/* LinkedIn-only MVP */}
               <ConnectedAccountCard
                 platform="linkedin"
                 isConnected={connectedAccounts.linkedin}
@@ -229,13 +228,21 @@ export default function Account() {
                 onReconnect={() => handleConnectAccount('linkedin')}
                 onDisconnect={() => handleDisconnectAccount('linkedin')}
               />
-              <ConnectedAccountCard
-                platform="meta"
-                isConnected={connectedAccounts.meta}
-                onConnect={() => handleConnectAccount('meta')}
-                onReconnect={() => handleConnectAccount('meta')}
-                onDisconnect={() => handleDisconnectAccount('meta')}
-              />
+
+              {/* Coming soon message for other platforms */}
+              <div
+                className="card-quiet"
+                style={{
+                  padding: 'var(--s-4)',
+                  background: 'var(--surf-1)',
+                  border: '1px dashed var(--bd-weak)',
+                  borderRadius: 'var(--r-lg)'
+                }}
+              >
+                <p className="text-xs" style={{ color: 'var(--text-60)' }}>
+                  Additional platforms (X, Meta) coming soon
+                </p>
+              </div>
             </div>
           </CardContent>
         </Card>

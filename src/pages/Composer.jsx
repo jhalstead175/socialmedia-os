@@ -8,7 +8,7 @@ import { createPageUrl } from '@/utils';
 import ConnectAccountModal from '../components/ConnectAccountModal';
 import { useDemoMode, demoData, useDemoAction } from '../hooks/useDemoMode';
 import { emit, NAV_EVENTS, ACTION_EVENTS, GATE_EVENTS } from '@/utils/telemetry';
-import { supabase } from '@/lib/supabaseClient';
+import { useSupabaseClient } from '@/hooks/useSupabaseClient';
 import { useUser } from '@/hooks/useUserSafe';
 import { toast } from 'sonner';
 
@@ -16,6 +16,7 @@ export default function Composer() {
   const isDemoMode = useDemoMode();
   const { handleAction } = useDemoAction();
   const { user: clerkUser } = useUser();
+  const supabase = useSupabaseClient();
   const [searchParams] = useSearchParams();
 
   // Auto-enable schedule mode if coming from Scheduler
@@ -25,17 +26,16 @@ export default function Composer() {
   const [selectedPlatforms, setSelectedPlatforms] = useState([]);
   const [showConnectModal, setShowConnectModal] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState(null);
-  const [connectedAccounts, setConnectedAccounts] = useState({ x: false, linkedin: false, meta: false });
+  const [connectedAccounts, setConnectedAccounts] = useState({ linkedin: false }); // LinkedIn-only MVP
   const [socialAccounts, setSocialAccounts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showSchedulePicker, setShowSchedulePicker] = useState(isScheduleMode);
   const [scheduledDate, setScheduledDate] = useState('');
   const [scheduledTime, setScheduledTime] = useState('');
 
+  // LinkedIn-only MVP
   const platforms = [
-    { id: 'x', name: 'X' },
-    { id: 'linkedin', name: 'LinkedIn' },
-    { id: 'meta', name: 'Meta' }
+    { id: 'linkedin', name: 'LinkedIn' }
   ];
 
   useEffect(() => {
@@ -62,13 +62,14 @@ export default function Composer() {
           return;
         }
 
-        const accountsMap = { x: false, linkedin: false, meta: false };
-        accounts?.forEach(account => {
+        const accountsMap = { linkedin: false };
+        const linkedInAccounts = (accounts || []).filter(a => a.platform === 'linkedin');
+        linkedInAccounts.forEach(account => {
           accountsMap[account.platform] = true;
         });
 
         setConnectedAccounts(accountsMap);
-        setSocialAccounts(accounts || []);
+        setSocialAccounts(linkedInAccounts);
       } catch (err) {
         console.error('Error loading accounts:', err);
       }

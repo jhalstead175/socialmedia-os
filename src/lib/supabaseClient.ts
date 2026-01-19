@@ -1,15 +1,19 @@
 /**
  * Supabase Client for SoshlOps
  *
- * Usage:
- * - Import and use throughout the application
- * - Requires VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env
- * - NEVER use service role key in frontend
+ * ⚠️ IMPORTANT: This is the UNAUTHENTICATED client
+ * - Only use for public data or Edge Function invocations
+ * - For authenticated queries, use useSupabaseClient() hook instead
  *
  * Auth Strategy:
  * - Clerk handles authentication
  * - Supabase handles data + RLS
- * - JWT from Clerk must include org_id for RLS to work
+ * - JWT from Clerk must be passed for RLS to work
+ *
+ * Migration guide:
+ * - OLD: import { supabase } from '@/lib/supabaseClient';
+ * - NEW: import { useSupabaseClient } from '@/hooks/useSupabaseClient';
+ *         const supabase = useSupabaseClient();
  */
 
 import { createClient } from '@supabase/supabase-js';
