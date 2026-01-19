@@ -60,9 +60,12 @@ export default function Dashboard() {
 
     setIsLoading(true);
     try {
-      // Check if user needs onboarding (stored in Clerk metadata)
-      const showOnboarding = clerkUser.publicMetadata?.showWelcome !== false;
-      if (showOnboarding) {
+      // Check if user needs onboarding (stored in Clerk unsafeMetadata or localStorage)
+      const hasCompletedOnboarding =
+        clerkUser.unsafeMetadata?.onboardingCompleted === true ||
+        localStorage.getItem('onboarding_completed') === 'true';
+
+      if (!hasCompletedOnboarding) {
         setShowWelcomeModal(true);
       }
 

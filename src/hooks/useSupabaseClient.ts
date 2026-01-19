@@ -31,10 +31,20 @@ export function useSupabaseClient(): SupabaseClient {
 
   useEffect(() => {
     const createAuthenticatedClient = async () => {
-      // Get Clerk token with Supabase claims
-      // Note: This requires a Clerk JWT template named "supabase"
-      // configured in Clerk Dashboard
-      const token = await getToken({ template: 'supabase' });
+      let token = null;
+
+      try {
+        // Get Clerk token with Supabase claims
+        // Note: This requires a Clerk JWT template named "supabase"
+        // configured in Clerk Dashboard
+        token = await getToken({ template: 'supabase' });
+      } catch (error) {
+        // JWT template doesn't exist - fall back to anon mode
+        // This allows the app to work during development/testing
+        // RLS will need to be disabled or policies updated
+        console.warn('Clerk JWT template "supabase" not found. Running in anon mode. RLS may block requests.');
+        console.warn('To fix: Create JWT template in Clerk Dashboard (see docs/CLERK_SUPABASE_SETUP.md)');
+      }
 
       const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
         global: {
