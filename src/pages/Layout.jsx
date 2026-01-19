@@ -6,16 +6,17 @@ import { useUser } from "@clerk/clerk-react";
 import { createPageUrl } from "@/utils";
 import {
   LayoutDashboard,
-  PenTool,
-  Calendar,
+  PenSquare,
+  CalendarClock,
   BarChart3,
-  MessageSquare,
+  Inbox,
   FolderOpen,
-  User as UserIcon,
+  User,
   Settings,
-  HelpCircle,
+  LifeBuoy,
   Menu,
   X,
+  Shield,
   Wrench
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -42,10 +43,8 @@ const globalStyles = `
     --text-70: rgba(255,255,255,0.70);
     --text-60: rgba(255,255,255,0.60);
 
-    /* Accent gradient */
-    --acc-a: #a5b4fc; /* indigo-300 */
-    --acc-b: #f0abfc; /* fuchsia-300 */
-    --acc-c: #67e8f9; /* cyan-300 */
+    /* Single accent color - professional, operational */
+    --accent: #3bf3f6;
 
     /* Borders & rings */
     --bd-weak: rgba(255,255,255,0.12);
@@ -227,21 +226,21 @@ export default function Layout({ children, currentPageName }) {
 
   const navLinks = useMemo(() => [
     { name: "Dashboard", href: createPageUrl("Dashboard"), icon: LayoutDashboard },
-    { name: "Composer", href: createPageUrl("Composer"), icon: PenTool },
-    { name: "Scheduler", href: createPageUrl("Scheduler"), icon: Calendar },
+    { name: "Composer", href: createPageUrl("Composer"), icon: PenSquare },
+    { name: "Scheduler", href: createPageUrl("Scheduler"), icon: CalendarClock },
     { name: "Analytics", href: createPageUrl("Analytics"), icon: BarChart3 },
-    { name: "Inbox", href: createPageUrl("Inbox"), icon: MessageSquare },
+    { name: "Inbox", href: createPageUrl("Inbox"), icon: Inbox },
     { name: "Assets", href: createPageUrl("Assets"), icon: FolderOpen },
-    { name: "Profile", href: createPageUrl("Profile"), icon: UserIcon },
+    { name: "Profile", href: createPageUrl("Profile"), icon: User },
   ], []);
 
   const footerLinks = useMemo(() => [
-    { name: "Help & Support", href: createPageUrl("Help"), icon: HelpCircle },
+    { name: "Help & Support", href: createPageUrl("Help"), icon: LifeBuoy },
     { name: "Account Settings", href: createPageUrl("Account"), icon: Settings },
   ], []);
 
   const adminLinks = useMemo(() => [
-    { name: "Admin Dashboard", href: createPageUrl("AdminDashboard"), icon: Settings },
+    { name: "Admin Dashboard", href: createPageUrl("AdminDashboard"), icon: Shield },
     { name: "Webhook Tools", href: createPageUrl("WebhookTools"), icon: Wrench },
   ], []);
 

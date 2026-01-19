@@ -4,14 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
-  PenTool,
-  Calendar,
+  PenSquare,
+  CalendarClock,
   BarChart3,
-  MessageSquare,
+  Inbox,
   TrendingUp,
   Users,
-  Eye,
-  Heart
+  Eye
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import WelcomeModal from "../components/onboarding/WelcomeModal";
@@ -214,13 +213,13 @@ export default function Dashboard() {
             <div className="flex gap-3">
               <Link to={createPageUrl("Composer")}>
                 <Button className="btn-primary">
-                  <PenTool className="w-5 h-5 mr-2" />
+                  <PenSquare className="w-5 h-5 mr-2" />
                   New Post
                 </Button>
               </Link>
               <Link to={createPageUrl("Scheduler")}>
                 <Button variant="outline">
-                  <Calendar className="w-5 h-5 mr-2" />
+                  <CalendarClock className="w-5 h-5 mr-2" />
                   Schedule
                 </Button>
               </Link>
@@ -234,7 +233,7 @@ export default function Dashboard() {
             <CardContent style={{ padding: 'var(--s-6)' }}>
               <div className="flex items-center justify-between mb-3">
                 <div className="text-sm" style={{ color: 'var(--text-60)' }}>Posts This Week</div>
-                <PenTool className="w-4 h-4" style={{ color: 'var(--acc-a)' }} />
+                <PenSquare className="w-4 h-4" style={{ color: 'var(--accent)' }} />
               </div>
               <div className="h2" style={{ color: 'var(--text-100)' }}>
                 {stats.postsPublished}
@@ -249,12 +248,12 @@ export default function Dashboard() {
             <CardContent style={{ padding: 'var(--s-6)' }}>
               <div className="flex items-center justify-between mb-3">
                 <div className="text-sm" style={{ color: 'var(--text-60)' }}>Total Reach</div>
-                <Eye className="w-4 h-4" style={{ color: 'var(--acc-b)' }} />
+                <Eye className="w-4 h-4" style={{ color: 'var(--accent)' }} />
               </div>
               <div className="h2" style={{ color: 'var(--text-100)' }}>
                 {stats.impressions.toLocaleString()}
               </div>
-              <div className="text-xs mt-2 flex items-center" style={{ color: 'var(--acc-a)' }}>
+              <div className="text-xs mt-2 flex items-center" style={{ color: 'var(--accent)' }}>
                 <TrendingUp className="w-3 h-3 mr-1" />
                 +0% vs last week
               </div>
@@ -265,7 +264,7 @@ export default function Dashboard() {
             <CardContent style={{ padding: 'var(--s-6)' }}>
               <div className="flex items-center justify-between mb-3">
                 <div className="text-sm" style={{ color: 'var(--text-60)' }}>Engagement</div>
-                <Heart className="w-4 h-4" style={{ color: 'var(--acc-c)' }} />
+                <TrendingUp className="w-4 h-4" style={{ color: 'var(--accent)' }} />
               </div>
               <div className="h2" style={{ color: 'var(--text-100)' }}>
                 {stats.totalEngagement.toLocaleString()}
@@ -313,7 +312,7 @@ export default function Dashboard() {
                     onMouseEnter={(e) => e.currentTarget.style.background = 'var(--surf-3)'}
                     onMouseLeave={(e) => e.currentTarget.style.background = 'var(--surf-2)'}
                   >
-                    <PenTool className="w-5 h-5" style={{ color: 'var(--acc-a)' }} />
+                    <PenSquare className="w-5 h-5" style={{ color: 'var(--accent)' }} />
                     <div className="text-left flex-1">
                       <div className="font-semibold">Create Post</div>
                       <div className="text-xs" style={{ color: 'var(--text-60)' }}>
@@ -334,7 +333,7 @@ export default function Dashboard() {
                     onMouseEnter={(e) => e.currentTarget.style.background = 'var(--surf-3)'}
                     onMouseLeave={(e) => e.currentTarget.style.background = 'var(--surf-2)'}
                   >
-                    <Calendar className="w-5 h-5" style={{ color: 'var(--acc-b)' }} />
+                    <CalendarClock className="w-5 h-5" style={{ color: 'var(--accent)' }} />
                     <div className="text-left flex-1">
                       <div className="font-semibold">View Schedule</div>
                       <div className="text-xs" style={{ color: 'var(--text-60)' }}>
@@ -355,7 +354,7 @@ export default function Dashboard() {
                     onMouseEnter={(e) => e.currentTarget.style.background = 'var(--surf-3)'}
                     onMouseLeave={(e) => e.currentTarget.style.background = 'var(--surf-2)'}
                   >
-                    <BarChart3 className="w-5 h-5" style={{ color: 'var(--acc-c)' }} />
+                    <BarChart3 className="w-5 h-5" style={{ color: 'var(--accent)' }} />
                     <div className="text-left flex-1">
                       <div className="font-semibold">View Analytics</div>
                       <div className="text-xs" style={{ color: 'var(--text-60)' }}>
@@ -377,7 +376,7 @@ export default function Dashboard() {
             <CardContent style={{ padding: 'var(--s-6)' }}>
               {!connectedAccounts.linkedin ? (
                 <div className="text-center py-8">
-                  <MessageSquare className="w-12 h-12 mx-auto mb-3" style={{ color: 'var(--text-60)', opacity: 0.5 }} />
+                  <Inbox className="w-12 h-12 mx-auto mb-3" style={{ color: 'var(--text-60)', opacity: 0.5 }} />
                   <p className="text-sm mb-4" style={{ color: 'var(--text-60)' }}>
                     No accounts connected
                   </p>

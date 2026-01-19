@@ -6,15 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
-  Sparkles,
+  LayoutDashboard,
   Share2,
-  Calendar,
+  CalendarClock,
   BarChart3,
   ArrowRight,
   CheckCircle,
-  User as UserIcon,
+  User,
   Target,
-  Zap
+  Send
 } from "lucide-react";
 
 const onboardingSteps = [
@@ -22,11 +22,11 @@ const onboardingSteps = [
     id: 'welcome',
     title: 'Welcome to SoshOps',
     description: 'Professional social media operations platform',
-    icon: Sparkles,
+    icon: LayoutDashboard,
     content: (
       <div className="space-y-4 text-center">
-        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mx-auto">
-          <Share2 className="w-10 h-10 text-white" />
+        <div className="w-20 h-20 rounded-full bg-[#3bf3f6]/20 flex items-center justify-center mx-auto">
+          <Share2 className="w-10 h-10 text-[#3bf3f6]" />
         </div>
         <p className="text-slate-600">
           SoshOps helps you manage, schedule, and optimize your social media presence across multiple platforms with professional-grade tools.
@@ -39,7 +39,7 @@ const onboardingSteps = [
     id: 'profile',
     title: 'Set Up Your Profile',
     description: 'Personalize your workspace',
-    icon: UserIcon,
+    icon: User,
     content: (
       <div className="space-y-4">
         <p className="text-slate-600">Your profile helps us:</p>
@@ -68,7 +68,7 @@ const onboardingSteps = [
     content: (
       <div className="grid gap-3">
         <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
-          <Calendar className="w-6 h-6 text-blue-600 mt-1 flex-shrink-0" />
+          <CalendarClock className="w-6 h-6 text-blue-600 mt-1 flex-shrink-0" />
           <div>
             <h4 className="font-semibold text-navy">Content Scheduler</h4>
             <p className="text-sm text-slate-600">Plan and schedule posts across all platforms</p>
@@ -82,7 +82,7 @@ const onboardingSteps = [
           </div>
         </div>
         <div className="flex items-start gap-3 p-3 bg-emerald-50 rounded-lg">
-          <Zap className="w-6 h-6 text-emerald-600 mt-1 flex-shrink-0" />
+          <Send className="w-6 h-6 text-emerald-600 mt-1 flex-shrink-0" />
           <div>
             <h4 className="font-semibold text-navy">Multi-Platform Publishing</h4>
             <p className="text-sm text-slate-600">Post to LinkedIn, Twitter, and more from one place</p>

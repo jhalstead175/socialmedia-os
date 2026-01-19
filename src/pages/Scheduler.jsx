@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, ChevronLeft, ChevronRight, CalendarPlus } from 'lucide-react';
+import { Calendar, Clock, ChevronLeft, ChevronRight, PlusSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useNavigate } from 'react-router-dom';
@@ -131,7 +131,7 @@ export default function Scheduler() {
             fontWeight: '600'
           }}
         >
-          <CalendarPlus className="w-4 h-4" />
+          <PlusSquare className="w-4 h-4" />
           Schedule Post
         </Button>
       </div>
