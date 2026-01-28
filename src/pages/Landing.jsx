@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import Pricing from "@/components/Pricing";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import Watermark from "@/components/Watermark";
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -13,7 +14,8 @@ export default function Landing() {
   };
 
   return (
-    <main className="px-6 max-w-7xl mx-auto">
+    <main className="relative px-6 max-w-7xl mx-auto">
+      <Watermark />
       <Header />
 
       {/* Hero */}
