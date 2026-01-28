@@ -1,3 +1,7 @@
+// ⚠️ DO NOT MODIFY LAYOUT OR PAGE STRUCTURE
+// Background layers must be additive only.
+// Any changes require explicit approval.
+
 import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";

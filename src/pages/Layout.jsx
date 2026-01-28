@@ -1,4 +1,6 @@
-
+// ⚠️ DO NOT MODIFY LAYOUT OR PAGE STRUCTURE
+// Background layers must be additive only.
+// Any changes require explicit approval.
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";

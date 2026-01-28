@@ -1,3 +1,6 @@
+// Brand watermark — visual only.
+// Do not add text, gradients, filters, or layout logic.
+
 import React from "react";
 
 const Watermark = () => {
