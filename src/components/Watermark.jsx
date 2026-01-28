@@ -2,10 +2,10 @@ import React from "react";
 
 const Watermark = () => {
   return (
-    <div className="absolute inset-0 bg-gradient-to-b from-[#0B0F1A] via-[#0E1424] to-black">
+    <div className="absolute inset-0 bg-gradient-to-b from-[#0B0F1A] via-[#0E1424] to-black -z-10">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-[0.04]"
+        className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-[0.08]"
       >
         <img
           src="/brand/logos/soshlops-mark.svg"
