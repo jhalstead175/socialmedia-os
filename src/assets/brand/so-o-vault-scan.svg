@@ -1,0 +1,17 @@
+<svg width="1000" height="1000" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <mask id="scan-mask" maskUnits="userSpaceOnUse">
+      <rect width="1000" height="1000" fill="white"/>
+      <!-- Animated scan bar -->
+      <rect id="scan" x="300" y="0" width="20" height="1000" fill="black"/>
+    </mask>
+  </defs>
+
+  <style>
+    #scan{animation:scanOnce .36s ease-out forwards}
+    @keyframes scanOnce{from{transform:translateX(0)}to{transform:translateX(400px)}}
+  </style>
+
+  <circle cx="500" cy="500" r="400" fill="white" mask="url(#scan-mask)"/>
+  <circle cx="500" cy="500" r="200" fill="black"/>
+</svg>
