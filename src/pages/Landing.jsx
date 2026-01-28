@@ -9,6 +9,8 @@ import Watermark from "@/components/Watermark";
 export default function Landing() {
   const navigate = useNavigate();
 
+  console.log("Rendering Landing page");
+
   const scrollToSection = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };

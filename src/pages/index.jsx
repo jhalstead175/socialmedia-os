@@ -153,6 +153,8 @@ function _getCurrentPage(url) {
 function PagesContent() {
     const location = useLocation();
     const currentPage = _getCurrentPage(location.pathname);
+
+    console.log("Current page:", currentPage);
     
     return (
         <Layout currentPageName={currentPage}>
