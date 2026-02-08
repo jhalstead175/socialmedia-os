@@ -59,6 +59,7 @@ export default function Composer() {
 
         if (error) {
           console.error('Failed to load connected accounts:', error);
+          toast.error('Failed to load connected accounts');
           return;
         }
 
@@ -72,11 +73,12 @@ export default function Composer() {
         setSocialAccounts(linkedInAccounts);
       } catch (err) {
         console.error('Error loading accounts:', err);
+        toast.error('Error loading accounts');
       }
     }
 
     loadConnectedAccounts();
-  }, [clerkUser, isDemoMode]);
+  }, [clerkUser, isDemoMode, supabase]);
 
   const handlePlatformToggle = (platformId) => {
     if (!connectedAccounts[platformId]) {
@@ -105,19 +107,27 @@ export default function Composer() {
     if (isDemoMode || !clerkUser) return true;
 
     try {
-      const { data: user } = await supabase
+      const { data: user, error: userError } = await supabase
         .from('users')
         .select('organization_id')
         .eq('clerk_user_id', clerkUser.id)
         .single();
 
-      if (!user) return false;
+      if (userError || !user) {
+        console.error('Failed to get user:', userError);
+        return true; // Fail open
+      }
 
-      const { count } = await supabase
+      const { count, error: countError } = await supabase
         .from('posts')
         .select('id', { count: 'exact', head: true })
         .eq('organization_id', user.organization_id)
         .eq('status', 'scheduled');
+
+      if (countError) {
+        console.error('Failed to check limits:', countError);
+        return true; // Fail open
+      }
 
       if (count >= PLAN_LIMITS.MAX_SCHEDULED_POSTS) {
         toast.error(`Maximum of ${PLAN_LIMITS.MAX_SCHEDULED_POSTS} scheduled posts reached`);
@@ -127,8 +137,28 @@ export default function Composer() {
       return true;
     } catch (err) {
       console.error('Error checking limits:', err);
-      return true; // Allow on error (fail open)
+      return true; // Fail open
     }
+  };
+
+  const validateContent = () => {
+    if (!content.trim()) {
+      toast.error('Please add content to your post');
+      return false;
+    }
+
+    if (selectedPlatforms.length === 0) {
+      toast.error('Please select at least one platform');
+      return false;
+    }
+
+    // LinkedIn character limit: 3000
+    if (content.length > 3000) {
+      toast.error('Post exceeds LinkedIn character limit (3000)');
+      return false;
+    }
+
+    return true;
   };
 
   const handleSaveDraft = async () => {
@@ -139,10 +169,7 @@ export default function Composer() {
       return;
     }
 
-    if (!canPublish) {
-      toast.error('Please select a platform and add content');
-      return;
-    }
+    if (!validateContent()) return;
 
     setLoading(true);
     try {
@@ -179,12 +206,16 @@ export default function Composer() {
         const account = socialAccounts.find(a => a.platform === platformId);
         if (!account) continue;
 
-        await supabase.from('post_platforms').insert({
+        const { error: linkError } = await supabase.from('post_platforms').insert({
           post_id: post.id,
           social_account_id: account.id,
           platform: platformId,
           status: 'pending'
         });
+
+        if (linkError) {
+          console.error('Failed to link platform:', linkError);
+        }
       }
 
       toast.success('Draft saved successfully');
@@ -193,7 +224,7 @@ export default function Composer() {
 
     } catch (err) {
       console.error('Failed to save draft:', err);
-      toast.error('Failed to save draft');
+      toast.error(err.message || 'Failed to save draft');
     } finally {
       setLoading(false);
     }
@@ -207,14 +238,7 @@ export default function Composer() {
       return;
     }
 
-    if (!canPublish) {
-      toast.error('Please select a platform and add content');
-      return;
-    }
-
-    // Check limits before scheduling
-    const withinLimits = await checkScheduledPostsLimit();
-    if (!withinLimits) return;
+    if (!validateContent()) return;
 
     setLoading(true);
     try {
@@ -253,40 +277,42 @@ export default function Composer() {
         const account = socialAccounts.find(a => a.platform === platformId);
         if (!account) continue;
 
-        await supabase.from('post_platforms').insert({
+        const { error: linkError } = await supabase.from('post_platforms').insert({
           post_id: post.id,
           social_account_id: account.id,
           platform: platformId,
           status: 'pending'
         });
+
+        if (linkError) {
+          console.error('Failed to link platform:', linkError);
+        }
       }
 
-      toast.success('Post published');
+      toast.success('Post scheduled for immediate publishing');
       setContent('');
       setSelectedPlatforms([]);
 
     } catch (err) {
       console.error('Failed to publish:', err);
-      toast.error('Failed to schedule post');
+      toast.error(err.message || 'Failed to publish post');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSchedulePost = async () => {
+  const handleSchedule = async () => {
     if (isDemoMode) {
-      toast.info('Schedule set (demo mode)');
-      setShowSchedulePicker(false);
+      emit(ACTION_EVENTS.SCHEDULE_ATTEMPTED);
+      const feedback = handleAction('schedule');
+      if (feedback) toast.info(feedback);
       return;
     }
+
+    if (!validateContent()) return;
 
     if (!scheduledDate || !scheduledTime) {
-      toast.error('Please select both date and time');
-      return;
-    }
-
-    if (!canPublish) {
-      toast.error('Please select a platform and add content');
+      toast.error('Please select a date and time');
       return;
     }
 
@@ -296,6 +322,8 @@ export default function Composer() {
 
     setLoading(true);
     try {
+      emit(ACTION_EVENTS.SCHEDULE_ATTEMPTED);
+
       // 1. Get user and org
       const { data: user, error: userError } = await supabase
         .from('users')
@@ -307,8 +335,15 @@ export default function Composer() {
         throw new Error('User not found');
       }
 
-      // 2. Parse scheduled datetime
-      const scheduledAt = new Date(`${scheduledDate}T${scheduledTime}`).toISOString();
+      // 2. Combine date and time
+      const scheduledDateTime = new Date(`${scheduledDate}T${scheduledTime}`);
+      
+      // Validate future date
+      if (scheduledDateTime <= new Date()) {
+        toast.error('Scheduled time must be in the future');
+        setLoading(false);
+        return;
+      }
 
       // 3. Create scheduled post
       const { data: post, error: postError } = await supabase
@@ -319,7 +354,7 @@ export default function Composer() {
           content: content.trim(),
           media_urls: [],
           status: 'scheduled',
-          scheduled_at: scheduledAt
+          scheduled_at: scheduledDateTime.toISOString()
         })
         .select('id')
         .single();
@@ -331,37 +366,28 @@ export default function Composer() {
         const account = socialAccounts.find(a => a.platform === platformId);
         if (!account) continue;
 
-        await supabase.from('post_platforms').insert({
+        const { error: linkError } = await supabase.from('post_platforms').insert({
           post_id: post.id,
           social_account_id: account.id,
           platform: platformId,
           status: 'pending'
         });
+
+        if (linkError) {
+          console.error('Failed to link platform:', linkError);
+        }
       }
 
-      // Format the scheduled time nicely
-      const scheduledDateTime = new Date(scheduledAt);
-      const formattedDate = scheduledDateTime.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric'
-      });
-      const formattedTime = scheduledDateTime.toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true
-      });
-
-      toast.success(`Post scheduled for ${formattedDate} at ${formattedTime}`);
+      toast.success(`Post scheduled for ${scheduledDateTime.toLocaleString()}`);
       setContent('');
       setSelectedPlatforms([]);
-      setShowSchedulePicker(false);
       setScheduledDate('');
       setScheduledTime('');
+      setShowSchedulePicker(false);
 
     } catch (err) {
       console.error('Failed to schedule post:', err);
-      toast.error('Failed to schedule post');
+      toast.error(err.message || 'Failed to schedule post');
     } finally {
       setLoading(false);
     }
@@ -370,143 +396,90 @@ export default function Composer() {
   return (
     <TooltipProvider>
       <div className="container-7xl py-8 px-4">
-        <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="h1" style={{ color: 'var(--text-100)' }}>
-              Composer
-            </h1>
-            <p className="lead mt-2">
-              Create and schedule posts across platforms
-            </p>
-          </div>
+        <ConnectAccountModal
+          isOpen={showConnectModal}
+          onClose={() => setShowConnectModal(false)}
+          platform={selectedPlatform}
+        />
 
-          {/* No Accounts Warning */}
-          {!hasAnyConnection && !isDemoMode && (
-            <div
-              className="card mb-6"
-              style={{
-                padding: 'var(--s-4)',
-                background: 'var(--surf-2)',
-                border: '1px solid var(--bd-weak)'
-              }}
-            >
-              <div className="flex items-start gap-3">
-                <Info className="w-5 h-5 mt-0.5" style={{ color: 'var(--text-60)' }} />
-                <div className="flex-1">
-                  <div className="text-sm font-medium" style={{ color: 'var(--text-100)' }}>
-                    Connect an account
-                  </div>
-                  <div className="text-xs mt-1" style={{ color: 'var(--text-60)' }}>
-                    Authorization required to publish
-                  </div>
-                </div>
-                <Link to={createPageUrl("Account")}>
-                  <Button variant="outline" size="sm">
-                    Connect
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          )}
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="h1" style={{ color: 'var(--text-100)' }}>
+            Composer
+          </h1>
+          <p className="lead mt-2">
+            Create and schedule posts across your connected accounts
+          </p>
+        </div>
 
-          {/* Main Composer Card */}
-          <div className="card" style={{ padding: 'var(--s-8)' }}>
-            {/* Platform Selection */}
-            <div className="mb-6">
-              <label className="text-sm font-medium mb-3 block" style={{ color: 'var(--text-80)' }}>
-                Select Platforms
-              </label>
-              <div className="flex gap-3">
-                {platforms.map((platform) => {
-                  const isConnected = connectedAccounts[platform.id];
-                  const isSelected = selectedPlatforms.includes(platform.id);
-
-                  return (
-                    <Tooltip key={platform.id}>
-                      <TooltipTrigger asChild>
-                        <button
-                          onClick={() => handlePlatformToggle(platform.id)}
-                          disabled={!isConnected}
-                          className="btn btn-outline"
-                          style={{
-                            background: isSelected ? 'var(--surf-3)' : 'var(--surf-1)',
-                            borderColor: isSelected ? 'var(--bd-strong)' : 'var(--bd-weak)',
-                            opacity: isConnected ? 1 : 0.5,
-                            cursor: isConnected ? 'pointer' : 'not-allowed'
-                          }}
-                          aria-label={isConnected ? `Toggle ${platform.name}` : `Connect ${platform.name} account to publish`}
-                        >
-                          {platform.name}
-                        </button>
-                      </TooltipTrigger>
-                      {!isConnected && (
-                        <TooltipContent>
-                          <p>Connect account to publish</p>
-                        </TooltipContent>
-                      )}
-                    </Tooltip>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Content Area */}
-            <div className="mb-6">
+        {/* Main Composer */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left: Content Editor */}
+          <div className="lg:col-span-2 space-y-6">
+            <div className="card" style={{ padding: 'var(--s-6)' }}>
               <Textarea
                 placeholder="What's on your mind?"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                rows={8}
-                className="w-full"
-                disabled={!hasAnyConnection}
+                className="min-h-[300px] resize-none border-0 focus-visible:ring-0 text-base"
                 style={{
-                  background: 'var(--surf-1)',
-                  borderColor: 'var(--bd-weak)',
-                  color: 'var(--text-100)',
-                  fontSize: 'var(--fs-md)',
-                  padding: 'var(--s-4)',
-                  borderRadius: 'var(--r-lg)',
-                  opacity: hasAnyConnection ? 1 : 0.5
+                  background: 'transparent',
+                  color: 'var(--text-100)'
                 }}
-                aria-label="Post content"
+                disabled={loading}
               />
-              <div className="text-sm mt-2" style={{ color: 'var(--text-60)' }}>
-                {content.length} characters
+
+              <div className="flex items-center justify-between mt-4 pt-4 border-t" style={{ borderColor: 'var(--bd-weak)' }}>
+                <div className="flex gap-2">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="sm" disabled style={{ cursor: 'not-allowed', opacity: 0.5 }}>
+                        <Paperclip className="w-4 h-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Media upload (v1.1)</p>
+                    </TooltipContent>
+                  </Tooltip>
+
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="sm" disabled style={{ cursor: 'not-allowed', opacity: 0.5 }}>
+                        <Hash className="w-4 h-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Hashtag suggestions (v1.1)</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+
+                <div className="text-sm" style={{ color: 'var(--text-60)' }}>
+                  {content.length} / 3000
+                </div>
               </div>
             </div>
 
-            {/* Schedule Picker (Inline) */}
+            {/* Schedule Picker */}
             {showSchedulePicker && (
-              <div
-                className="mb-6 p-4"
-                style={{
-                  background: 'var(--surf-2)',
-                  borderRadius: 'var(--r-lg)',
-                  border: '1px solid var(--bd-weak)'
-                }}
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <div>
-                    <div className="text-sm font-medium" style={{ color: 'var(--text-100)' }}>
-                      Schedule for later
-                    </div>
-                    <div className="text-xs mt-1" style={{ color: 'var(--text-60)' }}>
-                      Your post will publish automatically at the scheduled time.
-                    </div>
-                  </div>
-                  <button
+              <div className="card" style={{ padding: 'var(--s-6)' }}>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold" style={{ color: 'var(--text-100)' }}>
+                    Schedule Post
+                  </h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => setShowSchedulePicker(false)}
-                    className="text-sm"
-                    style={{ color: 'var(--text-60)' }}
-                    aria-label="Close schedule picker"
+                    disabled={loading}
                   >
                     <CloseIcon className="w-4 h-4" />
-                  </button>
+                  </Button>
                 </div>
-                <div className="flex gap-3">
-                  <div className="flex-1">
-                    <label className="text-xs mb-1 block" style={{ color: 'var(--text-70)' }}>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium mb-2 block" style={{ color: 'var(--text-80)' }}>
                       Date
                     </label>
                     <input
@@ -514,113 +487,139 @@ export default function Composer() {
                       value={scheduledDate}
                       onChange={(e) => setScheduledDate(e.target.value)}
                       min={new Date().toISOString().split('T')[0]}
-                      className="w-full px-3 py-2 rounded"
+                      className="w-full px-3 py-2 rounded-lg border"
                       style={{
-                        background: 'var(--surf-1)',
-                        border: '1px solid var(--bd-weak)',
+                        background: 'var(--surf-2)',
+                        borderColor: 'var(--bd-weak)',
                         color: 'var(--text-100)'
                       }}
+                      disabled={loading}
                     />
                   </div>
-                  <div className="flex-1">
-                    <label className="text-xs mb-1 block" style={{ color: 'var(--text-70)' }}>
+
+                  <div>
+                    <label className="text-sm font-medium mb-2 block" style={{ color: 'var(--text-80)' }}>
                       Time
                     </label>
                     <input
                       type="time"
                       value={scheduledTime}
                       onChange={(e) => setScheduledTime(e.target.value)}
-                      className="w-full px-3 py-2 rounded"
+                      className="w-full px-3 py-2 rounded-lg border"
                       style={{
-                        background: 'var(--surf-1)',
-                        border: '1px solid var(--bd-weak)',
+                        background: 'var(--surf-2)',
+                        borderColor: 'var(--bd-weak)',
                         color: 'var(--text-100)'
                       }}
+                      disabled={loading}
                     />
-                  </div>
-                  <div className="flex items-end">
-                    <Button
-                      onClick={handleSchedulePost}
-                      disabled={loading || !scheduledDate || !scheduledTime || !canPublish}
-                    >
-                      Schedule Post
-                    </Button>
                   </div>
                 </div>
               </div>
             )}
+          </div>
 
-            {/* Action Toolbar */}
-            <div className="flex items-center justify-between mb-6 pb-6" style={{ borderBottom: '1px solid var(--bd-weak)' }}>
-              <div className="flex gap-3">
-                <Button variant="ghost" size="sm" disabled={!hasAnyConnection}>
-                  <Paperclip className="w-4 h-4 mr-2" />
-                  Media
-                </Button>
-                <Button variant="ghost" size="sm" disabled={!hasAnyConnection}>
-                  <Hash className="w-4 h-4 mr-2" />
-                  Hashtags
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  disabled={!hasAnyConnection}
-                  onClick={() => setShowSchedulePicker(!showSchedulePicker)}
-                >
-                  <Clock className="w-4 h-4 mr-2" />
-                  Schedule
-                </Button>
+          {/* Right: Platform Selection & Actions */}
+          <div className="space-y-6">
+            {/* Platform Selection */}
+            <div className="card" style={{ padding: 'var(--s-6)' }}>
+              <h3 className="font-semibold mb-4" style={{ color: 'var(--text-100)' }}>
+                Publish to
+              </h3>
+
+              {!hasAnyConnection && (
+                <div className="mb-4 p-3 rounded-lg" style={{ background: 'var(--surf-2)' }}>
+                  <div className="flex items-start gap-2">
+                    <Info className="w-4 h-4 mt-0.5" style={{ color: 'var(--text-60)' }} />
+                    <p className="text-sm" style={{ color: 'var(--text-80)' }}>
+                      Connect an account to start publishing
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-3">
+                {platforms.map((platform) => (
+                  <button
+                    key={platform.id}
+                    onClick={() => handlePlatformToggle(platform.id)}
+                    className="w-full flex items-center justify-between p-3 rounded-lg border transition-colors"
+                    style={{
+                      background: selectedPlatforms.includes(platform.id) ? 'var(--acc-a-10)' : 'var(--surf-2)',
+                      borderColor: selectedPlatforms.includes(platform.id) ? 'var(--acc-a)' : 'var(--bd-weak)',
+                      color: 'var(--text-100)'
+                    }}
+                    disabled={loading}
+                  >
+                    <span className="font-medium">{platform.name}</span>
+                    {connectedAccounts[platform.id] ? (
+                      <span className="text-xs px-2 py-1 rounded" style={{ background: 'var(--acc-a-20)', color: 'var(--acc-a)' }}>
+                        Connected
+                      </span>
+                    ) : (
+                      <span className="text-xs" style={{ color: 'var(--text-60)' }}>
+                        Not connected
+                      </span>
+                    )}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex gap-3 justify-end">
-              <Button
-                variant="outline"
-                disabled={!hasAnyConnection || loading}
-                onClick={handleSaveDraft}
-              >
-                Save Draft
-              </Button>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span>
-                    <Button
-                      className="btn-primary"
-                      disabled={!canPublish || loading}
-                      onClick={showSchedulePicker ? handleSchedulePost : handlePublishNow}
-                      aria-label={canPublish ? (showSchedulePicker ? "Schedule post" : "Publish now") : "Select platform and add content to publish"}
-                    >
-                      <Send className="w-4 h-4 mr-2" />
-                      {loading ? (showSchedulePicker ? 'Scheduling...' : 'Publishing...') : (showSchedulePicker ? 'Schedule Post' : 'Publish Now')}
-                    </Button>
-                  </span>
-                </TooltipTrigger>
-                {!canPublish && hasAnyConnection && (
-                  <TooltipContent>
-                    <p>Select platform and add content</p>
-                  </TooltipContent>
-                )}
-              </Tooltip>
-            </div>
-          </div>
+            {/* Actions */}
+            <div className="card" style={{ padding: 'var(--s-6)' }}>
+              <div className="space-y-3">
+                <Button
+                  onClick={handlePublishNow}
+                  disabled={!canPublish || loading}
+                  className="w-full"
+                  style={{
+                    background: canPublish ? 'var(--acc-a)' : 'var(--surf-2)',
+                    color: canPublish ? 'var(--bg)' : 'var(--text-60)',
+                    cursor: canPublish && !loading ? 'pointer' : 'not-allowed'
+                  }}
+                >
+                  <Send className="w-4 h-4 mr-2" />
+                  {loading ? 'Publishing...' : 'Publish Now'}
+                </Button>
 
-          {/* Tips */}
-          <div className="mt-6 text-sm" style={{ color: 'var(--text-60)' }}>
-            <p>✓ Text-only posts (v1)</p>
-            <p>✓ Scheduler processes posts every minute</p>
-            <p>✓ Drafts saved to your organization</p>
+                <Button
+                  onClick={() => setShowSchedulePicker(!showSchedulePicker)}
+                  disabled={!canPublish || loading}
+                  variant="outline"
+                  className="w-full"
+                >
+                  <Clock className="w-4 h-4 mr-2" />
+                  {showSchedulePicker ? 'Hide Schedule' : 'Schedule'}
+                </Button>
+
+                {showSchedulePicker && (
+                  <Button
+                    onClick={handleSchedule}
+                    disabled={!canPublish || !scheduledDate || !scheduledTime || loading}
+                    className="w-full"
+                    style={{
+                      background: canPublish && scheduledDate && scheduledTime ? 'var(--acc-a)' : 'var(--surf-2)',
+                      color: canPublish && scheduledDate && scheduledTime ? 'var(--bg)' : 'var(--text-60)'
+                    }}
+                  >
+                    {loading ? 'Scheduling...' : 'Confirm Schedule'}
+                  </Button>
+                )}
+
+                <Button
+                  onClick={handleSaveDraft}
+                  disabled={!canPublish || loading}
+                  variant="ghost"
+                  className="w-full"
+                >
+                  {loading ? 'Saving...' : 'Save as Draft'}
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Connect Modal */}
-      {showConnectModal && (
-        <ConnectAccountModal
-          platform={selectedPlatform}
-          onClose={() => setShowConnectModal(false)}
-        />
-      )}
     </TooltipProvider>
   );
 }
