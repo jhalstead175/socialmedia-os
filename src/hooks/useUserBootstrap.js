@@ -21,6 +21,8 @@ export function useUserBootstrap() {
   const [loading, setLoading] = useState(true);
   const [organizationId, setOrganizationId] = useState(null);
   const [error, setError] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
+  const MAX_RETRIES = 3;
 
   useEffect(() => {
     async function bootstrapUser() {
@@ -59,6 +61,7 @@ export function useUserBootstrap() {
               console.log(`✅ Synced existing organization_id to Clerk metadata`);
             } catch (metadataError) {
               console.warn('Failed to sync organization_id to Clerk metadata:', metadataError);
+              // Non-fatal - continue
             }
           }
 
@@ -83,6 +86,10 @@ export function useUserBootstrap() {
           throw new Error(`Failed to create organization: ${orgError.message}`);
         }
 
+        if (!newOrg || !newOrg.id) {
+          throw new Error('Organization created but no ID returned');
+        }
+
         // 3. Create user record
         const { error: userError } = await supabase
           .from('users')
@@ -94,10 +101,20 @@ export function useUserBootstrap() {
           });
 
         if (userError) {
+          // Rollback: delete organization if user creation fails
+          try {
+            await supabase
+              .from('organizations')
+              .delete()
+              .eq('id', newOrg.id);
+            console.log('Rolled back organization creation');
+          } catch (rollbackError) {
+            console.error('Failed to rollback organization:', rollbackError);
+          }
           throw new Error(`Failed to create user: ${userError.message}`);
         }
 
-        // 4. Success - also sync organization_id to Clerk metadata for JWT template
+        // 4. Success - sync organization_id to Clerk metadata for JWT template
         setOrganizationId(newOrg.id);
         setBootstrapped(true);
         console.log(`✅ User bootstrapped: org_id = ${newOrg.id}`);
@@ -121,13 +138,29 @@ export function useUserBootstrap() {
       } catch (err) {
         console.error('Bootstrap error:', err);
         setError(err.message);
+
+        // Retry logic for transient failures
+        if (retryCount < MAX_RETRIES) {
+          console.log(`Retrying bootstrap (${retryCount + 1}/${MAX_RETRIES})...`);
+          setRetryCount(prev => prev + 1);
+          setTimeout(() => {
+            setLoading(true);
+            bootstrapUser();
+          }, 1000 * (retryCount + 1)); // Exponential backoff
+          return;
+        }
+
+        // Max retries reached - give up
+        console.error('Bootstrap failed after max retries');
       } finally {
-        setLoading(false);
+        if (retryCount >= MAX_RETRIES || error) {
+          setLoading(false);
+        }
       }
     }
 
     bootstrapUser();
-  }, [clerkUser, isLoaded]);
+  }, [clerkUser, isLoaded, retryCount]);
 
   return {
     bootstrapped,
