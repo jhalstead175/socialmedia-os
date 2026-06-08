@@ -3,6 +3,13 @@
  *
  * These are placeholder stubs to prevent build errors.
  * Integrations need to be migrated to Supabase Edge Functions.
+ *
+ * NOTE (Email Campaigns module): email + AI for the campaigns product no longer
+ * use these stubs — they call dedicated Edge Functions via src/api/email/
+ * (email-send, email-test, email-domain, and the Phase-2 ai-generate). The
+ * InvokeLLM / SendEmail stubs below remain only for legacy callers not yet
+ * migrated (e.g. ReferralSystem, the deprecated EmailService, TestingDashboard);
+ * remove them once those are ported. Do not use them in new code.
  */
 
 const createMockIntegration = (name) => async (...args) => {

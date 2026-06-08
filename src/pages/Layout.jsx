@@ -20,7 +20,8 @@ import {
   X,
   Shield,
   Wrench,
-  HelpCircle
+  HelpCircle,
+  Mail
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -234,6 +235,7 @@ export default function Layout({ children, currentPageName }) {
     { name: "Analytics", href: createPageUrl("Analytics"), icon: BarChart3 },
     { name: "Inbox", href: createPageUrl("Inbox"), icon: Inbox },
     { name: "Assets", href: createPageUrl("Assets"), icon: FolderOpen },
+    { name: "Email", href: createPageUrl("Email"), icon: Mail },
     { name: "Profile", href: createPageUrl("Profile"), icon: User },
   ], []);
 

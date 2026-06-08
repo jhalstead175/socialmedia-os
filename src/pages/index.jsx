@@ -65,6 +65,16 @@ import Contact from "./Contact";
 
 import Pricing from "./Pricing";
 
+import Email from "./Email";
+
+import EmailContacts from "./EmailContacts";
+
+import EmailCampaigns from "./EmailCampaigns";
+
+import EmailCampaignBuilder from "./EmailCampaignBuilder";
+
+import EmailSettings from "./EmailSettings";
+
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 
 const PAGES = {
@@ -133,7 +143,17 @@ const PAGES = {
     Contact: Contact,
     
     Pricing: Pricing,
-    
+
+    Email: Email,
+
+    EmailContacts: EmailContacts,
+
+    EmailCampaigns: EmailCampaigns,
+
+    EmailCampaignBuilder: EmailCampaignBuilder,
+
+    EmailSettings: EmailSettings,
+
 }
 
 function _getCurrentPage(url) {
@@ -229,7 +249,22 @@ function PagesContent() {
                 <Route path="/Contact" element={<Contact />} />
                 
                 <Route path="/Pricing" element={<Pricing />} />
-                
+
+                <Route path="/Email" element={<Email />} />
+                <Route path="/email" element={<Email />} />
+
+                <Route path="/EmailContacts" element={<EmailContacts />} />
+                <Route path="/emailcontacts" element={<EmailContacts />} />
+
+                <Route path="/EmailCampaigns" element={<EmailCampaigns />} />
+                <Route path="/emailcampaigns" element={<EmailCampaigns />} />
+
+                <Route path="/EmailCampaignBuilder" element={<EmailCampaignBuilder />} />
+                <Route path="/emailcampaignbuilder" element={<EmailCampaignBuilder />} />
+
+                <Route path="/EmailSettings" element={<EmailSettings />} />
+                <Route path="/emailsettings" element={<EmailSettings />} />
+
             </Routes>
         </Layout>
     );

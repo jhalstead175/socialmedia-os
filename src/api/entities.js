@@ -58,9 +58,9 @@ export const PromoBanner = createMockEntity('PromoBanner');
 export const CampaignLink = createMockEntity('CampaignLink');
 
 // Email & Communication
-export const EmailCampaign = createMockEntity('EmailCampaign');
-export const EmailTemplate = createMockEntity('EmailTemplate');
-export const ScheduledEmail = createMockEntity('ScheduledEmail');
+// NOTE: the former EmailCampaign / EmailTemplate / ScheduledEmail mock stubs were
+// removed during the Email Campaigns module build. Real, RLS-backed data access
+// lives in src/api/email/ (db.js + functions.js); see docs/email-campaigns/.
 
 // System & Monitoring
 export const PerformanceLog = createMockEntity('PerformanceLog');
